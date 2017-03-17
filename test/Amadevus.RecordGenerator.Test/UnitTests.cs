@@ -71,12 +71,12 @@ namespace Amadevus.RecordGenerator.Test
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new AmadevusRecordGeneratorCodeFixProvider();
+            return new RecordGeneratorCodeFixProvider();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new AmadevusRecordGeneratorAnalyzer();
+            return new RecordGeneratorAnalyzer();
         }
     }
 }

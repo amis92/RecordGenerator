@@ -12,17 +12,26 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Rename;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.CodeAnalysis.Formatting;
+using System.Reflection;
 
 namespace Amadevus.RecordGenerator
 {
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AmadevusRecordGeneratorCodeFixProvider)), Shared]
-    public class AmadevusRecordGeneratorCodeFixProvider : CodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RecordGeneratorCodeFixProvider)), Shared]
+    public class RecordGeneratorCodeFixProvider : CodeFixProvider
     {
-        private const string title = "Make uppercase";
+        private const string title = "Generate RecordAttribute declaration";
+        private string _versionString;
 
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {
-            get { return ImmutableArray.Create(AmadevusRecordGeneratorAnalyzer.DiagnosticId); }
+            get
+            {
+                return
+                    ImmutableArray.Create(
+                        RecordGeneratorAnalyzer.MissingRecordAttributeDeclarationDiagnostic.DiagnosticId,
+                        RecordGeneratorAnalyzer.MissingRecordPartialDiagnostic.DiagnosticId);
+            }
         }
 
         public sealed override FixAllProvider GetFixAllProvider()
@@ -35,20 +44,94 @@ namespace Amadevus.RecordGenerator
         {
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
-            // TODO: Replace the following code with your own analysis, generating a CodeAction for each fix to suggest
-            var diagnostic = context.Diagnostics.First();
-            var diagnosticSpan = diagnostic.Location.SourceSpan;
+            foreach (var diagnostic in context.Diagnostics)
+            {
 
-            // Find the type declaration identified by the diagnostic.
-            var declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<TypeDeclarationSyntax>().First();
+                var diagnosticSpan = diagnostic.Location.SourceSpan;
+                switch (diagnostic.Id)
+                {
+                    case RecordGeneratorAnalyzer.MissingRecordAttributeDeclarationDiagnostic.DiagnosticId:
+                        {
+                            // Find the attribute identifier syntax
+                            var declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IdentifierNameSyntax>().First();
+                            context.RegisterCodeFix(
+                                CodeAction.Create(
+                                    title: title,
+                                    createChangedSolution: c => CreateRecordAttributeDeclarationDocumentAsync(context.Document, declaration, c),
+                                    equivalenceKey: title),
+                                diagnostic);
+                        }
+                        break;
+                    case RecordGeneratorAnalyzer.MissingRecordPartialDiagnostic.DiagnosticId:
+                        {
+                            // Find the type declaration identified by the diagnostic.
+                            //var declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<TypeDeclarationSyntax>().First();
 
-            // Register a code action that will invoke the fix.
-            context.RegisterCodeFix(
-                CodeAction.Create(
-                    title: title,
-                    createChangedSolution: c => MakeUppercaseAsync(context.Document, declaration, c), 
-                    equivalenceKey: title),
-                diagnostic);
+
+                            // Register a code action that will invoke the fix.
+                            //context.RegisterCodeFix(
+                            //    CodeAction.Create(
+                            //        title: title,
+                            //        createChangedSolution: c => MakeUppercaseAsync(context.Document, declaration, c),
+                            //        equivalenceKey: title),
+                            //    diagnostic);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        private string VersionString => _versionString ?? (_versionString = GetType().GetTypeInfo().Assembly.GetName().Version.ToString());
+
+        private Task<Solution> CreateRecordAttributeDeclarationDocumentAsync(Document document, IdentifierNameSyntax declaration, CancellationToken c)
+        {
+            // get the namespace of document or namespace from attribute usage
+
+            var namespaces = declaration
+                .Ancestors()
+                .OfType<NamespaceDeclarationSyntax>()
+                .Reverse()
+                .Select(nsSyntax => nsSyntax.Name.ToString())
+                .ToArray();
+            var targetNamespace = string.Join(".", namespaces);
+
+            var text = 
+$@"namespace {targetNamespace}
+{{
+    /// <summary>
+    /// Identifies class or struct that is supposed to have a partial with ctor and mutators generated by source generator.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode(""{nameof(RecordGenerator)}"", ""{VersionString}"")]
+    [System.Diagnostics.Conditional(""NEVER"")]
+    [System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Struct, Inherited = false, AllowMultiple = false)]
+    internal sealed class RecordAttribute : System.Attribute
+    {{
+            public RecordAttribute()
+            {{
+            }}
+
+
+            public string PrimaryCtorAccess {{ get; set; }} = ""public"";
+
+            /// <summary>
+            /// Gets or sets whether mutator methods should be generated (e.g. WithSurname). Default is true.
+            /// </summary>
+            public bool GenerateMutators {{ get; set; }} = true;
+
+
+            /// <summary>
+            /// Gets or sets whether collection mutator methods should be generated (e.g. AddItems, ReplaceItems). Default is true.
+            /// </summary>
+            public bool GenerateCollectionMutators {{ get; set; }} = true;
+    }}
+}}
+";
+            var tree = CSharpSyntaxTree.ParseText(text, cancellationToken: c);
+            var formattedRoot = Formatter.Format(tree.GetRoot(), document.Project.Solution.Workspace, cancellationToken: c);
+            var doc = document.Project.AddDocument("RecordAttribute.cs", formattedRoot, document.Folders);
+            return Task.FromResult(doc.Project.Solution);
         }
 
         private async Task<Solution> MakeUppercaseAsync(Document document, TypeDeclarationSyntax typeDecl, CancellationToken cancellationToken)
