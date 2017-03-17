@@ -102,7 +102,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Amadevus.RecordGenerator\Amadevus.RecordGenerator.csproj">
+    <ProjectReference Include="..\..\src\Amadevus.RecordGenerator\Amadevus.RecordGenerator.csproj">
       <Project>{2B0212AB-ABA1-4D75-8823-2E0D041D9DEF}</Project>
       <Name>Amadevus.RecordGenerator</Name>
     </ProjectReference>
