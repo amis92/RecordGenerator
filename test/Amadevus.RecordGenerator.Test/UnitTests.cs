@@ -71,7 +71,7 @@ namespace Amadevus.RecordGenerator.Test
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new RecordGeneratorCodeFixProvider();
+            return new MissingRecordAttributeDeclarationCodeFixProvider();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
