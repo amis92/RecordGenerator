@@ -34,6 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ClassRecordPartialGenerator.cs" />
     <Compile Include="MissingRecordAttributeDeclarationCodeFixProvider.cs" />
     <Compile Include="DiagnosticAnalyzer.cs" />
     <Compile Include="MissingRecordAttributeDeclarationDiagnostic.cs" />
@@ -42,14 +43,19 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RecordAttribute.cs" />
     <Compile Include="RecordAttributeExtensions.cs" />
+    <Compile Include="RecordDelta.cs" />
+    <Compile Include="RecordEntry.cs" />
     <Compile Include="RecordGeneratorProperties.cs" />
     <Compile Include="RecordPartial.cs" />
     <Compile Include="RecordPartialExtensions.cs" />
+    <Compile Include="RecordPartialGenerator.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="StructRecordPartialGenerator.cs" />
+    <Compile Include="SyntaxExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources.resx">
