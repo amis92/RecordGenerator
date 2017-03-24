@@ -13,16 +13,13 @@ namespace Amadevus.RecordGenerator
 {
     internal abstract class RecordPartialGenerator
     {
-        protected RecordPartialGenerator(Document document, TypeDeclarationSyntax declaration, CancellationToken cancellationToken)
+        protected RecordPartialGenerator(TypeDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
-            Document = document;
             TypeDeclaration = declaration;
             CancellationToken = cancellationToken;
             TypeSyntaxLazy = new Lazy<TypeSyntax>(GetTypeSyntax);
             RecordPropertiesLazy = new Lazy<ImmutableArray<RecordEntry>>(GetRecordProperties);
         }
-
-        protected Document Document { get; }
 
         protected TypeDeclarationSyntax TypeDeclaration { get; }
 
@@ -36,55 +33,74 @@ namespace Amadevus.RecordGenerator
 
         private Lazy<TypeSyntax> TypeSyntaxLazy { get; }
 
-        public static RecordPartialGenerator Create(Document document, TypeDeclarationSyntax declaration, CancellationToken cancellationToken)
+        public static Document GenerateRecordPartialDocument(Document document, TypeDeclarationSyntax declaration, CancellationToken cancellationToken)
+        {
+            var generator = Create(declaration, cancellationToken);
+            return generator.GenerateRecordPartial(document);
+        }
+
+        public static CompilationUnitSyntax GenerateRecordPartialRoot(TypeDeclarationSyntax declaration, CancellationToken cancellationToken)
+        {
+            var generator = Create(declaration, cancellationToken);
+            return generator.GenerateCompilationUnit();
+        }
+
+        protected static RecordPartialGenerator Create(TypeDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             if (declaration is ClassDeclarationSyntax classDeclaration)
             {
-                return new ClassRecordPartialGenerator(document, classDeclaration, cancellationToken);
+                return new ClassRecordPartialGenerator(classDeclaration, cancellationToken);
             }
             if (declaration is StructDeclarationSyntax structDeclaration)
             {
-                return new StructRecordPartialGenerator(document, structDeclaration, cancellationToken);
+                return new StructRecordPartialGenerator(structDeclaration, cancellationToken);
             }
             return null;
         }
 
-        public abstract Task<Document> GenerateRecordPartialAsync();
+        protected abstract Document GenerateRecordPartial(Document document);
 
         protected abstract string TypeName();
 
-        protected async Task<Document> GenerateDocumentAsync()
+        protected Document GenerateDocument(Document document)
         {
-            var typeDeclaration = await TypeDeclarationAsync().ConfigureAwait(false);
-
-            var rootMemberDeclaration = RootMemberDeclaration(typeDeclaration);
-
-            var compilationUnit = await CompilationUnitAsync(rootMemberDeclaration).ConfigureAwait(false);
-
-            var document = DocumentAsync(compilationUnit);
-
-            return document;
+            var compilationUnit = GenerateCompilationUnit();
+            var partialDocument = DocumentFrom(compilationUnit, document);
+            return partialDocument;
         }
 
-        protected Document DocumentAsync(CompilationUnitSyntax compilationUnit)
+        protected CompilationUnitSyntax GenerateCompilationUnit()
+        {
+            var typeDeclaration = GenerateTypeDeclaration();
+            var rootMemberDeclaration = RootMemberDeclarationFrom(typeDeclaration);
+            var compilationUnit = CompilationUnitFrom(rootMemberDeclaration);
+            return compilationUnit;
+        }
+
+        protected Document DocumentFrom(CompilationUnitSyntax compilationUnit, Document document)
         {
             var typeName = TypeName();
-            var recordPartialRoot = Formatter.Format(compilationUnit, Document.Project.Solution.Workspace, cancellationToken: CancellationToken);
-            var recordPartialDocument = Document.Project.AddDocument($"{typeName}.Record.cs", recordPartialRoot, Document.Folders);
+            var project = document.Project;
+            var recordPartialRoot = Formatter.Format(compilationUnit, project.Solution.Workspace, cancellationToken: CancellationToken);
+            var recordPartialDocument = project.AddDocument($"{typeName}.{RecordPartial.FilenamePostfix}.cs", recordPartialRoot, document.Folders);
             return recordPartialDocument;
         }
 
-        protected async Task<CompilationUnitSyntax> CompilationUnitAsync(MemberDeclarationSyntax rootMemberDeclaration)
+        protected CompilationUnitSyntax CompilationUnitFrom(MemberDeclarationSyntax rootMemberDeclaration)
         {
-            var syntaxTree = await Document.GetSyntaxTreeAsync(CancellationToken).ConfigureAwait(false);
+            var syntaxTree = TypeDeclaration.SyntaxTree;
             var recordPartialCompilationUnit = SyntaxFactory.CompilationUnit()
                 .WithUsings(syntaxTree.GetCompilationUnitRoot(CancellationToken).Usings)
-                .WithMembers(SyntaxFactory.SingletonList(rootMemberDeclaration));
+                .WithMembers(SyntaxFactory.SingletonList(rootMemberDeclaration))
+                .WithLeadingTrivia(
+                    SyntaxFactory.SyntaxTrivia(SyntaxKind.SingleLineCommentTrivia, RecordPartial.FileHeader),
+                    SyntaxFactory.SyntaxTrivia(SyntaxKind.EndOfLineTrivia, Environment.NewLine),
+                    SyntaxFactory.SyntaxTrivia(SyntaxKind.EndOfLineTrivia, Environment.NewLine));
 
             return recordPartialCompilationUnit;
         }
 
-        protected MemberDeclarationSyntax RootMemberDeclaration(TypeDeclarationSyntax newTypeDeclaration)
+        protected MemberDeclarationSyntax RootMemberDeclarationFrom(TypeDeclarationSyntax newTypeDeclaration)
         {
             var newRootMemberDeclaration =
                 TypeDeclaration
@@ -97,7 +113,7 @@ namespace Amadevus.RecordGenerator
             return newRootMemberDeclaration;
         }
 
-        protected abstract Task<TypeDeclarationSyntax> TypeDeclarationAsync();
+        protected abstract TypeDeclarationSyntax GenerateTypeDeclaration();
         
         protected SyntaxList<MemberDeclarationSyntax> GenerateMembers(SyntaxToken identifier, IReadOnlyList<RecordEntry> properties)
         {
@@ -107,10 +123,10 @@ namespace Amadevus.RecordGenerator
                 .WithBody(properties.IntoCtorBody());
 
             return SyntaxFactory.SingletonList<MemberDeclarationSyntax>(ctor)
-                .AddRange(RecordProperties.Select(p => Mutator(p)));
+                .AddRange(RecordProperties.Select(p => MutatorFrom(p)));
         }
 
-        protected MethodDeclarationSyntax Mutator(RecordEntry entry)
+        protected MethodDeclarationSyntax MutatorFrom(RecordEntry entry)
         {
             var arguments = RecordProperties.Select(x =>
             {
@@ -119,7 +135,7 @@ namespace Amadevus.RecordGenerator
             });
 
             var mutator =
-                SyntaxFactory.MethodDeclaration(RecordTypeSyntax, MutatorIdentifier(entry))
+                SyntaxFactory.MethodDeclaration(RecordTypeSyntax, MutatorIdentifierFor(entry))
                 .WithModifiers(
                     SyntaxFactory.TokenList(
                         SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
@@ -139,7 +155,7 @@ namespace Amadevus.RecordGenerator
             return mutator;
         }
 
-        protected SyntaxToken MutatorIdentifier(RecordEntry entry)
+        protected SyntaxToken MutatorIdentifierFor(RecordEntry entry)
         {
             return SyntaxFactory.Identifier($"With{entry.Identifier.ValueText}");
         }
@@ -153,6 +169,11 @@ namespace Amadevus.RecordGenerator
                             SyntaxFactory.ParseName("System.CodeDom.Compiler.GeneratedCode"))
                         .WithArgumentList(
                             SyntaxFactory.ParseAttributeArgumentList($"(\"{nameof(RecordGenerator)}\", \"{RecordGeneratorProperties.VersionString}\")"))));
+        }
+
+        protected ImmutableArray<RecordEntry> GetRecordProperties()
+        {
+            return TypeDeclaration.Members.GetRecordProperties().AsRecordEntries();
         }
 
         private TypeSyntax GetTypeSyntax()
@@ -170,11 +191,6 @@ namespace Amadevus.RecordGenerator
                         arguments));
 
             return SyntaxFactory.GenericName(TypeDeclaration.Identifier, typeArgList);
-        }
-
-        protected ImmutableArray<RecordEntry> GetRecordProperties()
-        {
-            return TypeDeclaration.Members.GetRecordProperties().AsRecordEntries();
         }
     }
 }

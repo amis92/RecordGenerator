@@ -8,22 +8,21 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Rename;
-using Microsoft.CodeAnalysis.Text;
-using System.Reflection;
 
 namespace Amadevus.RecordGenerator
 {
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(MissingRecordPartialCodeFixProvider)), Shared]
-    public sealed class MissingRecordPartialCodeFixProvider : CodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(GenerateRecordPartialCodeFixProvider)), Shared]
+    public sealed class GenerateRecordPartialCodeFixProvider : CodeFixProvider
     {
-        private const string title = "Generate RecordAttribute declaration";
+        private const string title = "Generate Record partial with ctor and mutators";
 
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {
             get
             {
-                return ImmutableArray.Create(MissingRecordPartialDiagnostic.DiagnosticId);
+                return ImmutableArray.Create(
+                    MissingRecordPartialDiagnostic.DiagnosticId,
+                    InvalidGeneratedRecordPartialDiagnostic.DiagnosticId);
             }
         }
         
@@ -58,9 +57,7 @@ namespace Amadevus.RecordGenerator
         {
             (document, declaration) = await AddPartialModifierIfRequired(document, declaration, c).ConfigureAwait(false);
 
-            var generator = RecordPartialGenerator.Create(document, declaration, c);
-
-            var generatedDocument = await generator.GenerateRecordPartialAsync().ConfigureAwait(false);
+            var generatedDocument = RecordPartialGenerator.GenerateRecordPartialDocument(document, declaration, c);
 
             return generatedDocument.Project.Solution;
         }

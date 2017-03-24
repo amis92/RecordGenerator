@@ -17,8 +17,8 @@ using System.Reflection;
 
 namespace Amadevus.RecordGenerator
 {
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(MissingRecordAttributeDeclarationCodeFixProvider)), Shared]
-    public sealed class MissingRecordAttributeDeclarationCodeFixProvider : CodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(GenerateRecordAttributeDeclarationCodeFixProvider)), Shared]
+    public sealed class GenerateRecordAttributeDeclarationCodeFixProvider : CodeFixProvider
     {
         private const string title = "Generate RecordAttribute declaration";
 

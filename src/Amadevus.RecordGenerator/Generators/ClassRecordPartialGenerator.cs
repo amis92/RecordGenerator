@@ -8,19 +8,19 @@ namespace Amadevus.RecordGenerator
 {
     internal class ClassRecordPartialGenerator : RecordPartialGenerator
     {
-        public ClassRecordPartialGenerator(Document document, ClassDeclarationSyntax declaration, CancellationToken c) : base(document, declaration, c)
+        public ClassRecordPartialGenerator(ClassDeclarationSyntax declaration, CancellationToken c) : base(declaration, c)
         {
             TypeDeclaration = declaration;
         }
 
         protected new ClassDeclarationSyntax TypeDeclaration { get; }
 
-        public override Task<Document> GenerateRecordPartialAsync()
+        protected override Document GenerateRecordPartial(Document document)
         {
-            return GenerateDocumentAsync();
+            return GenerateDocument(document);
         }
 
-        protected override Task<TypeDeclarationSyntax> TypeDeclarationAsync()
+        protected override TypeDeclarationSyntax GenerateTypeDeclaration()
         {
             TypeDeclarationSyntax newDeclaration = TypeDeclaration
                 .WithAttributeLists(
@@ -29,7 +29,7 @@ namespace Amadevus.RecordGenerator
                     }))
                 .WithModifiers(SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PartialKeyword)))
                 .WithMembers(GenerateMembers(TypeDeclaration.Identifier, RecordProperties));
-            return Task.FromResult(newDeclaration);
+            return newDeclaration;
         }
 
         protected override string TypeName()

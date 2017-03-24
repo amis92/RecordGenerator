@@ -6,15 +6,14 @@ namespace Amadevus.RecordGenerator
 {
     internal static class RecordPartialExtensions
     {
-        public static bool IsPartOfRecordPartialFile(this ClassDeclarationSyntax declaration)
+        public static bool IsFileHeaderPresent(this TypeDeclarationSyntax declaration)
         {
             var firstSingleLineComment = declaration.SyntaxTree
                                 .GetRoot()
-                                .DescendantTrivia()
-                                .FirstOrDefault(trivia => trivia.Kind() == SyntaxKind.SingleLineCommentTrivia);
-            return firstSingleLineComment.Kind() == SyntaxKind.None 
+                                .FindTrivia(0);
+            return firstSingleLineComment.Kind() != SyntaxKind.SingleLineCommentTrivia
                 ? false
-                : firstSingleLineComment.Token.ValueText.StartsWith(RecordPartial.FileHeader);
+                : firstSingleLineComment.ToString().StartsWith(RecordPartial.FileHeader);
         }
     }
 }

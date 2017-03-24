@@ -1,7 +1,5 @@
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -19,7 +17,8 @@ namespace Amadevus.RecordGenerator
             {
                 return ImmutableArray.Create(
                     MissingRecordAttributeDeclarationDiagnostic.Descriptor,
-                    MissingRecordPartialDiagnostic.Descriptor);
+                    MissingRecordPartialDiagnostic.Descriptor,
+                    InvalidGeneratedRecordPartialDiagnostic.Descriptor);
             }
         }
 
@@ -38,18 +37,18 @@ namespace Amadevus.RecordGenerator
                 typeDeclaration.AttributeLists
                 .SelectMany(attListSyntax => attListSyntax.Attributes.Where(att => att.IsRecordAttributeSyntax()))
                 .ToImmutableArray();
-            
+
             // if no record attributes, stop diagnostic
             if (recordNamedAttributes.Length == 0)
             {
                 return;
             }
-            
+
             // check if RecordAttribute is already declared
             foreach (var attribute in recordNamedAttributes)
             {
-                var symbolInfo = context.SemanticModel.GetSymbolInfo(attribute);
-                if (symbolInfo.Symbol == null)
+                var attributeSymbolInfo = context.SemanticModel.GetSymbolInfo(attribute);
+                if (attributeSymbolInfo.Symbol == null)
                 {
                     var diagnostic =
                         MissingRecordAttributeDeclarationDiagnostic.Create(
@@ -59,10 +58,10 @@ namespace Amadevus.RecordGenerator
                     context.ReportDiagnostic(diagnostic);
                 }
             }
-            
+
             // check if there already is record partial
-            var classSymbol = context.SemanticModel.GetDeclaredSymbol(typeDeclaration);
-            if (classSymbol == null)
+            var typeSymbol = context.SemanticModel.GetDeclaredSymbol(typeDeclaration);
+            if (typeSymbol == null)
             {
                 return;
             }
@@ -72,34 +71,63 @@ namespace Amadevus.RecordGenerator
             // for now we must check if the "would-be-generated" partial exists
             // if not - report diagnostic, if does - check if it's still correct
             // (and report diagnostic if it's not)
+            AnalyzeIfGenerationRequired(context, typeDeclaration, typeSymbol);
+        }
 
-            var syntaxRefs = classSymbol.DeclaringSyntaxReferences;
-            if (syntaxRefs.Length == 1)
+        private static void AnalyzeIfGenerationRequired(SyntaxNodeAnalysisContext context, TypeDeclarationSyntax typeDeclaration, INamedTypeSymbol typeSymbol)
+        {
+            var recordPartial = GetGeneratedPartial(typeDeclaration, typeSymbol);
+            if (recordPartial == null)
             {
-                // single part means there sure is no generated partial
-                var diagnostic =
+                // no generated partial found
+                var missingPartialDiagnostic =
                     MissingRecordPartialDiagnostic.Create(
                         typeDeclaration.Identifier.GetLocation(),
                         typeDeclaration.Identifier.ValueText);
 
-                context.ReportDiagnostic(diagnostic);
+                context.ReportDiagnostic(missingPartialDiagnostic);
                 return;
             }
 
+            // check partial is equivalent to would-be generated partial
+            var wouldBePartialRoot = RecordPartialGenerator.GenerateRecordPartialRoot(typeDeclaration, context.CancellationToken);
+            var currentPartialRoot = recordPartial.SyntaxTree.GetRoot(context.CancellationToken);
+
+            /* TODO create CSharpSyntaxWalker which will compare just tokens (not trivia)
+             * and also return if the only difference is GeneratedCodeAttribute version
+             */
+
+            if (wouldBePartialRoot.IsEquivalentTo(currentPartialRoot, topLevel:false))
+            {
+                // no generation necessary
+                return;
+            }
+            // report error "record partial requires update"
+            var invalidPartialDiagnostic =
+                InvalidGeneratedRecordPartialDiagnostic.Create(
+                    typeDeclaration.Identifier.GetLocation(),
+                    typeDeclaration.Identifier.ValueText);
+
+            context.ReportDiagnostic(invalidPartialDiagnostic);
+        }
+
+        private static TypeDeclarationSyntax GetGeneratedPartial(TypeDeclarationSyntax typeDeclaration, INamedTypeSymbol typeSymbol)
+        {
+            var syntaxRefs = typeSymbol.DeclaringSyntaxReferences;
+            if (syntaxRefs.Length == 1)
+            {
+                return null;
+            }
             // get all partial declarations (except the original one)
             var declarations =
                 syntaxRefs
-                .Select(@ref => @ref.GetSyntax() as ClassDeclarationSyntax)
+                .Select(@ref => @ref.GetSyntax() as TypeDeclarationSyntax)
                 .Where(syntax => syntax != null && syntax != typeDeclaration)
                 .ToList();
 
             // find the one with appropriate header
-            var recordPartial = declarations.FirstOrDefault(d => d.IsPartOfRecordPartialFile());
-            if (recordPartial == null)
-            {
-                // TODO report diagnostic "record partial missing"
-            }
-            // TODO check if partial is up-to-date else report "record partial not up-to-date"
+            var recordPartial = declarations.FirstOrDefault(d => d.IsFileHeaderPresent());
+            return recordPartial;
         }
     }
 }
