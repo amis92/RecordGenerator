@@ -4,7 +4,7 @@ namespace Amadevus.RecordGenerator
 {
     internal static class MissingRecordPartialDiagnostic
     {
-        public const string DiagnosticId = RecordGeneratorProperties.DiagnosticIdPrefix + "0002";
+        public const string DiagnosticId = Properties.DiagnosticIdPrefix + "0002";
         private static readonly string Title = "Missing record partial";
         private static readonly string MessageFormat = "Type '{0}' is marked as [Record] but no appropriate partial was found (with constructor and/or mutators).";
         private static readonly string Description = "Record type has no generated partial (with constructor and/or mutators).";
@@ -14,7 +14,7 @@ namespace Amadevus.RecordGenerator
                 DiagnosticId,
                 Title,
                 MessageFormat,
-                RecordGeneratorProperties.AnalyzerCategory,
+                Properties.AnalyzerCategory,
                 DiagnosticSeverity.Warning,
                 isEnabledByDefault: true,
                 description: Description);

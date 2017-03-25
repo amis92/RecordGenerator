@@ -18,7 +18,8 @@ namespace Amadevus.RecordGenerator
                 return ImmutableArray.Create(
                     MissingRecordAttributeDeclarationDiagnostic.Descriptor,
                     MissingRecordPartialDiagnostic.Descriptor,
-                    InvalidGeneratedRecordPartialDiagnostic.Descriptor);
+                    InvalidGeneratedRecordPartialDiagnostic.Descriptor,
+                    DifferentGeneratorVersionDiagnostic.Descriptor);
             }
         }
 
@@ -76,7 +77,7 @@ namespace Amadevus.RecordGenerator
 
         private static void AnalyzeIfGenerationRequired(SyntaxNodeAnalysisContext context, TypeDeclarationSyntax typeDeclaration, INamedTypeSymbol typeSymbol)
         {
-            var recordPartial = GetGeneratedPartial(typeDeclaration, typeSymbol);
+            var recordPartial = RecordPartialGenerator.GetGeneratedPartial(typeDeclaration, typeSymbol);
             if (recordPartial == null)
             {
                 // no generated partial found
@@ -92,42 +93,40 @@ namespace Amadevus.RecordGenerator
             // check partial is equivalent to would-be generated partial
             var wouldBePartialRoot = RecordPartialGenerator.GenerateRecordPartialRoot(typeDeclaration, context.CancellationToken);
             var currentPartialRoot = recordPartial.SyntaxTree.GetRoot(context.CancellationToken);
-
-            /* TODO create CSharpSyntaxWalker which will compare just tokens (not trivia)
-             * and also return if the only difference is GeneratedCodeAttribute version
-             */
-
-            if (wouldBePartialRoot.IsEquivalentTo(currentPartialRoot, topLevel:false))
+            
+            var equivalenceResult = wouldBePartialRoot.IsTokenwiseEquivalentTo(currentPartialRoot);
+            switch (equivalenceResult)
             {
-                // no generation necessary
-                return;
+                case RecordPartialComparer.Result.Equivalent:
+                    return;
+                case RecordPartialComparer.Result.EquivalentExceptGeneratedCodeAttributeVersion:
+                    {
+                        string version = recordPartial.ExtractGeneratedCodeAttributeVersionArgument();
+                        // report info "record partial might need update"
+                        var differentToolVersionDiagnostic =
+                            DifferentGeneratorVersionDiagnostic.Create(
+                                typeDeclaration.Identifier.GetLocation(),
+                                typeDeclaration.Identifier.ValueText,
+                                version,
+                                Properties.VersionString);
+
+                        context.ReportDiagnostic(differentToolVersionDiagnostic);
+                    }
+                    return;
+                case RecordPartialComparer.Result.NotEquivalent:
+                    {
+                        // report error "record partial requires update"
+                        var invalidPartialDiagnostic =
+                            InvalidGeneratedRecordPartialDiagnostic.Create(
+                                typeDeclaration.Identifier.GetLocation(),
+                                typeDeclaration.Identifier.ValueText);
+
+                        context.ReportDiagnostic(invalidPartialDiagnostic);
+                    }
+                    return;
+                default:
+                    break;
             }
-            // report error "record partial requires update"
-            var invalidPartialDiagnostic =
-                InvalidGeneratedRecordPartialDiagnostic.Create(
-                    typeDeclaration.Identifier.GetLocation(),
-                    typeDeclaration.Identifier.ValueText);
-
-            context.ReportDiagnostic(invalidPartialDiagnostic);
-        }
-
-        private static TypeDeclarationSyntax GetGeneratedPartial(TypeDeclarationSyntax typeDeclaration, INamedTypeSymbol typeSymbol)
-        {
-            var syntaxRefs = typeSymbol.DeclaringSyntaxReferences;
-            if (syntaxRefs.Length == 1)
-            {
-                return null;
-            }
-            // get all partial declarations (except the original one)
-            var declarations =
-                syntaxRefs
-                .Select(@ref => @ref.GetSyntax() as TypeDeclarationSyntax)
-                .Where(syntax => syntax != null && syntax != typeDeclaration)
-                .ToList();
-
-            // find the one with appropriate header
-            var recordPartial = declarations.FirstOrDefault(d => d.IsFileHeaderPresent());
-            return recordPartial;
         }
     }
 }

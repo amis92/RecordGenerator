@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Microsoft.CodeAnalysis.CSharp;
+﻿using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Amadevus.RecordGenerator
@@ -13,7 +12,7 @@ namespace Amadevus.RecordGenerator
                                 .FindTrivia(0);
             return firstSingleLineComment.Kind() != SyntaxKind.SingleLineCommentTrivia
                 ? false
-                : firstSingleLineComment.ToString().StartsWith(RecordPartial.FileHeader);
+                : firstSingleLineComment.ToString().StartsWith(RecordPartialProperties.FileHeader);
         }
     }
 }

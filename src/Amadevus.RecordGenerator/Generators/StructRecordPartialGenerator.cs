@@ -1,5 +1,4 @@
 ﻿using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -15,9 +14,9 @@ namespace Amadevus.RecordGenerator
 
         protected new StructDeclarationSyntax TypeDeclaration { get; }
 
-        protected override Document GenerateRecordPartial(Document document)
+        protected override Document GenerateRecordPartial(Document document, INamedTypeSymbol typeSymbol)
         {
-            return GenerateDocument(document);
+            return GenerateDocument(document, typeSymbol);
         }
 
         protected override TypeDeclarationSyntax GenerateTypeDeclaration()
@@ -25,7 +24,7 @@ namespace Amadevus.RecordGenerator
             TypeDeclarationSyntax newDeclaration = TypeDeclaration
                 .WithAttributeLists(
                     SyntaxFactory.List(new[] {
-                        GeneratedCodeAttribute()
+                        GeneratedCodeAttributeExtensions.CreateAttribute()
                     }))
                 .WithModifiers(SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PartialKeyword)))
                 .WithMembers(GenerateMembers(TypeDeclaration.Identifier, RecordProperties));

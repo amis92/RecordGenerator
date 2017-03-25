@@ -22,7 +22,8 @@ namespace Amadevus.RecordGenerator
             {
                 return ImmutableArray.Create(
                     MissingRecordPartialDiagnostic.DiagnosticId,
-                    InvalidGeneratedRecordPartialDiagnostic.DiagnosticId);
+                    InvalidGeneratedRecordPartialDiagnostic.DiagnosticId,
+                    DifferentGeneratorVersionDiagnostic.DiagnosticId);
             }
         }
         
@@ -56,9 +57,9 @@ namespace Amadevus.RecordGenerator
         private async Task<Solution> FixMissingRecordPartialAsync(Document document, TypeDeclarationSyntax declaration, CancellationToken c)
         {
             (document, declaration) = await AddPartialModifierIfRequired(document, declaration, c).ConfigureAwait(false);
-
-            var generatedDocument = RecordPartialGenerator.GenerateRecordPartialDocument(document, declaration, c);
-
+            var semanticModel = await document.GetSemanticModelAsync(c).ConfigureAwait(false);
+            var typeSymbol = semanticModel.GetDeclaredSymbol(declaration);
+            var generatedDocument = RecordPartialGenerator.GenerateRecordPartialDocument(document, declaration, typeSymbol, c);
             return generatedDocument.Project.Solution;
         }
 

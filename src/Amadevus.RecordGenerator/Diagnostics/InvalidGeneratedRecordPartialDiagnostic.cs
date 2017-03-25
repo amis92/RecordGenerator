@@ -4,7 +4,7 @@ namespace Amadevus.RecordGenerator
 {
     internal class InvalidGeneratedRecordPartialDiagnostic
     {
-        public const string DiagnosticId = RecordGeneratorProperties.DiagnosticIdPrefix + "0003";
+        public const string DiagnosticId = Properties.DiagnosticIdPrefix + "0003";
         private static readonly string Title = "Invalid generated record partial";
         private static readonly string MessageFormat = "Type '{0}' marked as [Record] has generated partial that requires re-generation.";
         private static readonly string Description = "Generated record partial is invalid and requires re-generation.";
@@ -14,7 +14,7 @@ namespace Amadevus.RecordGenerator
                 DiagnosticId,
                 Title,
                 MessageFormat,
-                RecordGeneratorProperties.AnalyzerCategory,
+                Properties.AnalyzerCategory,
                 DiagnosticSeverity.Error,
                 isEnabledByDefault: true,
                 description: Description);

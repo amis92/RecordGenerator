@@ -2,7 +2,7 @@
 
 namespace Amadevus.RecordGenerator
 {
-    public static class RecordGeneratorProperties
+    public static class Properties
     {
         public const string AnalyzerCategory = "RecordGenerator";
 
@@ -14,7 +14,7 @@ namespace Amadevus.RecordGenerator
 
         private static string GetVersionString()
         {
-            return typeof(RecordGeneratorProperties).GetTypeInfo().Assembly.GetName().Version.ToString();
+            return typeof(Properties).GetTypeInfo().Assembly.GetName().Version.ToString();
         }
     }
 }

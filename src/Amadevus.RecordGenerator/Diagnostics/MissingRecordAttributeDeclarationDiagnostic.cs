@@ -4,7 +4,7 @@ namespace Amadevus.RecordGenerator
 {
     internal static class MissingRecordAttributeDeclarationDiagnostic
     {
-        public const string DiagnosticId = RecordGeneratorProperties.DiagnosticIdPrefix + "0001";
+        public const string DiagnosticId = Properties.DiagnosticIdPrefix + "0001";
         private static readonly string Title = "Missing RecordAttribute declaration";
         private static readonly string MessageFormat = "Type {0} has [{1}] attribute but no such attribute is defined.";
         private static readonly string Description = "No RecordAttribute id defined.";
@@ -14,7 +14,7 @@ namespace Amadevus.RecordGenerator
                 DiagnosticId,
                 Title,
                 MessageFormat,
-                RecordGeneratorProperties.AnalyzerCategory,
+                Properties.AnalyzerCategory,
                 DiagnosticSeverity.Warning,
                 isEnabledByDefault: true,
                 description: Description);
