@@ -49,6 +49,7 @@
     <Compile Include="Concepts\RecordDelta.cs" />
     <Compile Include="Generators\RecordEntry.cs" />
     <Compile Include="Generators\Properties.cs" />
+    <Compile Include="Utilities\RecordAttributeProperties.cs" />
     <Compile Include="Utilities\RecordPartialProperties.cs" />
     <Compile Include="Utilities\RecordPartialComparer.cs" />
     <Compile Include="Utilities\RecordPartialExtensions.cs" />
