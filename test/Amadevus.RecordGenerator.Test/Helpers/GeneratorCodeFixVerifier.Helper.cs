@@ -2,17 +2,20 @@
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Simplification;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace TestHelper
 {
     /// <summary>
-    /// Diagnostic Producer class with extra methods dealing with applying codefixes
+    /// Diagnostic Producer class with extra methods dealing with applying generator codefixes
     /// All methods are static
     /// </summary>
-    public abstract partial class CodeFixVerifier : DiagnosticVerifier
+    public abstract partial class GeneratorCodeFixVerifier
     {
         /// <summary>
         /// Apply the inputted CodeAction to the inputted document.
@@ -21,11 +24,18 @@ namespace TestHelper
         /// <param name="document">The Document to apply the fix on</param>
         /// <param name="codeAction">A CodeAction that will be applied to the Document.</param>
         /// <returns>A Document with the changes from the CodeAction</returns>
-        private static Document ApplyFix(Document document, CodeAction codeAction)
+        private static GeneratorDocumentPackage ApplyGeneratorFix(Document document, CodeAction codeAction)
         {
             var operations = codeAction.GetOperationsAsync(CancellationToken.None).Result;
-            var solution = operations.OfType<ApplyChangesOperation>().Single().ChangedSolution;
-            return solution.GetDocument(document.Id);
+            var changedSolution = operations.OfType<ApplyChangesOperation>().Single().ChangedSolution;
+            var changes = changedSolution.GetChanges(document.Project.Solution);
+            var projectChange = changes.GetProjectChanges().Single();
+            var addedId = projectChange.GetAddedDocuments().FirstOrDefault();
+            var changedId = projectChange.GetChangedDocuments().FirstOrDefault(x => x != document.Id);
+            var added = addedId is null ? null : changedSolution.GetDocument(addedId);
+            var changed = changedId is null ? null : changedSolution.GetDocument(changedId);
+            var @fixed = changedSolution.GetDocument(document.Id);
+            return new GeneratorDocumentPackage { AddedDocument = added, ChangedDocument = changed, FixedDocument = @fixed };
         }
 
         /// <summary>

@@ -104,7 +104,7 @@ namespace TestHelper
         /// <param name="sources">Classes in the form of strings</param>
         /// <param name="language">The language the source code is in</param>
         /// <returns>A Tuple containing the Documents produced from the sources and their TextSpans if relevant</returns>
-        private static Document[] GetDocuments(string[] sources, string language)
+        protected static Document[] GetDocuments(string[] sources, string language)
         {
             if (language != LanguageNames.CSharp && language != LanguageNames.VisualBasic)
             {

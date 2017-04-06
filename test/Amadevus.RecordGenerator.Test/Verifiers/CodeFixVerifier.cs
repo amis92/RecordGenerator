@@ -81,6 +81,10 @@ namespace TestHelper
             for (int i = 0; i < attempts; ++i)
             {
                 var actions = new List<CodeAction>();
+                if (!codeFixProvider.FixableDiagnosticIds.Contains(analyzerDiagnostics[0].Id))
+                {
+                    continue;
+                }
                 var context = new CodeFixContext(document, analyzerDiagnostics[0], (a, d) => actions.Add(a), CancellationToken.None);
                 codeFixProvider.RegisterCodeFixesAsync(context).Wait();
 

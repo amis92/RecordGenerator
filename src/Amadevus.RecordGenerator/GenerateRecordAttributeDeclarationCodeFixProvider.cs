@@ -60,8 +60,17 @@ namespace Amadevus.RecordGenerator
                 .Select(nsSyntax => nsSyntax.Name.ToString())
                 .ToArray();
             var targetNamespace = string.Join(".", namespaces);
+            var text = RecordAttributeDeclarationSource(targetNamespace);
 
-            var text = 
+            var tree = CSharpSyntaxTree.ParseText(text, cancellationToken: cancellationToken);
+            var formattedRoot = Formatter.Format(tree.GetRoot(), document.Project.Solution.Workspace, cancellationToken: cancellationToken);
+            var doc = document.Project.AddDocument(RecordAttributeProperties.Filename, formattedRoot, document.Folders);
+            return Task.FromResult(doc.Project.Solution);
+        }
+
+        internal static string RecordAttributeDeclarationSource(string targetNamespace)
+        {
+            var text =
 $@"namespace {targetNamespace}
 {{
     /// <summary>
@@ -72,30 +81,27 @@ $@"namespace {targetNamespace}
     [System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Struct, Inherited = false, AllowMultiple = false)]
     internal sealed class RecordAttribute : System.Attribute
     {{
-            public RecordAttribute()
-            {{
-            }}
+        public RecordAttribute()
+        {{
+        }}
 
 
-            public string PrimaryCtorAccess {{ get; set; }} = ""public"";
+        public string PrimaryCtorAccess {{ get; set; }} = ""public"";
 
-            /// <summary>
-            /// Gets or sets whether mutator methods should be generated (e.g. WithSurname). Default is true.
-            /// </summary>
-            public bool GenerateMutators {{ get; set; }} = true;
+        /// <summary>
+        /// Gets or sets whether mutator methods should be generated (e.g. WithSurname). Default is true.
+        /// </summary>
+        public bool GenerateMutators {{ get; set; }} = true;
 
 
-            /// <summary>
-            /// Gets or sets whether collection mutator methods should be generated (e.g. AddItems, ReplaceItems). Default is true.
-            /// </summary>
-            public bool GenerateCollectionMutators {{ get; set; }} = true;
+        /// <summary>
+        /// Gets or sets whether collection mutator methods should be generated (e.g. AddItems, ReplaceItems). Default is true.
+        /// </summary>
+        public bool GenerateCollectionMutators {{ get; set; }} = true;
     }}
 }}
 ";
-            var tree = CSharpSyntaxTree.ParseText(text, cancellationToken: cancellationToken);
-            var formattedRoot = Formatter.Format(tree.GetRoot(), document.Project.Solution.Workspace, cancellationToken: cancellationToken);
-            var doc = document.Project.AddDocument("RecordAttribute.cs", formattedRoot, document.Folders);
-            return Task.FromResult(doc.Project.Solution);
+            return text;
         }
     }
 }

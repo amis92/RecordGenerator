@@ -35,6 +35,14 @@ namespace TestHelper
     /// </summary>
     public struct DiagnosticResult
     {
+        public DiagnosticResult(DiagnosticDescriptor descriptor, params object[] messageArgs)
+        {
+            locations = null;
+            Id = descriptor.Id;
+            Message = string.Format(descriptor.MessageFormat.ToString(), messageArgs);
+            Severity = descriptor.DefaultSeverity;
+        }
+
         private DiagnosticResultLocation[] locations;
 
         public DiagnosticResultLocation[] Locations
