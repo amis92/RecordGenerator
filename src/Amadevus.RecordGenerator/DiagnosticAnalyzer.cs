@@ -16,10 +16,10 @@ namespace Amadevus.RecordGenerator
             get
             {
                 return ImmutableArray.Create(
-                    MissingRecordAttributeDeclarationDiagnostic.Descriptor,
-                    MissingRecordPartialDiagnostic.Descriptor,
-                    InvalidGeneratedRecordPartialDiagnostic.Descriptor,
-                    DifferentGeneratorVersionDiagnostic.Descriptor);
+                    RecordAttributeDeclarationMissingDiagnostic.Descriptor,
+                    RecordPartialMissingDiagnostic.Descriptor,
+                    RecordPartialInvalidDiagnostic.Descriptor,
+                    GeneratorVersionDifferentDiagnostic.Descriptor);
             }
         }
 
@@ -52,7 +52,7 @@ namespace Amadevus.RecordGenerator
                 if (attributeSymbolInfo.Symbol == null)
                 {
                     var diagnostic =
-                        MissingRecordAttributeDeclarationDiagnostic.Create(
+                        RecordAttributeDeclarationMissingDiagnostic.Create(
                             attribute.GetLocation(),
                             typeIdentifierText,
                             attribute.GetUnqualifiedName());
@@ -82,7 +82,7 @@ namespace Amadevus.RecordGenerator
             {
                 // no generated partial found
                 var missingPartialDiagnostic =
-                    MissingRecordPartialDiagnostic.Create(
+                    RecordPartialMissingDiagnostic.Create(
                         typeDeclaration.Identifier.GetLocation(),
                         typeDeclaration.Identifier.ValueText);
 
@@ -104,7 +104,7 @@ namespace Amadevus.RecordGenerator
                         string version = recordPartial.ExtractGeneratedCodeAttributeVersionArgument();
                         // report info "record partial might need update"
                         var differentToolVersionDiagnostic =
-                            DifferentGeneratorVersionDiagnostic.Create(
+                            GeneratorVersionDifferentDiagnostic.Create(
                                 typeDeclaration.Identifier.GetLocation(),
                                 typeDeclaration.Identifier.ValueText,
                                 version,
@@ -117,7 +117,7 @@ namespace Amadevus.RecordGenerator
                     {
                         // report error "record partial requires update"
                         var invalidPartialDiagnostic =
-                            InvalidGeneratedRecordPartialDiagnostic.Create(
+                            RecordPartialInvalidDiagnostic.Create(
                                 typeDeclaration.Identifier.GetLocation(),
                                 typeDeclaration.Identifier.ValueText);
 

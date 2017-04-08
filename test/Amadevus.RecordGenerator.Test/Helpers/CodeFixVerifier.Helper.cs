@@ -8,6 +8,16 @@ using System.Threading;
 
 namespace TestHelper
 {
+    public static class SourceExtensions
+    {
+        public const string GeneratorVersionToken = "GENERATOR_VERSION";
+
+        public static string ReplaceRecordGeneratorVersion(this string source, string version)
+        {
+            return source.Replace(GeneratorVersionToken, version);
+        }
+    }
+
     /// <summary>
     /// Diagnostic Producer class with extra methods dealing with applying codefixes
     /// All methods are static

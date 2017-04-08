@@ -21,7 +21,7 @@ namespace Amadevus.RecordGenerator
         {
             get
             {
-                return ImmutableArray.Create(MissingRecordAttributeDeclarationDiagnostic.DiagnosticId);
+                return ImmutableArray.Create(RecordAttributeDeclarationMissingDiagnostic.DiagnosticId);
             }
         }
 

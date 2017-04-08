@@ -3,15 +3,11 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Formatting;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using TestHelper;
+using Xunit;
 
 namespace TestHelper
 {
@@ -105,7 +101,7 @@ namespace TestHelper
                             documentPackage.FixedDocument.Project.Solution.Workspace));
                     newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, GetCompilerDiagnostics(documentPackage.FixedDocument));
 
-                    Assert.IsTrue(false,
+                    Assert.True(false,
                         string.Format("Fix introduced new compiler diagnostics:\r\n{0}\r\n\r\nNew document:\r\n{1}\r\n",
                             string.Join("\r\n", newCompilerDiagnostics.Select(d => d.ToString())),
                             documentPackage.FixedDocument.GetSyntaxRootAsync().Result.ToFullString()));
@@ -120,18 +116,18 @@ namespace TestHelper
 
             //after applying all of the code fixes, compare the resulting string to the inputted one
             var actualFixed = GetStringFromDocument(documentPackage.FixedDocument);
-            Assert.AreEqual(sources.FixedSource, actualFixed);
+            Assert.Equal(sources.FixedSource, actualFixed);
             if (sources.AddedSource != null)
             {
-                Assert.IsNotNull(documentPackage.AddedDocument, "Expected added (new) document, none found in results.");
+                Assert.True(documentPackage.AddedDocument != null, "Expected added (new) document, none found in results.");
                 var actualAdded = GetStringFromDocument(documentPackage.AddedDocument);
-                Assert.AreEqual(sources.AddedSource, actualAdded);
+                Assert.Equal(sources.AddedSource, actualAdded);
             }
             if (sources.ChangedSource != null)
             {
-                Assert.IsNotNull(documentPackage.ChangedDocument, "Expected changed (except the fixed one) document, none found in results.");
+                Assert.True(documentPackage.ChangedDocument != null, "Expected changed (except the fixed one) document, none found in results.");
                 var actualChanged = GetStringFromDocument(documentPackage.ChangedDocument);
-                Assert.AreEqual(sources.ChangedSource, actualChanged);
+                Assert.Equal(sources.ChangedSource, actualChanged);
             }
         }
 
@@ -142,7 +138,7 @@ namespace TestHelper
             public Document ChangedDocument { get; set; }
         }
 
-        protected class GeneratorSourcePackage
+        public class GeneratorSourcePackage
         {
             /// <summary>
             /// Gets or sets source to apply codefix to. Must not be null.
@@ -165,6 +161,19 @@ namespace TestHelper
             /// May be null.
             /// </summary>
             public string ChangedSource { get; set; }
+
+            public string[] GetInputSources()
+            {
+                return AdditionalSources == null
+                    ? new[] { OldSource }
+                    : new[] { OldSource }.Concat(AdditionalSources).ToArray();
+            }
+
+            public GeneratorSourcePackage AndFixedSameAsOld()
+            {
+                FixedSource = OldSource;
+                return this;
+            }
         }
     }
 }

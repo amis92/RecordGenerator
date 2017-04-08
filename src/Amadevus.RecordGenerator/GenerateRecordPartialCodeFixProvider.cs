@@ -21,9 +21,9 @@ namespace Amadevus.RecordGenerator
             get
             {
                 return ImmutableArray.Create(
-                    MissingRecordPartialDiagnostic.DiagnosticId,
-                    InvalidGeneratedRecordPartialDiagnostic.DiagnosticId,
-                    DifferentGeneratorVersionDiagnostic.DiagnosticId);
+                    RecordPartialMissingDiagnostic.DiagnosticId,
+                    RecordPartialInvalidDiagnostic.DiagnosticId,
+                    GeneratorVersionDifferentDiagnostic.DiagnosticId);
             }
         }
         

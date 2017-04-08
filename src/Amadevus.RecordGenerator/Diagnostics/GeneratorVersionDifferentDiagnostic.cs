@@ -2,7 +2,7 @@
 
 namespace Amadevus.RecordGenerator
 {
-    internal class DifferentGeneratorVersionDiagnostic
+    internal class GeneratorVersionDifferentDiagnostic
     {
         public const string DiagnosticId = Properties.DiagnosticIdPrefix + "0004";
         private static readonly string Title = "Record partial was generated with different version of the tool";

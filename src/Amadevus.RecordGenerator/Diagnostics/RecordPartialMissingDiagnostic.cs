@@ -2,7 +2,7 @@
 
 namespace Amadevus.RecordGenerator
 {
-    internal static class MissingRecordPartialDiagnostic
+    internal static class RecordPartialMissingDiagnostic
     {
         public const string DiagnosticId = Properties.DiagnosticIdPrefix + "0002";
         private static readonly string Title = "Missing record partial";
