@@ -136,6 +136,8 @@ namespace Amadevus.RecordGenerator
                 .WithLeadingTrivia(
                     SyntaxFactory.SyntaxTrivia(SyntaxKind.SingleLineCommentTrivia, RecordPartialProperties.FileHeader),
                     SyntaxFactory.SyntaxTrivia(SyntaxKind.EndOfLineTrivia, Environment.NewLine),
+                    SyntaxFactory.SyntaxTrivia(SyntaxKind.SingleLineCommentTrivia, RecordPartialProperties.FilePostheaderWarning),
+                    SyntaxFactory.SyntaxTrivia(SyntaxKind.EndOfLineTrivia, Environment.NewLine),
                     SyntaxFactory.SyntaxTrivia(SyntaxKind.EndOfLineTrivia, Environment.NewLine));
 
             return recordPartialCompilationUnit;
