@@ -35,7 +35,7 @@ namespace Amadevus.RecordGenerator
         public static Document GenerateRecordPartialDocument(Document document, TypeDeclarationSyntax declaration, INamedTypeSymbol typeSymbol, CancellationToken cancellationToken)
         {
             var generator = Create(declaration, cancellationToken);
-            return generator.GenerateRecordPartial(document, typeSymbol);
+            return generator.GenerateDocument(document, typeSymbol);
         }
 
         public static CompilationUnitSyntax GenerateRecordPartialRoot(TypeDeclarationSyntax declaration, CancellationToken cancellationToken)
@@ -76,9 +76,9 @@ namespace Amadevus.RecordGenerator
             return null;
         }
 
-        protected abstract Document GenerateRecordPartial(Document document, INamedTypeSymbol typeSymbol);
-
         protected abstract string TypeName();
+
+        protected abstract TypeDeclarationSyntax GenerateTypeDeclaration();
 
         protected Document GenerateDocument(Document document, INamedTypeSymbol typeSymbol)
         {
@@ -97,7 +97,7 @@ namespace Amadevus.RecordGenerator
 
         protected Document DocumentFrom(CompilationUnitSyntax compilationUnit, Document document, INamedTypeSymbol typeSymbol)
         {
-            var typeName = TypeName();
+            var typeName = FilenameIncludingEnclosingTypeAndArity();
             var project = document.Project;
             var recordPartialRoot = FormattedPerWorkspace(compilationUnit, project.Solution.Workspace);
 
@@ -108,6 +108,17 @@ namespace Amadevus.RecordGenerator
             }
             var recordPartialDocument = project.AddDocument($"{typeName}.{RecordPartialProperties.FilenamePostfix}.cs", recordPartialRoot, document.Folders);
             return recordPartialDocument;
+        }
+
+        protected string FilenameIncludingEnclosingTypeAndArity()
+        {
+            var namesWithArityQuery =
+                TypeDeclaration
+                .AncestorsAndSelf()
+                .OfType<TypeDeclarationSyntax>()
+                .Select(type => type.NameWithArity())
+                .Reverse();
+            return string.Join(".", namesWithArityQuery);
         }
 
         protected CompilationUnitSyntax FormattedPerWorkspace(CompilationUnitSyntax compilationUnit, Workspace workspace)
@@ -135,16 +146,44 @@ namespace Amadevus.RecordGenerator
             var newRootMemberDeclaration =
                 TypeDeclaration
                 .Ancestors()
-                .OfType<NamespaceDeclarationSyntax>()
+                .OfType<MemberDeclarationSyntax>()
                 .Aggregate(newTypeDeclaration as MemberDeclarationSyntax, (prev, curr) =>
                 {
-                    return curr.WithMembers(SyntaxFactory.SingletonList(prev));
+
+                    return curr is NamespaceDeclarationSyntax ns ? SimplifyEnclosingNamespace(prev, ns)
+                    : curr is ClassDeclarationSyntax @class ? SimplifyEnclosingMember(prev, @class)
+                    : curr is StructDeclarationSyntax @struct ? SimplifyEnclosingMember(prev, @struct)
+                    : prev;
                 });
             return newRootMemberDeclaration;
         }
 
-        protected abstract TypeDeclarationSyntax GenerateTypeDeclaration();
-        
+        private static NamespaceDeclarationSyntax SimplifyEnclosingNamespace(MemberDeclarationSyntax member, NamespaceDeclarationSyntax enclosingNamespace)
+        {
+            return
+                SyntaxFactory.NamespaceDeclaration(enclosingNamespace.Name)
+                .WithMembers(SyntaxFactory.SingletonList(member))
+                .WithUsings(enclosingNamespace.Usings);
+        }
+
+        private static ClassDeclarationSyntax SimplifyEnclosingMember(MemberDeclarationSyntax member, ClassDeclarationSyntax enclosingType)
+        {
+            return
+                SyntaxFactory.ClassDeclaration(enclosingType.Identifier)
+                .WithPartialModifier()
+                .WithTypeParameterList(enclosingType.TypeParameterList)
+                .WithMembers(SyntaxFactory.SingletonList(member));
+        }
+
+        private static StructDeclarationSyntax SimplifyEnclosingMember(MemberDeclarationSyntax member, StructDeclarationSyntax enclosingType)
+        {
+            return
+                SyntaxFactory.StructDeclaration(enclosingType.Identifier)
+                .WithPartialModifier()
+                .WithTypeParameterList(enclosingType.TypeParameterList)
+                .WithMembers(SyntaxFactory.SingletonList(member));
+        }
+
         protected SyntaxList<MemberDeclarationSyntax> GenerateMembers(SyntaxToken identifier, IReadOnlyList<RecordEntry> properties)
         {
             var ctor = SyntaxFactory.ConstructorDeclaration(identifier.ValueText)

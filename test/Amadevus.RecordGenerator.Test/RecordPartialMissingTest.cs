@@ -304,8 +304,8 @@ namespace RecordGeneratorTests
                     }
                 };
                 // TODO fix type-enclosed records, github issue #8 ( https://github.com/amis92/RecordGenerator/issues/8 )
-                //yield return
-                var unused =
+                yield return
+                //var unused =
                 new GeneratorTheoryData
                 {
                     Description = "nested types",
@@ -314,12 +314,12 @@ namespace RecordGeneratorTests
                         OldSource = @"
 namespace RecordGeneratorTests
 {
-    class Outer
+    partial class Outer
     {
-        class Inner<T>
+        partial class Inner<T>
         {
             [Record]
-            class Person
+            partial class Person
             {
                 public string FirstName { get; }
             }
@@ -374,7 +374,7 @@ namespace RecordGeneratorTests
                         {
                             Locations =
                             new[] {
-                                new DiagnosticResultLocation("Test0.cs", 9, 19)
+                                new DiagnosticResultLocation("Test0.cs", 9, 27)
                             }
                         }
                     }

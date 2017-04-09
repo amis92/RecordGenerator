@@ -14,11 +14,6 @@ namespace Amadevus.RecordGenerator
 
         protected new StructDeclarationSyntax TypeDeclaration { get; }
 
-        protected override Document GenerateRecordPartial(Document document, INamedTypeSymbol typeSymbol)
-        {
-            return GenerateDocument(document, typeSymbol);
-        }
-
         protected override TypeDeclarationSyntax GenerateTypeDeclaration()
         {
             TypeDeclarationSyntax newDeclaration = TypeDeclaration

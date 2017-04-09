@@ -9,16 +9,29 @@ namespace Amadevus.RecordGenerator
 {
     internal static class SyntaxExtensions
     {
+        public static string NameWithArity(this TypeDeclarationSyntax declaration)
+        {
+            return declaration.Arity == 0 ? declaration.Identifier.ValueText : $"{declaration.Identifier.ValueText}`{declaration.Arity}";
+        }
+
+        public static ClassDeclarationSyntax WithPartialModifier(this ClassDeclarationSyntax declaration)
+        {
+            return declaration.AddModifiers(SyntaxFactory.Token(SyntaxKind.PartialKeyword));
+        }
+        public static StructDeclarationSyntax WithPartialModifier(this StructDeclarationSyntax declaration)
+        {
+            return declaration.AddModifiers(SyntaxFactory.Token(SyntaxKind.PartialKeyword));
+        }
 
         public static TypeDeclarationSyntax WithPartialModifier(this TypeDeclarationSyntax declaration)
         {
             if (declaration is ClassDeclarationSyntax classDeclaration)
             {
-                return classDeclaration.AddModifiers(SyntaxFactory.Token(SyntaxKind.PartialKeyword));
+                return classDeclaration.WithPartialModifier();
             }
             if (declaration is StructDeclarationSyntax structDeclaration)
             {
-                return structDeclaration.AddModifiers(SyntaxFactory.Token(SyntaxKind.PartialKeyword));
+                return structDeclaration.WithPartialModifier();
             }
             return declaration;
         }
