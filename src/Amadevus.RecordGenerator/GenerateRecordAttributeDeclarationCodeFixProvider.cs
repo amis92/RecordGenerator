@@ -92,15 +92,18 @@ $@"namespace {targetNamespace}
         /// Gets or sets whether mutator methods should be generated (e.g. WithSurname). Default is true.
         /// </summary>
         public bool GenerateMutators {{ get; set; }} = true;
+    }}
+}}
+";
 
+            /* to add sometime in future:
 
         /// <summary>
         /// Gets or sets whether collection mutator methods should be generated (e.g. AddItems, ReplaceItems). Default is true.
         /// </summary>
         public bool GenerateCollectionMutators {{ get; set; }} = true;
-    }}
-}}
-";
+        
+             */
             return text;
         }
     }

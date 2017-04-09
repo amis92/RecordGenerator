@@ -35,9 +35,21 @@ namespace Amadevus.RecordGenerator
                    .FirstOrDefault();
         }
 
+        public static SyntaxKind GetPrimaryCtorAccessSyntaxKind(this AttributeSyntax syntax)
+        {
+            switch (syntax.GetPrimaryCtorAccess())
+            {
+                case "public": return SyntaxKind.PublicKeyword;
+                case "protected": return SyntaxKind.ProtectedKeyword;
+                case "private": return SyntaxKind.PrivateKeyword;
+                default:
+                    return SyntaxKind.PublicKeyword;
+            }
+        }
+
         public static string GetPrimaryCtorAccess(this AttributeSyntax syntax)
         {
-            var argument = syntax.ArgumentList.Arguments
+            var argument = syntax?.ArgumentList?.Arguments
                 .FirstOrDefault(
                     x => x.NameEquals.Name.Identifier.ValueText == RecordAttributeProperties.PrimaryCtorAccessName);
             var token = (argument?.Expression as LiteralExpressionSyntax)?.Token ?? default(SyntaxToken);
@@ -55,7 +67,7 @@ namespace Amadevus.RecordGenerator
 
         public static bool GetGenerateMutators(this AttributeSyntax syntax)
         {
-            var argument = syntax.ArgumentList.Arguments
+            var argument = syntax?.ArgumentList?.Arguments
                 .FirstOrDefault(
                     x => x.NameEquals.Name.Identifier.ValueText == RecordAttributeProperties.GenerateMutatorsName);
             var token = (argument?.Expression as LiteralExpressionSyntax)?.Token ?? default(SyntaxToken);
@@ -67,7 +79,7 @@ namespace Amadevus.RecordGenerator
 
         public static bool GetGenerateCollectionMutators(this AttributeSyntax syntax)
         {
-            var argument = syntax.ArgumentList.Arguments
+            var argument = syntax?.ArgumentList?.Arguments
                 .FirstOrDefault(
                     x => x.NameEquals.Name.Identifier.ValueText == RecordAttributeProperties.GenerateCollectionMutatorsName);
             var token = (argument?.Expression as LiteralExpressionSyntax)?.Token ?? default(SyntaxToken);

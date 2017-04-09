@@ -18,6 +18,7 @@ namespace Amadevus.RecordGenerator
             CancellationToken = cancellationToken;
             TypeSyntaxLazy = new Lazy<TypeSyntax>(GetTypeSyntax);
             RecordPropertiesLazy = new Lazy<ImmutableArray<RecordEntry>>(GetRecordProperties);
+            RecordAttributeLazy = new Lazy<AttributeSyntax>(TypeDeclaration.ExtractRecordAttribute);
         }
 
         protected TypeDeclarationSyntax TypeDeclaration { get; }
@@ -28,9 +29,13 @@ namespace Amadevus.RecordGenerator
 
         protected TypeSyntax RecordTypeSyntax => TypeSyntaxLazy.Value;
 
+        protected AttributeSyntax RecordAttribute => RecordAttributeLazy.Value;
+
         private Lazy<ImmutableArray<RecordEntry>> RecordPropertiesLazy { get; }
 
         private Lazy<TypeSyntax> TypeSyntaxLazy { get; }
+
+        private Lazy<AttributeSyntax> RecordAttributeLazy { get; }
 
         public static Document GenerateRecordPartialDocument(Document document, TypeDeclarationSyntax declaration, INamedTypeSymbol typeSymbol, CancellationToken cancellationToken)
         {
@@ -189,12 +194,17 @@ namespace Amadevus.RecordGenerator
         protected SyntaxList<MemberDeclarationSyntax> GenerateMembers(SyntaxToken identifier, IReadOnlyList<RecordEntry> properties)
         {
             var ctor = SyntaxFactory.ConstructorDeclaration(identifier.ValueText)
-                .WithModifiers(SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+                .WithModifiers(SyntaxFactory.TokenList(SyntaxFactory.Token(RecordAttribute.GetPrimaryCtorAccessSyntaxKind())))
                 .WithParameterList(properties.IntoCtorParameterList())
                 .WithBody(properties.IntoCtorBody());
 
-            return SyntaxFactory.SingletonList<MemberDeclarationSyntax>(ctor)
-                .AddRange(RecordProperties.Select(p => MutatorFrom(p)));
+            var members = SyntaxFactory.SingletonList<MemberDeclarationSyntax>(ctor);
+
+            if (RecordAttribute.GetGenerateMutators())
+            {
+                members = members.AddRange(RecordProperties.Select(p => MutatorFrom(p)));
+            }
+            return members;
         }
 
         protected MethodDeclarationSyntax MutatorFrom(RecordEntry entry)
