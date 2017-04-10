@@ -1,8 +1,7 @@
-image: Visual Studio 2017
-
 # configuration for all except 'release' branch
 # Build in Debug, publish to MyGet
 -
+  image: Visual Studio 2017
   branches:
     except:
       - release
@@ -50,6 +49,7 @@ image: Visual Studio 2017
 # configuration for all except 'release' branch
 # Build in Release, publish to Nuget
 -
+  image: Visual Studio 2017
   branches:
     only:
       - release
