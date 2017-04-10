@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Amadevus.RecordGenerator")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Amadeusz Sadowski")]
 [assembly: AssemblyProduct("Amadevus.RecordGenerator")]
 [assembly: AssemblyCopyright("Copyright © Amadeusz Sadowski 2017")]
 [assembly: AssemblyTrademark("")]

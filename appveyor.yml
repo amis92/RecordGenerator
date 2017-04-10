@@ -20,7 +20,7 @@
     - ps: echo "`$env:PACKAGE_SUFFIX='$env:PACKAGE_SUFFIX'"
   assembly_info:
     patch: true
-    file: AssemblyInfo.cs
+    file: src\**\AssemblyInfo.cs
     assembly_version: "0.1.0"
     assembly_file_version: "0.1.0.{build}"
     assembly_informational_version: "{version}"
@@ -59,7 +59,7 @@
     - packages -> **\packages.config
   assembly_info:
     patch: true
-    file: AssemblyInfo.cs
+    file: src\**\AssemblyInfo.cs
     assembly_version: "0.1.0"
     assembly_file_version: "0.1.0.{build}"
     assembly_informational_version: "{version}"
