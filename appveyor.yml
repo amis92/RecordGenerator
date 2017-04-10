@@ -1,0 +1,82 @@
+# configuration for all except 'release' branch
+# Build in Debug, publish to MyGet
+os: Visual Studio 2017
+-
+  branches:
+    except:
+      - release
+  version: 0.1.0-{branch}-build{build}
+  skip_tags: true
+  configuration:
+    - Debug
+    - Release
+  cache:
+    - packages -> **\packages.config
+  before_build:
+    - nuget restore
+    - ps: >-
+        $env:PACKAGE_SUFFIX = ($env:APPVEYOR_REPO_BRANCH -replace '^(.{0,6}).*$', '$1') + '-build' + "$env:APPVEYOR_BUILD_NUMBER".PadLeft(5, "0")
+    - ps: echo "`$env:PACKAGE_SUFFIX='$env:PACKAGE_SUFFIX'"
+  assembly_info:
+    patch: true
+    file: AssemblyInfo.cs
+    assembly_version: "0.1.0"
+    assembly_file_version: "0.1.0.{build}"
+    assembly_informational_version: "{version}"
+  build:
+    project: Amadevus.RecordGenerator.sln
+    verbosity: minimal
+  notifications:
+    - provider: Webhook
+      url: https://webhooks.gitter.im/e/7a491795ae7262cd16b3
+      on_build_success: true
+      on_build_failure: true
+      on_build_status_changed: true
+  artifacts:
+    - path: '**\*.nupkg'
+  deploy:
+    provider: NuGet
+    server: https://www.myget.org/F/amadevus/api/v2/package
+    symbol_server: https://www.myget.org/F/amadevus/symbols/api/v2/package
+    api_key:
+      secure: 1xqXXkTjhe96ttKDaPOqzaoeulcSO4cb2FMu3nXvHmrFMRq2gJJ6DkKlu1VUu2bO
+    skip_symbols: false
+    artifact: /.*\.nupkg/
+    on:
+      configuration: Debug
+
+# configuration for all except 'release' branch
+# Build in Release, publish to Nuget
+-
+  branches:
+    only:
+      - release
+  version: 0.1.0-{branch}-build{build}
+  configuration: Release
+  cache:
+    - packages -> **\packages.config
+  assembly_info:
+    patch: true
+    file: AssemblyInfo.cs
+    assembly_version: "0.1.0"
+    assembly_file_version: "0.1.0.{build}"
+    assembly_informational_version: "{version}"
+  before_build:
+    - nuget restore
+  build:
+    project: Amadevus.RecordGenerator.sln
+    verbosity: minimal
+  notifications:
+    - provider: Webhook
+      url: https://webhooks.gitter.im/e/7a491795ae7262cd16b3
+      on_build_success: true
+      on_build_failure: true
+      on_build_status_changed: true
+  artifacts:
+    - path: '**\*.nupkg'
+  deploy:
+    provider: NuGet
+    api_key:
+      secure: 2gemJwOXQpV6gzlWzuZWH85ZNqvsWoVvbzUSI00Q8D7WdxkErr4p0Rn8hJ1fx4en
+    skip_symbols: false
+    artifact: /.*\.nupkg/

@@ -4,16 +4,16 @@
     <id>Amadevus.RecordGenerator</id>
     <version>1.0.0.0</version>
     <title>Amadevus.RecordGenerator</title>
-    <authors>Amadeusz</authors>
-    <owners>Amadeusz</owners>
-    <licenseUrl>http://LICENSE_URL_HERE_OR_DELETE_THIS_LINE</licenseUrl>
-    <projectUrl>http://PROJECT_URL_HERE_OR_DELETE_THIS_LINE</projectUrl>
+    <authors>Amadeusz Sadowski</authors>
+    <owners>Amadeusz Sadowski</owners>
+    <licenseUrl>https://github.com/amis92/RecordGenerator/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/amis92/RecordGenerator</projectUrl>
     <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Amadevus.RecordGenerator</description>
     <releaseNotes>Summary of changes made in this release of the package.</releaseNotes>
-    <copyright>Copyright</copyright>
-    <tags>Amadevus.RecordGenerator, analyzers</tags>
+    <copyright>Copyright Amadeusz Sadowski 2017</copyright>
+    <tags>Amadevus.RecordGenerator, analyzers, record, generator, amadevus</tags>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System" targetFramework="" />
     </frameworkAssemblies>
