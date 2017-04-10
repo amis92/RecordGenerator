@@ -1,12 +1,14 @@
+image: Visual Studio 2017
+
 # configuration for all except 'release' branch
 # Build in Debug, publish to MyGet
-os: Visual Studio 2017
 -
   branches:
     except:
       - release
   version: 0.1.0-{branch}-build{build}
   skip_tags: true
+  clone_depth: 1
   configuration:
     - Debug
     - Release
