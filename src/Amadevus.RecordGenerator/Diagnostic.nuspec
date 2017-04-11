@@ -9,7 +9,7 @@
     <copyright>$copyright$</copyright>
     <licenseUrl>https://github.com/amis92/RecordGenerator/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/amis92/RecordGenerator</projectUrl>
-    <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>
+    <iconUrl>https://github.com/amis92/RecordGenerator/blob/master/docs/logo.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Analyzers and CodeFixes that generate code for [Record]-marked types: constructors and mutators, in separate partial file. See project site for more details.</description>
     <releaseNotes>Initial release with support for constructor and With-mutators.</releaseNotes>
