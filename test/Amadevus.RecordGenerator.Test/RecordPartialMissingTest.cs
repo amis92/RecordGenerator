@@ -390,7 +390,7 @@ namespace RecordGeneratorTests
                         OldSource = @"
 namespace RecordGeneratorTests
 {
-    [Record(PrimaryCtorAccess = ""protected"")]
+    [Record(ConstructorAccess = ""protected"")]
     partial class Person
     {
         public string FirstName { get; }
@@ -446,7 +446,7 @@ namespace RecordGeneratorTests
                         OldSource = @"
 namespace RecordGeneratorTests
 {
-    [Record(PrimaryCtorAccess = ""private"")]
+    [Record(ConstructorAccess = ""private"")]
     partial class Person
     {
         public string FirstName { get; }
@@ -502,7 +502,7 @@ namespace RecordGeneratorTests
                         OldSource = @"
 namespace RecordGeneratorTests
 {
-    [Record(PrimaryCtorAccess = ""public"")]
+    [Record(ConstructorAccess = ""public"")]
     partial class Person
     {
         public string FirstName { get; }

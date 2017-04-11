@@ -9,8 +9,8 @@ namespace Amadevus.RecordGenerator
     internal class RecordAttributeProperties
     {
         public const string Filename = "RecordAttribute";
-        public const string PrimaryCtorAccessDefault = "public";
-        public const string PrimaryCtorAccessName = nameof(RecordAttribute.PrimaryCtorAccess);
+        public const string ConstructorAccessDefault = "public";
+        public const string ConstructorAccessName = nameof(RecordAttribute.ConstructorAccess);
         public const bool GenerateMutatorsDefault = true;
         public const string GenerateMutatorsName = nameof(RecordAttribute.GenerateMutators);
         public const bool GenerateCollectionMutatorsDefault = true;

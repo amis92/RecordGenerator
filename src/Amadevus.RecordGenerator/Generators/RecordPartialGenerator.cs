@@ -194,7 +194,7 @@ namespace Amadevus.RecordGenerator
         protected SyntaxList<MemberDeclarationSyntax> GenerateMembers(SyntaxToken identifier, IReadOnlyList<RecordEntry> properties)
         {
             var ctor = SyntaxFactory.ConstructorDeclaration(identifier.ValueText)
-                .WithModifiers(SyntaxFactory.TokenList(SyntaxFactory.Token(RecordAttribute.GetPrimaryCtorAccessSyntaxKind())))
+                .WithModifiers(SyntaxFactory.TokenList(SyntaxFactory.Token(RecordAttribute.GetConstructorAccessSyntaxKind())))
                 .WithParameterList(properties.IntoCtorParameterList())
                 .WithBody(properties.IntoCtorBody());
 

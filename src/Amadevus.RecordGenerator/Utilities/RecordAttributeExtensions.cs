@@ -35,9 +35,9 @@ namespace Amadevus.RecordGenerator
                    .FirstOrDefault();
         }
 
-        public static SyntaxKind GetPrimaryCtorAccessSyntaxKind(this AttributeSyntax syntax)
+        public static SyntaxKind GetConstructorAccessSyntaxKind(this AttributeSyntax syntax)
         {
-            switch (syntax.GetPrimaryCtorAccess())
+            switch (syntax.GetConstructorAccess())
             {
                 case "public": return SyntaxKind.PublicKeyword;
                 case "protected": return SyntaxKind.ProtectedKeyword;
@@ -47,22 +47,22 @@ namespace Amadevus.RecordGenerator
             }
         }
 
-        public static string GetPrimaryCtorAccess(this AttributeSyntax syntax)
+        public static string GetConstructorAccess(this AttributeSyntax syntax)
         {
             var argument = syntax?.ArgumentList?.Arguments
                 .FirstOrDefault(
-                    x => x.NameEquals.Name.Identifier.ValueText == RecordAttributeProperties.PrimaryCtorAccessName);
+                    x => x.NameEquals.Name.Identifier.ValueText == RecordAttributeProperties.ConstructorAccessName);
             var token = (argument?.Expression as LiteralExpressionSyntax)?.Token ?? default(SyntaxToken);
             return token.IsKind(SyntaxKind.StringLiteralToken)
                 ? MapToCorrectAccessValueOrDefault(token.ValueText)
-                : RecordAttributeProperties.PrimaryCtorAccessDefault;
+                : RecordAttributeProperties.ConstructorAccessDefault;
         }
 
         private static string MapToCorrectAccessValueOrDefault(string access)
         {
             return access == "public" || access == "protected" || access == "private"
                 ? access
-                : RecordAttributeProperties.PrimaryCtorAccessDefault;
+                : RecordAttributeProperties.ConstructorAccessDefault;
         }
 
         public static bool GetGenerateMutators(this AttributeSyntax syntax)

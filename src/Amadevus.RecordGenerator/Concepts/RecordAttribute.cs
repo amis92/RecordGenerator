@@ -8,12 +8,11 @@
     [System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Struct, Inherited = false, AllowMultiple = false)]
     internal sealed class RecordAttribute : System.Attribute
     {
-        public RecordAttribute()
-        {
-        }
-
-
-        public string PrimaryCtorAccess { get; set; } = "public";
+        /// <summary>
+        /// Gets or sets access modifier of the generated constructor. Valid values: "public", "protected", "private".
+        /// Default is "public".
+        /// </summary>
+        public string ConstructorAccess { get; set; } = "public";
 
         /// <summary>
         /// Gets or sets whether mutator methods should be generated (e.g. WithSurname). Default is true.
