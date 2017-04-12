@@ -15,10 +15,13 @@ cache:
   - packages -> **\packages.config
 init:
   - git config --global core.autocrlf true
-  - ps: $env:BASE_VERSION = $env:APPVEYOR_BUILD_VERSION -replace '^([^-]*).*$', '$1'
+    # extract x.y.z from version
+  - ps: |
+      $env:BASE_VERSION = $env:APPVEYOR_BUILD_VERSION -replace '^([^-]*).*$', '$1'
   - ps: echo "`$env:BASE_VERSION='$env:BASE_VERSION'"
-  - ps: >-
-      $env:PACKAGE_SUFFIX = ($env:APPVEYOR_REPO_BRANCH -replace '^(.{0,6}).*$', '$1') + '-build' + "$env:APPVEYOR_BUILD_NUMBER".PadLeft(5, "0")
+    # create suffix in form {branch}-build00000 where branch has all non-character
+  - ps: |
+      $env:PACKAGE_SUFFIX = ($env:APPVEYOR_REPO_BRANCH -replace '[^\w\d]', '-') + '-build' + "$env:APPVEYOR_BUILD_NUMBER".PadLeft(5, "0")
   - ps: echo "`$env:PACKAGE_SUFFIX='$env:PACKAGE_SUFFIX'"
   - ps: $env:INFORMATIONAL_VERSION = "$env:BASE_VERSION-$env:PACKAGE_SUFFIX"
   - ps: echo "`$env:INFORMATIONAL_VERSION='$env:INFORMATIONAL_VERSION'"
