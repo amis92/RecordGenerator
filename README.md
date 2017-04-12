@@ -1,4 +1,4 @@
-﻿![RecordGenerator logo](/docs/logo.png)
+﻿![RecordGenerator logo](https://raw.githubusercontent.com/amis92/RecordGenerator/master/docs/logo.png)
 
 # Amadevus.RecordGenerator
 
@@ -43,7 +43,7 @@ As it is a NuGet, it's really simple:
 
 Watch the gif below and then read on:
 
-![Demo gif](/docs/demo-v0.1.gif)
+![Demo gif](https://raw.githubusercontent.com/amis92/RecordGenerator/master/docs/demo-v0.1.gif)
 
 As you can see, it's very nice and easy. You just have to **decorate your class or struct
 with `[Record]` attribute** and voila, you have a diagnostic with codefix available
