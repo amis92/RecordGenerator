@@ -15,6 +15,9 @@ cache:
   - packages -> **\packages.config
 init:
   - git config --global core.autocrlf true
+    # set release_branch
+  - ps: $env:release_branch = $env:APPVEYOR_REPO_BRANCH.StartsWith("release")
+  - ps: echo "`$env:release_branch='$env:release_branch'"
     # extract x.y.z from version
   - ps: |
       $env:BASE_VERSION = $env:APPVEYOR_BUILD_VERSION -replace '^([^-]*).*$', '$1'
@@ -23,10 +26,9 @@ init:
   - ps: |
       $env:PACKAGE_SUFFIX = ($env:APPVEYOR_REPO_BRANCH -replace '[^\w\d]', '-') + '-build' + "$env:APPVEYOR_BUILD_NUMBER".PadLeft(5, "0")
   - ps: echo "`$env:PACKAGE_SUFFIX='$env:PACKAGE_SUFFIX'"
-  - ps: $env:INFORMATIONAL_VERSION = "$env:BASE_VERSION-$env:PACKAGE_SUFFIX"
+    # set INFORMATIONAL_VERSION
+  - ps: $env:INFORMATIONAL_VERSION = if ($env:release_branch) {"$env:BASE_VERSION.$env:APPVEYOR_BUILD_NUMBER"} Else {"$env:BASE_VERSION-$env:PACKAGE_SUFFIX"}
   - ps: echo "`$env:INFORMATIONAL_VERSION='$env:INFORMATIONAL_VERSION'"
-  - ps: $env:release_branch = $env:APPVEYOR_REPO_BRANCH.StartsWith("release")
-  - ps: echo "`$env:release_branch='$env:release_branch'"
 before_build:
   - nuget restore
 assembly_info:
