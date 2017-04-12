@@ -1,8 +1,8 @@
 ![RecordGenerator logo](/docs/logo.png)
 
-## Amadevus.RecordGenerator
+# Amadevus.RecordGenerator
 
-#### Description
+## Description
 [Description]: #description
 
 C# RecordGenerator Analyzer with record generating CodeFix. And the analyzer keeps watch over
@@ -16,7 +16,7 @@ in case regeneration is due! How awesome is that?
 [![License](https://img.shields.io/github/license/amis92/recordgenerator.svg)](https://github.com/amis92/RecordGenerator/blob/master/LICENSE)
 ---
 
-#### Table of content
+## Table of content
 [Table of content]: #table-of-content
 
 * [Description]
@@ -25,7 +25,7 @@ in case regeneration is due! How awesome is that?
 * [Requirements]
 * [Contributions]
 
-#### Installation
+## Installation
 [Installation]: #installation
 
 As it is a NuGet, it's really simple:
@@ -33,12 +33,12 @@ As it is a NuGet, it's really simple:
 * Package Manager `Install-Package Amadevus.RecordGenerator`
 * Terminal (.NET Core) `dotnet add package Amadevus.RecordGenerator`
 
-#### Usage
+## Usage
 [Usage]: #usage
 
 Watch the gif below and then read on:
 
-! [Demo gif] (/docs/demo.gif)
+![Demo gif](/docs/demo-v0.1.gif)
 
 As you can see, it's very nice and easy. You just have to **decorate your class or struct
 with `[Record]` attribute** and voila, you have a diagnostic with codefix available
@@ -59,14 +59,20 @@ currently two kinds of members generated:
 Additionally, after such file is generated, the analyzer monitors changes and gives error
 if regeneration is required. That error also has available codefix which will update generated code.
 
-#### Requirements
+## Requirements
 [Requirements]: #requirements
+
+![Visual Studio logo](https://upload.wikimedia.org/wikipedia/commons/6/61/Visual_Studio_2017_logo_and_wordmark.svg)
 
 As this is a Roslyn Analyzer with CodeFix, it requires **Visual Studio 2015+** (it should also work
 with **VS Code**).
 
-#### Contributions
+## Contributions
 [Contributions]: #contributions
 
 All contributions are welcome, as well as critique. If you have any issues, problems or suggestions -
 please open an issue.
+
+Visual Studio logo ™ Microsoft Corporation, used without permission.
+
+RecordGenerator logo (on top) by Amadeusz Sadowski, all rights reserved.
