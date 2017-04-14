@@ -5,7 +5,7 @@
 # Build in Release, publish to Nuget
 
 image: Visual Studio 2017
-version: 0.1.0-{branch}-build{build}
+version: 0.1.1-{branch}-build{build}
 skip_tags: true
 clone_depth: 1
 configuration:
@@ -15,27 +15,32 @@ cache:
   - packages -> **\packages.config
 init:
   - git config --global core.autocrlf true
-    # set release_branch
-  - ps: $env:release_branch = $env:APPVEYOR_REPO_BRANCH.StartsWith("release")
-  - ps: echo "`$env:release_branch='$env:release_branch'"
-    # extract x.y.z from version
+# checking if release branch
   - ps: |
-      $env:BASE_VERSION = $env:APPVEYOR_BUILD_VERSION -replace '^([^-]*).*$', '$1'
-  - ps: echo "`$env:BASE_VERSION='$env:BASE_VERSION'"
-    # create suffix in form {branch}-build00000 where branch has all non-character
+      # set release_branch
+      $env:release_branch = $env:APPVEYOR_REPO_BRANCH.StartsWith("release")
+      echo "release_branch='$env:release_branch'"
+ # setting versions
   - ps: |
+      # extract x.y.z from version
+      $env:ASM_MAJOR_VERSION = $env:APPVEYOR_BUILD_VERSION -replace '^(\d*)\.(\d*)\.(\d*).*$', '$1'
+      $env:ASM_MINOR_VERSION = $env:APPVEYOR_BUILD_VERSION -replace '^(\d*)\.(\d*)\.(\d*).*$', '$2'
+      $env:ASM_PATCH_VERSION = $env:APPVEYOR_BUILD_VERSION -replace '^(\d*)\.(\d*)\.(\d*).*$', '$3'
+      $env:ASM_FILE_VERSION = "$env:ASM_MAJOR_VERSION.$env:ASM_MINOR_VERSION.$env:ASM_PATCH_VERSION.$env:APPVEYOR_BUILD_NUMBER"
+      echo "ASM_FILE_VERSION='$env:ASM_FILE_VERSION'"
+      # create suffix in form {branch}-build00000 where branch has all non-character
       $env:PACKAGE_SUFFIX = ($env:APPVEYOR_REPO_BRANCH -replace '[^\w\d]', '-') + '-build' + "$env:APPVEYOR_BUILD_NUMBER".PadLeft(5, "0")
-  - ps: echo "`$env:PACKAGE_SUFFIX='$env:PACKAGE_SUFFIX'"
-    # set INFORMATIONAL_VERSION
-  - ps: $env:INFORMATIONAL_VERSION = if ($env:release_branch) {"$env:BASE_VERSION.$env:APPVEYOR_BUILD_NUMBER"} Else {"$env:BASE_VERSION-$env:PACKAGE_SUFFIX"}
-  - ps: echo "`$env:INFORMATIONAL_VERSION='$env:INFORMATIONAL_VERSION'"
+      echo "PACKAGE_SUFFIX='$env:PACKAGE_SUFFIX'"
+      # set ASM_INFORMATIONAL_VERSION
+      $env:ASM_INFORMATIONAL_VERSION = "$env:ASM_MAJOR_VERSION.$env:ASM_MINOR_VERSION.$env:ASM_PATCH_VERSION-$env:PACKAGE_SUFFIX"
+      echo "ASM_INFORMATIONAL_VERSION='$env:ASM_INFORMATIONAL_VERSION'"
 before_build:
   - nuget restore
 assembly_info:
   patch: true
   file: src\**\AssemblyInfo.cs
-  assembly_version: $(BASE_VERSION)
-  assembly_file_version: '$(BASE_VERSION).$(APPVEYOR_BUILD_NUMBER)'
+  assembly_version: '$(ASM_MAJOR_VERSION).0.0.0'
+  assembly_file_version: '$(ASM_FILE_VERSION)'
   assembly_informational_version: '$(INFORMATIONAL_VERSION)'
 build:
   project: Amadevus.RecordGenerator.sln

@@ -12,7 +12,7 @@
     <iconUrl>https://raw.githubusercontent.com/amis92/RecordGenerator/master/docs/logo.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Analyzers and CodeFixes that generate code for [Record]-marked types: constructors and mutators, in separate partial file. See project site for more details.</description>
-    <releaseNotes>Initial release with support for constructor and With-mutators.</releaseNotes>
+    <releaseNotes>Initial release with support for constructor and With-mutators. (Fixed layout to match analyzer requirements)</releaseNotes>
     <tags>Amadevus.RecordGenerator, analyzers, record, generator, amadevus</tags>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System" targetFramework="" />
