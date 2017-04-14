@@ -42,7 +42,7 @@ assembly_info:
   file: src\**\AssemblyInfo.cs
   assembly_version: '$(ASM_MAJOR_VERSION).0.0.0'
   assembly_file_version: '$(ASM_FILE_VERSION)'
-  assembly_informational_version: '$(INFORMATIONAL_VERSION)'
+  assembly_informational_version: '$(ASM_INFORMATIONAL_VERSION)'
 build:
   project: Amadevus.RecordGenerator.sln
   verbosity: minimal
