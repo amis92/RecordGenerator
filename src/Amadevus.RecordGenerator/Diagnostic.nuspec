@@ -6,14 +6,14 @@
     <title>Amadevus.RecordGenerator</title>
     <authors>Amadeusz Sadowski</authors>
     <owners>Amadeusz Sadowski</owners>
-    <copyright>$copyright$</copyright>
+    <copyright>Copyright © 2017 Amadeusz Sadowski</copyright>
     <licenseUrl>https://github.com/amis92/RecordGenerator/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/amis92/RecordGenerator</projectUrl>
     <iconUrl>https://raw.githubusercontent.com/amis92/RecordGenerator/master/docs/logo.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Analyzers and CodeFixes that generate code for [Record]-marked types: constructors and mutators, in separate partial file. See project site for more details.</description>
     <releaseNotes>Initial release with support for constructor and With-mutators. (Fixed layout to match analyzer requirements)</releaseNotes>
-    <tags>Amadevus.RecordGenerator, analyzers, record, generator, amadevus</tags>
+    <tags>Amadevus RecordGenerator analyzers codefix record constructor mutator generator</tags>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System" targetFramework="" />
     </frameworkAssemblies>
@@ -21,7 +21,7 @@
   </metadata>
   <!-- The convention for analyzers is to put language agnostic dlls in analyzers\portable50 and language specific analyzers in either analyzers\portable50\cs or analyzers\portable50\vb -->
   <files>
-    <file src="*.dll" target="analyzers\dotnet\cs" exclude="**\Microsoft.CodeAnalysis.*;**\System.Collections.Immutable.*;**\System.Reflection.Metadata.*;**\System.Composition.*" />
+    <file src="*.dll" target="analyzers\dotnet\cs\" exclude="**\Microsoft.CodeAnalysis.*;**\System.Collections.Immutable.*;**\System.Reflection.Metadata.*;**\System.Composition.*" />
     <file src="tools\*.ps1" target="tools\" />
   </files>
 </package>

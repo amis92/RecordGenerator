@@ -36,6 +36,7 @@ init:
       echo "ASM_INFORMATIONAL_VERSION='$env:ASM_INFORMATIONAL_VERSION'"
 before_build:
   - nuget restore
+  - ps: cat "src\Amadevus.RecordGenerator\Properties\AssemblyInfo.cs"
 assembly_info:
   patch: true
   file: src\**\AssemblyInfo.cs

@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Amadeusz Sadowski")]
 [assembly: AssemblyProduct("Amadevus.RecordGenerator")]
-[assembly: AssemblyCopyright("Copyright © Amadeusz Sadowski 2017")]
+[assembly: AssemblyCopyright("Copyright © 2017 Amadeusz Sadowski")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
