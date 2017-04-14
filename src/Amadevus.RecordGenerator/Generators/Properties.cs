@@ -14,7 +14,8 @@ namespace Amadevus.RecordGenerator
 
         private static string GetVersionString()
         {
-            return typeof(Properties).GetTypeInfo().Assembly.GetName().Version.ToString();
+            var assembly = typeof(Properties).GetTypeInfo().Assembly;
+            return assembly.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version ?? "";
         }
     }
 }
