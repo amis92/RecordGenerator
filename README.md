@@ -311,6 +311,8 @@ with **VS Code**~~ nope, until [OmniSharp/omnisharp-vscode#43](https://github.co
 All contributions are welcome, as well as critique. If you have any issues, problems or suggestions -
 please open an issue.
 
+When commiting a change, two main versioning mechanisms are branch name and version in `appveyor.yml`. Branch name will be used as a suffix when publishing packages on MyGet feed. Version will be used for both MyGet and releasing to NuGet. Also please note that NuGetPackVersion should also be updated in `Amadevus.RecordGenerator.csproj` until fixed (moved to SDK-style csproj/NuGet publishing).
+
 Visual Studio logo ™ Microsoft Corporation, used without permission.
 
 RecordGenerator logo (on top) by Amadeusz Sadowski, all rights reserved.
