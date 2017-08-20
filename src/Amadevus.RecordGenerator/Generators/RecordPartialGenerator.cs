@@ -248,10 +248,11 @@ namespace Amadevus.RecordGenerator
 
         private TypeSyntax GetTypeSyntax()
         {
+            var identifier = TypeDeclaration.Identifier.WithTrailingTrivia();
             var typeParamList = TypeDeclaration.TypeParameterList;
             if (typeParamList == null)
             {
-                return SyntaxFactory.IdentifierName(TypeDeclaration.Identifier);
+                return SyntaxFactory.IdentifierName(identifier);
             }
 
             var arguments = typeParamList.Parameters.Select(param => SyntaxFactory.IdentifierName(param.Identifier));
@@ -260,7 +261,7 @@ namespace Amadevus.RecordGenerator
                     SyntaxFactory.SeparatedList<TypeSyntax>(
                         arguments));
 
-            return SyntaxFactory.GenericName(TypeDeclaration.Identifier, typeArgList);
+            return SyntaxFactory.GenericName(identifier, typeArgList);
         }
     }
 }

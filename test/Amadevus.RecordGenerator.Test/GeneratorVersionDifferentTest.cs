@@ -67,14 +67,12 @@ namespace RecordGeneratorTests
 
         public Person WithFirstName(string FirstName)
         {
-            return new Person
-(FirstName, LastName);
+            return new Person(FirstName, LastName);
         }
 
         public Person WithLastName(string LastName)
         {
-            return new Person
-(FirstName, LastName);
+            return new Person(FirstName, LastName);
         }
     }
 }";

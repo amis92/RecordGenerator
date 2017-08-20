@@ -17,6 +17,7 @@ namespace Amadevus.RecordGenerator
         protected override TypeDeclarationSyntax GenerateTypeDeclaration()
         {
             TypeDeclarationSyntax newDeclaration = TypeDeclaration
+                .WithBaseList(null)
                 .WithAttributeLists(
                     SyntaxFactory.List(new[] {
                         GeneratedCodeAttributeExtensions.CreateAttribute()
