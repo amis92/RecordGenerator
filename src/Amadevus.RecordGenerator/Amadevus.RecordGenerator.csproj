@@ -15,7 +15,7 @@
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <NuGetPackVersion Condition="'$(ASM_INFORMATIONAL_VERSION)' == ''">0.1.1</NuGetPackVersion>
+    <NuGetPackVersion Condition="'$(ASM_INFORMATIONAL_VERSION)' == ''">0.2.0</NuGetPackVersion>
     <NuGetPackVersion Condition="'$(ASM_INFORMATIONAL_VERSION)' != '' And $(RELEASE_BRANCH) != 'True'">$(ASM_INFORMATIONAL_VERSION)</NuGetPackVersion>
     <NuGetPackVersion Condition="'$(ASM_INFORMATIONAL_VERSION)' != '' And $(RELEASE_BRANCH) == 'True'">$(ASM_MAJOR_VERSION).$(ASM_MINOR_VERSION).$(ASM_PATCH_VERSION)</NuGetPackVersion>
   </PropertyGroup>

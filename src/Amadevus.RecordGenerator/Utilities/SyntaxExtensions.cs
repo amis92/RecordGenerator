@@ -38,7 +38,7 @@ namespace Amadevus.RecordGenerator
 
         public static bool IsRecordViable(this PropertyDeclarationSyntax pdSyntax)
         {
-            return pdSyntax.AccessorList?.Accessors.All(x => x.Kind() != SyntaxKind.SetAccessorDeclaration && x.Body == null) ?? false
+            return (pdSyntax.AccessorList?.Accessors.All(x => x.Kind() != SyntaxKind.SetAccessorDeclaration && x.Body == null) ?? false)
                 && pdSyntax.Modifiers.Any(x => x.Kind() == SyntaxKind.PublicKeyword)
                 && pdSyntax.Modifiers.All(x => x.Kind() != SyntaxKind.StaticKeyword);
         }
