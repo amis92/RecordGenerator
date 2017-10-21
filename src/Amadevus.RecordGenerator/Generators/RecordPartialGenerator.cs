@@ -65,9 +65,10 @@ namespace Amadevus.RecordGenerator
                 .Where(otherDeclaration => otherDeclaration.HasGeneratedCodeAttribute())
                 .ToList();
 
+            var typenameWithAncestorsAndArity = typeDeclaration.GetTypenameWithAncestorTypesAndArity();
             // find the one with appropriate full name
             var recordPartial = declarations.FirstOrDefault(
-                d => d.GetTypenameWithAncestorTypesAndArity() == typeDeclaration.GetTypenameWithAncestorTypesAndArity());
+                d => d.GetTypenameWithAncestorTypesAndArity() == typenameWithAncestorsAndArity);
             return recordPartial;
         }
 

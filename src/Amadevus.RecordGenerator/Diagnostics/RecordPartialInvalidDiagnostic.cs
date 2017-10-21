@@ -6,7 +6,7 @@ namespace Amadevus.RecordGenerator
     {
         public const string DiagnosticId = Properties.DiagnosticIdPrefix + "0003";
         private static readonly string Title = "Invalid generated record partial";
-        private static readonly string MessageFormat = "Type '{0}' marked as [Record] has generated partial that requires re-generation.";
+        private static readonly string MessageFormat = "Type '{0}' marked as [Record] has generated partial that requires re-generation. Diff:\n\n{1}";
         private static readonly string Description = "Generated record partial is invalid and requires re-generation.";
 
         public static DiagnosticDescriptor Descriptor =

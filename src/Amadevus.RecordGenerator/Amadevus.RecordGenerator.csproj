@@ -38,6 +38,20 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Diagnostics\GeneratorVersionDifferentDiagnostic.cs" />
+    <Compile Include="Utilities\Differ\DiffBuilder\IInlineDiffBuilder.cs" />
+    <Compile Include="Utilities\Differ\DiffBuilder\InlineDiffBuilder.cs" />
+    <Compile Include="Utilities\Differ\DiffBuilder\ISideBySideDiffBuilder.cs" />
+    <Compile Include="Utilities\Differ\DiffBuilder\Model\DiffPaneModel.cs" />
+    <Compile Include="Utilities\Differ\DiffBuilder\Model\DiffPiece.cs" />
+    <Compile Include="Utilities\Differ\DiffBuilder\Model\SideBySideDiffModel.cs" />
+    <Compile Include="Utilities\Differ\DiffBuilder\SideBySideDiffBuilder.cs" />
+    <Compile Include="Utilities\Differ\Differ.cs" />
+    <Compile Include="Utilities\Differ\IDiffer.cs" />
+    <Compile Include="Utilities\Differ\Log.cs" />
+    <Compile Include="Utilities\Differ\Model\DiffBlock.cs" />
+    <Compile Include="Utilities\Differ\Model\DiffResult.cs" />
+    <Compile Include="Utilities\Differ\Model\EditLengthResult.cs" />
+    <Compile Include="Utilities\Differ\Model\ModificationData.cs" />
     <Compile Include="Utilities\GeneratedCodeAttributeExtensions.cs" />
     <Compile Include="Generators\ClassRecordPartialGenerator.cs" />
     <Compile Include="Diagnostics\RecordPartialInvalidDiagnostic.cs" />

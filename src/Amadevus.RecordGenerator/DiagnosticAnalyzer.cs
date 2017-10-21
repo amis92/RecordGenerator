@@ -118,16 +118,53 @@ namespace Amadevus.RecordGenerator
                 case RecordPartialComparer.Result.NotEquivalent:
                     {
                         // report error "record partial requires update"
+
+                        var diffMessage = CreateDiff();
+
                         var invalidPartialDiagnostic =
                             RecordPartialInvalidDiagnostic.Create(
                                 typeDeclaration.Identifier.GetLocation(),
-                                typeDeclaration.Identifier.ValueText);
+                                typeDeclaration.Identifier.ValueText,
+                                diffMessage);
 
                         context.ReportDiagnostic(invalidPartialDiagnostic);
                     }
                     return;
                 default:
                     break;
+            }
+
+            string CreateDiff()
+            {
+                var before = currentPartialRoot.ToString();
+                var after = wouldBePartialRoot.ToString();
+                var diffBuilder = new DiffPlex.DiffBuilder.InlineDiffBuilder(new DiffPlex.Differ());
+                var diff = diffBuilder.BuildDiffModel(before, after);
+
+                StringWriter writer = new StringWriter();
+                var maxLineCountChars = diff.Lines.Select(line => line.Position).Max().ToString().Length;
+                foreach (var line in diff.Lines)
+                {
+                    var positionString = line.Position.ToString().PadLeft(maxLineCountChars);
+                    writer.Write(positionString);
+                    switch (line.Type)
+                    {
+                        case DiffPlex.DiffBuilder.Model.ChangeType.Deleted:
+                            writer.Write($": - ");
+                            break;
+                        case DiffPlex.DiffBuilder.Model.ChangeType.Inserted:
+                            writer.Write($": + ");
+                            break;
+                        case DiffPlex.DiffBuilder.Model.ChangeType.Modified:
+                            writer.Write($": ~ ");
+                            break;
+                        default:
+                            writer.Write($":   ");
+                            break;
+                    }
+                    writer.WriteLine(line.Text);
+                }
+                return writer.ToString();
             }
         }
     }
