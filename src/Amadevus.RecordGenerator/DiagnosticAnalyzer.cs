@@ -4,6 +4,8 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using System.IO;
+using System.Threading;
 
 namespace Amadevus.RecordGenerator
 {
@@ -78,7 +80,8 @@ namespace Amadevus.RecordGenerator
         private static void AnalyzeIfGenerationRequired(SyntaxNodeAnalysisContext context, TypeDeclarationSyntax typeDeclaration, INamedTypeSymbol typeSymbol)
         {
             var recordPartial = RecordPartialGenerator.GetGeneratedPartial(typeDeclaration, typeSymbol);
-            if (recordPartial == null)
+            var currentPartialFilename = Path.GetFileName(recordPartial.SyntaxTree.FilePath);
+            if (recordPartial == null || RecordPartialGenerator.GetGeneratedFilename(typeDeclaration, CancellationToken.None) != currentPartialFilename)
             {
                 // no generated partial found
                 var missingPartialDiagnostic =

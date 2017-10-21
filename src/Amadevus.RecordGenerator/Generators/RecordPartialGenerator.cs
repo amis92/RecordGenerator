@@ -7,6 +7,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
+using System.IO;
 
 namespace Amadevus.RecordGenerator
 {
@@ -63,9 +64,15 @@ namespace Amadevus.RecordGenerator
                 .Where(syntax => syntax != null && syntax != typeDeclaration)
                 .ToList();
 
-            // find the one with appropriate header
-            var recordPartial = declarations.FirstOrDefault(d => d.IsFileHeaderPresent());
+            // find the one with appropriate filename
+            var recordPartial = declarations.FirstOrDefault(d => Path.GetFileName(d.SyntaxTree.FilePath) == GeneratedFilename(typeDeclaration));
             return recordPartial;
+        }
+
+        public static string GetGeneratedFilename(TypeDeclarationSyntax declaration, CancellationToken cancellationToken)
+        {
+            var generator = Create(declaration, cancellationToken);
+            return generator.GeneratedFilename();
         }
 
         protected static RecordPartialGenerator Create(TypeDeclarationSyntax declaration, CancellationToken cancellationToken)
@@ -102,7 +109,6 @@ namespace Amadevus.RecordGenerator
 
         protected Document DocumentFrom(CompilationUnitSyntax compilationUnit, Document document, INamedTypeSymbol typeSymbol)
         {
-            var typeName = FilenameIncludingEnclosingTypeAndArity();
             var project = document.Project;
             var recordPartialRoot = FormattedPerWorkspace(compilationUnit, project.Solution.Workspace);
 
@@ -111,20 +117,25 @@ namespace Amadevus.RecordGenerator
                 var existingPartialDocument = project.GetDocument(existingPartial.SyntaxTree);
                 return existingPartialDocument.WithSyntaxRoot(recordPartialRoot);
             }
-            var recordPartialDocument = project.AddDocument($"{typeName}.{RecordPartialProperties.FilenamePostfix}.cs", recordPartialRoot, document.Folders);
+            var recordPartialDocument = project.AddDocument(GeneratedFilename(), recordPartialRoot, document.Folders);
             return recordPartialDocument;
         }
 
-        protected string FilenameIncludingEnclosingTypeAndArity()
+        protected static string GeneratedFilename(TypeDeclarationSyntax typeDeclaration)
         {
             var namesWithArityQuery =
-                TypeDeclaration
+                typeDeclaration
                 .AncestorsAndSelf()
                 .OfType<TypeDeclarationSyntax>()
                 .Select(type => type.NameWithArity())
                 .Reverse();
-            return string.Join(".", namesWithArityQuery);
+            var nameWithArity = string.Join(".", namesWithArityQuery);
+            return $"{nameWithArity}{GeneratedFilenameSuffix}";
         }
+
+        protected string GeneratedFilename() => GeneratedFilename(TypeDeclaration);
+
+        protected static string GeneratedFilenameSuffix => $".{RecordPartialProperties.FilenamePostfix}.cs";
 
         protected CompilationUnitSyntax FormattedPerWorkspace(CompilationUnitSyntax compilationUnit, Workspace workspace)
         {
