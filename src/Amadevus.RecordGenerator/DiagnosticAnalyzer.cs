@@ -80,8 +80,7 @@ namespace Amadevus.RecordGenerator
         private static void AnalyzeIfGenerationRequired(SyntaxNodeAnalysisContext context, TypeDeclarationSyntax typeDeclaration, INamedTypeSymbol typeSymbol)
         {
             var recordPartial = RecordPartialGenerator.GetGeneratedPartial(typeDeclaration, typeSymbol);
-            var currentPartialFilename = Path.GetFileName(recordPartial.SyntaxTree.FilePath);
-            if (recordPartial == null || RecordPartialGenerator.GetGeneratedFilename(typeDeclaration, CancellationToken.None) != currentPartialFilename)
+            if (recordPartial == null)
             {
                 // no generated partial found
                 var missingPartialDiagnostic =

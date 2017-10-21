@@ -4,6 +4,8 @@ namespace Amadevus.RecordGenerator
 {
     public static class Properties
     {
+        public const string AnalyzerName = "RecordGenerator";
+
         public const string AnalyzerCategory = "RecordGenerator";
 
         public const string DiagnosticIdPrefix = "RG";

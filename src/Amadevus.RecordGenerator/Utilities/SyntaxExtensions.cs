@@ -9,6 +9,18 @@ namespace Amadevus.RecordGenerator
 {
     internal static class SyntaxExtensions
     {
+        public static string GetTypenameWithAncestorTypesAndArity(this TypeDeclarationSyntax typeDeclaration)
+        {
+            var namesWithArityQuery =
+                typeDeclaration
+                .AncestorsAndSelf()
+                .OfType<TypeDeclarationSyntax>()
+                .Select(type => type.NameWithArity())
+                .Reverse();
+            var nameWithArity = string.Join(".", namesWithArityQuery);
+            return nameWithArity;
+        }
+
         public static string NameWithArity(this TypeDeclarationSyntax declaration)
         {
             return declaration.Arity == 0 ? declaration.Identifier.ValueText : $"{declaration.Identifier.ValueText}`{declaration.Arity}";

@@ -46,12 +46,13 @@ namespace Amadevus.RecordGenerator.Test
             {
                 const string @namespace = "ConsoleApplication1";
                 const string typeName = "TypeName";
+                const string filename = typeName + ".cs";
                 yield return new GeneratorTheoryData
                 {
                     Description = "class with [Record]",
                     SourcePackage = new GeneratorSourcePackage
                     {
-                        OldSource = GetBasicClassDeclaration(typeName, @namespace, "Record"),
+                        OldSource = (filename, GetBasicClassDeclaration(typeName, @namespace, "Record")),
                         AddedSource = GenerateRecordAttributeDeclarationCodeFixProvider.RecordAttributeDeclarationSource(@namespace)
                     }.AndFixedSameAsOld(),
                     ExpectedDiagnostics = new[]
@@ -60,14 +61,14 @@ namespace Amadevus.RecordGenerator.Test
                         {
                             Locations =
                             new[] {
-                                new DiagnosticResultLocation("Test0.cs", 4, 10)
+                                new DiagnosticResultLocation(filename, 4, 10)
                             }
                         },
                         new DiagnosticResult(RecordPartialMissingDiagnostic.Descriptor, typeName)
                         {
                             Locations =
                             new[] {
-                                new DiagnosticResultLocation("Test0.cs", 5, 15)
+                                new DiagnosticResultLocation(filename, 5, 15)
                             }
                         }
                     }
@@ -77,7 +78,7 @@ namespace Amadevus.RecordGenerator.Test
                     Description = "class with [record]",
                     SourcePackage = new GeneratorSourcePackage
                     {
-                        OldSource = GetBasicClassDeclaration(typeName, @namespace, "record"),
+                        OldSource = (filename, GetBasicClassDeclaration(typeName, @namespace, "record")),
                         AddedSource = GenerateRecordAttributeDeclarationCodeFixProvider.RecordAttributeDeclarationSource(@namespace)
                     }.AndFixedSameAsOld(),
                     ExpectedDiagnostics = new[]
@@ -86,14 +87,14 @@ namespace Amadevus.RecordGenerator.Test
                         {
                             Locations =
                             new[] {
-                                new DiagnosticResultLocation("Test0.cs", 4, 10)
+                                new DiagnosticResultLocation(filename, 4, 10)
                             }
                         },
                         new DiagnosticResult(RecordPartialMissingDiagnostic.Descriptor, typeName)
                         {
                             Locations =
                             new[] {
-                                new DiagnosticResultLocation("Test0.cs", 5, 15)
+                                new DiagnosticResultLocation(filename, 5, 15)
                             }
                         }
                     }
@@ -103,7 +104,7 @@ namespace Amadevus.RecordGenerator.Test
                     Description = "struct with [Record]",
                     SourcePackage = new GeneratorSourcePackage
                     {
-                        OldSource = GetBasicStructDeclaration(typeName, @namespace, "Record"),
+                        OldSource = (filename, GetBasicStructDeclaration(typeName, @namespace, "Record")),
                         AddedSource = GenerateRecordAttributeDeclarationCodeFixProvider.RecordAttributeDeclarationSource(@namespace)
                     }.AndFixedSameAsOld(),
                     ExpectedDiagnostics = new[]
@@ -112,14 +113,14 @@ namespace Amadevus.RecordGenerator.Test
                         {
                             Locations =
                             new[] {
-                                new DiagnosticResultLocation("Test0.cs", 4, 10)
+                                new DiagnosticResultLocation(filename, 4, 10)
                             }
                         },
                         new DiagnosticResult(RecordPartialMissingDiagnostic.Descriptor, typeName)
                         {
                             Locations =
                             new[] {
-                                new DiagnosticResultLocation("Test0.cs", 5, 16)
+                                new DiagnosticResultLocation(filename, 5, 16)
                             }
                         }
                     }
@@ -129,7 +130,7 @@ namespace Amadevus.RecordGenerator.Test
                     Description = "struct with [record]",
                     SourcePackage = new GeneratorSourcePackage
                     {
-                        OldSource = GetBasicStructDeclaration(typeName, @namespace, "record"),
+                        OldSource = (filename, GetBasicStructDeclaration(typeName, @namespace, "record")),
                         AddedSource = GenerateRecordAttributeDeclarationCodeFixProvider.RecordAttributeDeclarationSource(@namespace)
                     }.AndFixedSameAsOld(),
                     ExpectedDiagnostics = new[]
@@ -138,14 +139,14 @@ namespace Amadevus.RecordGenerator.Test
                         {
                             Locations =
                             new[] {
-                                new DiagnosticResultLocation("Test0.cs", 4, 10)
+                                new DiagnosticResultLocation(filename, 4, 10)
                             }
                         },
                         new DiagnosticResult(RecordPartialMissingDiagnostic.Descriptor, typeName)
                         {
                             Locations =
                             new[] {
-                                new DiagnosticResultLocation("Test0.cs", 5, 16)
+                                new DiagnosticResultLocation(filename, 5, 16)
                             }
                         }
                     }
@@ -164,8 +165,8 @@ namespace Amadevus.RecordGenerator.Test
                     Description = "attribute exists, only diagnostic to create record partial expected",
                     SourcePackage = new GeneratorSourcePackage
                     {
-                        OldSource = GetBasicClassDeclaration(typeName, @namespace, "Record"),
-                        AdditionalSources = new[] { GenerateRecordAttributeDeclarationCodeFixProvider.RecordAttributeDeclarationSource(@namespace) }
+                        OldSource = (filename, GetBasicClassDeclaration(typeName, @namespace, "Record")),
+                        AdditionalSources = new SourceTuple[] { GenerateRecordAttributeDeclarationCodeFixProvider.RecordAttributeDeclarationSource(@namespace) }
                     }.AndFixedSameAsOld(),
                     ExpectedDiagnostics = new[]
                     {
@@ -173,7 +174,7 @@ namespace Amadevus.RecordGenerator.Test
                         {
                             Locations =
                             new[] {
-                                new DiagnosticResultLocation("Test0.cs", 5, 15)
+                                new DiagnosticResultLocation(filename, 5, 15)
                             }
                         }
                     }

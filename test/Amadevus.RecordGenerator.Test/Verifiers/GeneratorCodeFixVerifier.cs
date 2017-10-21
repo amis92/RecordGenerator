@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Formatting;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -54,7 +55,7 @@ namespace TestHelper
         /// <param name="allowNewCompilerDiagnostics">A bool controlling whether or not the test will fail if the CodeFix introduces other warnings after being applied</param>
         private void VerifyGeneratorFix(string language, DiagnosticAnalyzer analyzer, CodeFixProvider codeFixProvider, GeneratorSourcePackage sources, int? codeFixIndex, bool allowNewCompilerDiagnostics)
         {
-            var compiledSources = (sources.AdditionalSources?.ToImmutableList() ?? ImmutableList<string>.Empty).Insert(0, sources.OldSource).ToArray();
+            var compiledSources = (sources.AdditionalSources?.ToImmutableList() ?? ImmutableList<SourceTuple>.Empty).Insert(0, sources.OldSource).ToArray();
             var documents = GetDocuments(compiledSources, language);
             var analyzerDiagnostics = GetSortedDiagnosticsFromDocuments(analyzer, documents.Take(1).ToArray());
             var compilerDiagnostics = GetCompilerDiagnostics(documents[0]);
@@ -143,26 +144,26 @@ namespace TestHelper
             /// <summary>
             /// Gets or sets source to apply codefix to. Must not be null.
             /// </summary>
-            public string OldSource { get; set; }
+            public SourceTuple OldSource { get; set; }
             /// <summary>
             /// Gets or sets additional sources to include in codefixed project.
             /// </summary>
-            public string[] AdditionalSources { get; set; }
+            public SourceTuple[] AdditionalSources { get; set; }
             /// <summary>
             /// Gets or sets source from <see cref="OldSource"/> after codefix. Must not be null.
             /// </summary>
-            public string FixedSource { get; set; }
+            public SourceTuple FixedSource { get; set; }
             /// <summary>
             /// Gets or sets source of document that was added to project during codefix. May be null.
             /// </summary>
-            public string AddedSource { get; set; }
+            public SourceTuple AddedSource { get; set; }
             /// <summary>
             /// Gets or sets source of document that was changed during hotfix (but it's not the same as <see cref="FixedSource"/>).
             /// May be null.
             /// </summary>
-            public string ChangedSource { get; set; }
+            public SourceTuple ChangedSource { get; set; }
 
-            public string[] GetInputSources()
+            public SourceTuple[] GetInputSources()
             {
                 return AdditionalSources == null
                     ? new[] { OldSource }
@@ -174,6 +175,40 @@ namespace TestHelper
                 FixedSource = OldSource;
                 return this;
             }
+
+        }
+    }
+
+    public struct SourceTuple
+    {
+        public SourceTuple(string filename, string source)
+        {
+            Filename = filename;
+            Source = source;
+        }
+
+        public string Filename { get; }
+        public string Source { get; }
+
+        public static implicit operator SourceTuple((string filename, string source) t)
+        {
+            return new SourceTuple(t.filename, t.source);
+        }
+
+        public static implicit operator SourceTuple(string source)
+        {
+            return new SourceTuple(null, source);
+        }
+
+        public static implicit operator string(SourceTuple tuple)
+        {
+            return tuple.Source;
+        }
+
+        public void Deconstruct(out string filename, out string source)
+        {
+            filename = Filename;
+            source = Source;
         }
     }
 }

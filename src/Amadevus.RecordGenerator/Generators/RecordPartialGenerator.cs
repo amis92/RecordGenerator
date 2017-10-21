@@ -61,11 +61,13 @@ namespace Amadevus.RecordGenerator
             var declarations =
                 syntaxRefs
                 .Select(@ref => @ref.GetSyntax() as TypeDeclarationSyntax)
-                .Where(syntax => syntax != null && syntax != typeDeclaration)
+                .Where(otherDeclaration => otherDeclaration != null && otherDeclaration != typeDeclaration)
+                .Where(otherDeclaration => otherDeclaration.HasGeneratedCodeAttribute())
                 .ToList();
 
-            // find the one with appropriate filename
-            var recordPartial = declarations.FirstOrDefault(d => Path.GetFileName(d.SyntaxTree.FilePath) == GeneratedFilename(typeDeclaration));
+            // find the one with appropriate full name
+            var recordPartial = declarations.FirstOrDefault(
+                d => d.GetTypenameWithAncestorTypesAndArity() == typeDeclaration.GetTypenameWithAncestorTypesAndArity());
             return recordPartial;
         }
 
@@ -123,19 +125,13 @@ namespace Amadevus.RecordGenerator
 
         protected static string GeneratedFilename(TypeDeclarationSyntax typeDeclaration)
         {
-            var namesWithArityQuery =
-                typeDeclaration
-                .AncestorsAndSelf()
-                .OfType<TypeDeclarationSyntax>()
-                .Select(type => type.NameWithArity())
-                .Reverse();
-            var nameWithArity = string.Join(".", namesWithArityQuery);
+            string nameWithArity = typeDeclaration.GetTypenameWithAncestorTypesAndArity();
             return $"{nameWithArity}{GeneratedFilenameSuffix}";
         }
 
         protected string GeneratedFilename() => GeneratedFilename(TypeDeclaration);
 
-        protected static string GeneratedFilenameSuffix => $".{RecordPartialProperties.FilenamePostfix}.cs";
+        public static string GeneratedFilenameSuffix => $".{RecordPartialProperties.FilenamePostfix}.cs";
 
         protected CompilationUnitSyntax FormattedPerWorkspace(CompilationUnitSyntax compilationUnit, Workspace workspace)
         {
