@@ -119,7 +119,7 @@ namespace Amadevus.RecordGenerator
                     {
                         // report error "record partial requires update"
 
-                        var diffMessage = CreateDiff();
+                        var diffMessage = RecordPartialInvalidDiagnostic.CreateMessageDiff(currentPartialRoot, wouldBePartialRoot);
 
                         var invalidPartialDiagnostic =
                             RecordPartialInvalidDiagnostic.Create(
@@ -132,39 +132,6 @@ namespace Amadevus.RecordGenerator
                     return;
                 default:
                     break;
-            }
-
-            string CreateDiff()
-            {
-                var before = currentPartialRoot.ToString();
-                var after = wouldBePartialRoot.ToString();
-                var diffBuilder = new DiffPlex.DiffBuilder.InlineDiffBuilder(new DiffPlex.Differ());
-                var diff = diffBuilder.BuildDiffModel(before, after);
-
-                StringWriter writer = new StringWriter();
-                var maxLineCountChars = diff.Lines.Select(line => line.Position).Max().ToString().Length;
-                foreach (var line in diff.Lines)
-                {
-                    var positionString = line.Position.ToString().PadLeft(maxLineCountChars);
-                    writer.Write(positionString);
-                    switch (line.Type)
-                    {
-                        case DiffPlex.DiffBuilder.Model.ChangeType.Deleted:
-                            writer.Write($": - ");
-                            break;
-                        case DiffPlex.DiffBuilder.Model.ChangeType.Inserted:
-                            writer.Write($": + ");
-                            break;
-                        case DiffPlex.DiffBuilder.Model.ChangeType.Modified:
-                            writer.Write($": ~ ");
-                            break;
-                        default:
-                            writer.Write($":   ");
-                            break;
-                    }
-                    writer.WriteLine(line.Text);
-                }
-                return writer.ToString();
             }
         }
     }

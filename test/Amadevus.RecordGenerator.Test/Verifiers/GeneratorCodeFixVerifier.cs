@@ -176,6 +176,17 @@ namespace TestHelper
                 return this;
             }
 
+            public GeneratorSourcePackage GetAdditionalSource(int additionalIndex, out SourceTuple source)
+            {
+                source = AdditionalSources[additionalIndex];
+                return this;
+            }
+
+            public GeneratorSourcePackage GetChangedSource(out SourceTuple source)
+            {
+                source = ChangedSource;
+                return this;
+            }
         }
     }
 
