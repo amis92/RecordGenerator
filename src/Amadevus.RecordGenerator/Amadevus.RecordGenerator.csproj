@@ -37,47 +37,22 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Diagnostics\GeneratorVersionDifferentDiagnostic.cs" />
-    <Compile Include="Utilities\Differ\DiffBuilder\IInlineDiffBuilder.cs" />
-    <Compile Include="Utilities\Differ\DiffBuilder\InlineDiffBuilder.cs" />
-    <Compile Include="Utilities\Differ\DiffBuilder\ISideBySideDiffBuilder.cs" />
-    <Compile Include="Utilities\Differ\DiffBuilder\Model\DiffPaneModel.cs" />
-    <Compile Include="Utilities\Differ\DiffBuilder\Model\DiffPiece.cs" />
-    <Compile Include="Utilities\Differ\DiffBuilder\Model\SideBySideDiffModel.cs" />
-    <Compile Include="Utilities\Differ\DiffBuilder\SideBySideDiffBuilder.cs" />
-    <Compile Include="Utilities\Differ\Differ.cs" />
-    <Compile Include="Utilities\Differ\IDiffer.cs" />
-    <Compile Include="Utilities\Differ\Log.cs" />
-    <Compile Include="Utilities\Differ\Model\DiffBlock.cs" />
-    <Compile Include="Utilities\Differ\Model\DiffResult.cs" />
-    <Compile Include="Utilities\Differ\Model\EditLengthResult.cs" />
-    <Compile Include="Utilities\Differ\Model\ModificationData.cs" />
-    <Compile Include="Utilities\GeneratedCodeAttributeExtensions.cs" />
-    <Compile Include="Generators\ClassRecordPartialGenerator.cs" />
-    <Compile Include="Diagnostics\RecordPartialInvalidDiagnostic.cs" />
     <Compile Include="GenerateRecordAttributeDeclarationCodeFixProvider.cs" />
     <Compile Include="DiagnosticAnalyzer.cs" />
     <Compile Include="Diagnostics\RecordAttributeDeclarationMissingDiagnostic.cs" />
-    <Compile Include="GenerateRecordPartialCodeFixProvider.cs" />
-    <Compile Include="Diagnostics\RecordPartialMissingDiagnostic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Concepts\RecordAttribute.cs" />
     <Compile Include="Utilities\RecordAttributeExtensions.cs" />
     <Compile Include="Concepts\RecordDelta.cs" />
-    <Compile Include="Generators\RecordEntry.cs" />
-    <Compile Include="Generators\Properties.cs" />
+    <Compile Include="Utilities\RecordEntry.cs" />
+    <Compile Include="Utilities\Properties.cs" />
     <Compile Include="Utilities\RecordAttributeProperties.cs" />
     <Compile Include="Utilities\RecordPartialProperties.cs" />
-    <Compile Include="Utilities\RecordPartialComparer.cs" />
-    <Compile Include="Utilities\RecordPartialExtensions.cs" />
-    <Compile Include="Generators\RecordPartialGenerator.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Generators\StructRecordPartialGenerator.cs" />
-    <Compile Include="Utilities\SyntaxExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources.resx">

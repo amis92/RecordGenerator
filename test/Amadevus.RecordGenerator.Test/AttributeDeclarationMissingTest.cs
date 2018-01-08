@@ -63,13 +63,6 @@ namespace Amadevus.RecordGenerator.Test
                             new[] {
                                 new DiagnosticResultLocation(filename, 4, 10)
                             }
-                        },
-                        new DiagnosticResult(RecordPartialMissingDiagnostic.Descriptor, typeName)
-                        {
-                            Locations =
-                            new[] {
-                                new DiagnosticResultLocation(filename, 5, 15)
-                            }
                         }
                     }
                 };
@@ -88,13 +81,6 @@ namespace Amadevus.RecordGenerator.Test
                             Locations =
                             new[] {
                                 new DiagnosticResultLocation(filename, 4, 10)
-                            }
-                        },
-                        new DiagnosticResult(RecordPartialMissingDiagnostic.Descriptor, typeName)
-                        {
-                            Locations =
-                            new[] {
-                                new DiagnosticResultLocation(filename, 5, 15)
                             }
                         }
                     }
@@ -115,13 +101,6 @@ namespace Amadevus.RecordGenerator.Test
                             new[] {
                                 new DiagnosticResultLocation(filename, 4, 10)
                             }
-                        },
-                        new DiagnosticResult(RecordPartialMissingDiagnostic.Descriptor, typeName)
-                        {
-                            Locations =
-                            new[] {
-                                new DiagnosticResultLocation(filename, 5, 16)
-                            }
                         }
                     }
                 };
@@ -140,13 +119,6 @@ namespace Amadevus.RecordGenerator.Test
                             Locations =
                             new[] {
                                 new DiagnosticResultLocation(filename, 4, 10)
-                            }
-                        },
-                        new DiagnosticResult(RecordPartialMissingDiagnostic.Descriptor, typeName)
-                        {
-                            Locations =
-                            new[] {
-                                new DiagnosticResultLocation(filename, 5, 16)
                             }
                         }
                     }
@@ -168,16 +140,7 @@ namespace Amadevus.RecordGenerator.Test
                         OldSource = (filename, GetBasicClassDeclaration(typeName, @namespace, "Record")),
                         AdditionalSources = new SourceTuple[] { GenerateRecordAttributeDeclarationCodeFixProvider.RecordAttributeDeclarationSource(@namespace) }
                     }.AndFixedSameAsOld(),
-                    ExpectedDiagnostics = new[]
-                    {
-                        new DiagnosticResult(RecordPartialMissingDiagnostic.Descriptor, typeName)
-                        {
-                            Locations =
-                            new[] {
-                                new DiagnosticResultLocation(filename, 5, 15)
-                            }
-                        }
-                    }
+                    ExpectedDiagnostics = new DiagnosticResult[0]
                 };
             }
 

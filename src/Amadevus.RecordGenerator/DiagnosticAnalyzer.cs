@@ -17,11 +17,7 @@ namespace Amadevus.RecordGenerator
         {
             get
             {
-                return ImmutableArray.Create(
-                    RecordAttributeDeclarationMissingDiagnostic.Descriptor,
-                    RecordPartialMissingDiagnostic.Descriptor,
-                    RecordPartialInvalidDiagnostic.Descriptor,
-                    GeneratorVersionDifferentDiagnostic.Descriptor);
+                return ImmutableArray.Create(RecordAttributeDeclarationMissingDiagnostic.Descriptor);
             }
         }
 
@@ -60,78 +56,6 @@ namespace Amadevus.RecordGenerator
                             attribute.GetUnqualifiedName());
                     context.ReportDiagnostic(diagnostic);
                 }
-            }
-
-            // check if there already is record partial
-            var typeSymbol = context.SemanticModel.GetDeclaredSymbol(typeDeclaration);
-            if (typeSymbol == null)
-            {
-                return;
-            }
-
-            // ### NOTE ###
-            // this part will be unnecessary once source generators are a thing
-            // for now we must check if the "would-be-generated" partial exists
-            // if not - report diagnostic, if does - check if it's still correct
-            // (and report diagnostic if it's not)
-            AnalyzeIfGenerationRequired(context, typeDeclaration, typeSymbol);
-        }
-
-        private static void AnalyzeIfGenerationRequired(SyntaxNodeAnalysisContext context, TypeDeclarationSyntax typeDeclaration, INamedTypeSymbol typeSymbol)
-        {
-            var recordPartial = RecordPartialGenerator.GetGeneratedPartial(typeDeclaration, typeSymbol);
-            if (recordPartial == null)
-            {
-                // no generated partial found
-                var missingPartialDiagnostic =
-                    RecordPartialMissingDiagnostic.Create(
-                        typeDeclaration.Identifier.GetLocation(),
-                        typeDeclaration.Identifier.ValueText);
-
-                context.ReportDiagnostic(missingPartialDiagnostic);
-                return;
-            }
-
-            // check partial is equivalent to would-be generated partial
-            var wouldBePartialRoot = RecordPartialGenerator.GenerateRecordPartialRoot(typeDeclaration, context.CancellationToken);
-            var currentPartialRoot = recordPartial.SyntaxTree.GetRoot(context.CancellationToken);
-            
-            var equivalenceResult = wouldBePartialRoot.IsTokenwiseEquivalentTo(currentPartialRoot);
-            switch (equivalenceResult)
-            {
-                case RecordPartialComparer.Result.Equivalent:
-                    return;
-                case RecordPartialComparer.Result.EquivalentExceptGeneratedCodeAttributeVersion:
-                    {
-                        string version = recordPartial.ExtractGeneratedCodeAttributeVersionArgument();
-                        // report info "record partial might need update"
-                        var differentToolVersionDiagnostic =
-                            GeneratorVersionDifferentDiagnostic.Create(
-                                typeDeclaration.Identifier.GetLocation(),
-                                typeDeclaration.Identifier.ValueText,
-                                version,
-                                Properties.VersionString);
-
-                        context.ReportDiagnostic(differentToolVersionDiagnostic);
-                    }
-                    return;
-                case RecordPartialComparer.Result.NotEquivalent:
-                    {
-                        // report error "record partial requires update"
-
-                        var diffMessage = RecordPartialInvalidDiagnostic.CreateMessageDiff(currentPartialRoot, wouldBePartialRoot);
-
-                        var invalidPartialDiagnostic =
-                            RecordPartialInvalidDiagnostic.Create(
-                                typeDeclaration.Identifier.GetLocation(),
-                                typeDeclaration.Identifier.ValueText,
-                                diffMessage);
-
-                        context.ReportDiagnostic(invalidPartialDiagnostic);
-                    }
-                    return;
-                default:
-                    break;
             }
         }
     }

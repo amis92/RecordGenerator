@@ -108,10 +108,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GeneratorVersionDifferentTest.cs" />
     <Compile Include="Helpers\GeneratorCodeFixVerifier.Helper.cs" />
-    <Compile Include="RecordPartialInvalidTest.cs" />
-    <Compile Include="RecordPartialMissingTest.cs" />
     <Compile Include="TheoryHelpers\ITheoryDatum.cs" />
     <Compile Include="TheoryHelpers\TheoryData.cs" />
     <Compile Include="TheoryHelpers\TheoryDatum.cs" />

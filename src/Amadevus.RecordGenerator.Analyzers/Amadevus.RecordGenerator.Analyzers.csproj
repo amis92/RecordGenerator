@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.3</TargetFramework>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <PackageId>Amadevus.RecordGenerator.Analyzers</PackageId>
+    <PackageVersion>1.0.0.0</PackageVersion>
+    <Authors>Amadeusz Sadowski</Authors>
+    <PackageLicenseUrl>https://github.com/amis92/RecordGenerator/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/amis92/RecordGenerator</PackageProjectUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/amis92/RecordGenerator/master/docs/logo.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/amis92/RecordGenerator</RepositoryUrl>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Description>Analyzers and CodeFixes that generate code for [Record]-marked types: constructors and mutators, in separate partial file. See project site for more details.</Description>
+    <PackageReleaseNotes>Bugfix. Doesn't raise false RG0003 'requires regeneration' errors for Records nested in Records. Also now diff is attached to that error message.</PackageReleaseNotes>
+    <Copyright>Copyright © 2018 Amadeusz Sadowski</Copyright>
+    <PackageTags>Amadevus.RecordGenerator.Analyzers, analyzers, codefix, record, constructor, mutator, generator, immutable</PackageTags>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <RepositoryType>git</RepositoryType>
+    <Company />
+    <Version>0.3.0</Version>
+  </PropertyGroup>
+   
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.4.0" PrivateAssets="all" />
+    <PackageReference Update="NETStandard.Library" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources.Designer.cs" DesignTime="True" AutoGen="True" DependentUpon="Resources.resx" />
+    <EmbeddedResource Update="Resources.resx" Generator="ResXFileCodeGenerator" LastGenOutput="Resources.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="tools\*.ps1" CopyToOutputDirectory="Always" Pack="true" PackagePath="" />
+    <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+  </ItemGroup>
+
+</Project>
