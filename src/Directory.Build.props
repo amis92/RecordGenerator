@@ -14,8 +14,8 @@
     <Version></Version>
     <PackageVersion></PackageVersion>
     <AssemblyVersion></AssemblyVersion>
-    <AssemblyFileVersion></AssemblyFileVersion>
-    <AssemblyInformationalVersion></AssemblyInformationalVersion>
+    <FileVersion></FileVersion>
+    <InformationalVersion></InformationalVersion>
   </PropertyGroup>
   
 </Project>
