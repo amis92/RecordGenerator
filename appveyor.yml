@@ -43,6 +43,7 @@ dotnet_csproj:
   patch: true
   file: '**\*.props'
   version: '$(ASM_VERSION)'
+  assembly_version: '$(ASM_VERSION)'
   package_version: '$(PACKAGE_VERSION)'
   file_version: '$(ASM_FILE_VERSION)'
   informational_version: '$(ASM_INFORMATIONAL_VERSION)'
