@@ -45,8 +45,8 @@ dotnet_csproj:
   version: '$(ASM_VERSION)'
   file_version: '$(ASM_FILE_VERSION)'
   informational_version: '$(ASM_INFORMATIONAL_VERSION)'
-build:
-  verbosity: minimal
+build_script:
+  - msbuild /v:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 notifications:
   - provider: Webhook
     url: https://webhooks.gitter.im/e/7a491795ae7262cd16b3
