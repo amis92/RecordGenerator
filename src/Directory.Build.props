@@ -12,9 +12,9 @@
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <RepositoryType>git</RepositoryType>
     <Company>Amadevus</Company>
-    <Version>0.3.0</Version>
-    <PackageVersion>$(Version)-manual-build</PackageVersion>
-    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+    <Version></Version>
+    <PackageVersion></PackageVersion>
+    <AssemblyVersion></AssemblyVersion>
     <AssemblyFileVersion></AssemblyFileVersion>
     <AssemblyInformationalVersion></AssemblyInformationalVersion>
   </PropertyGroup>

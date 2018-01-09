@@ -30,9 +30,9 @@ init:
       $env:ASM_VERSION = "$major.0.0.0"
       $env:ASM_FILE_VERSION = "$version_base.$env:APPVEYOR_BUILD_NUMBER"
       $env:ASM_INFORMATIONAL_VERSION = "$version_base-$version_suffix"
-      $env:PACKAGE_VERSION = if ($env:release_branch) { "$version_base" } else { "$env:ASM_INFORMATIONAL_VERSION" }
+      $env:PACKAGE_VERSION = if ($env:release_branch -eq $True) { "$version_base" } else { "$env:ASM_INFORMATIONAL_VERSION" }
       # print
-      echo "$version_base='$$version_base'"
+      echo "version_base='$version_base'"
       echo "version_suffix='$version_suffix'"
       echo "PACKAGE_VERSION='$env:PACKAGE_VERSION'"
       echo "ASM_VERSION='$env:ASM_VERSION'"
@@ -40,9 +40,9 @@ init:
       echo "ASM_INFORMATIONAL_VERSION='$env:ASM_INFORMATIONAL_VERSION'"
 dotnet_csproj:
   patch: true
-  file: '**\*Build.props'
-  package_version: '$(PACKAGE_VERSION)'
+  file: '**\*.Build.props'
   version: '$(ASM_VERSION)'
+  package_version: '$(PACKAGE_VERSION)'
   file_version: '$(ASM_FILE_VERSION)'
   informational_version: '$(ASM_INFORMATIONAL_VERSION)'
 before_build:
