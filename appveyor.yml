@@ -12,6 +12,7 @@ configuration:
   - Debug
   - Release
 init:
+  - appveyor version
   - git config --global core.autocrlf true
 # checking if release branch
   - ps: |
@@ -45,6 +46,8 @@ dotnet_csproj:
   package_version: '$(PACKAGE_VERSION)'
   file_version: '$(ASM_FILE_VERSION)'
   informational_version: '$(ASM_INFORMATIONAL_VERSION)'
+before_build:
+  - cat src\Directory.Build.props
 build_script:
   - msbuild /v:m /t:Restore,Build /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 notifications:
