@@ -40,7 +40,7 @@ init:
       echo "ASM_INFORMATIONAL_VERSION='$env:ASM_INFORMATIONAL_VERSION'"
 dotnet_csproj:
   patch: true
-  file: '**\*.csproj;**\*.props'
+  file: '**\*.props'
   version: '$(ASM_VERSION)'
   package_version: '$(PACKAGE_VERSION)'
   file_version: '$(ASM_FILE_VERSION)'
