@@ -1,6 +1,9 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 
-namespace Amadevus.RecordGenerator
+[assembly: InternalsVisibleTo("Amadevus.RecordGenerator.Analyzers.Test")]
+
+namespace Amadevus.RecordGenerator.Analyzers
 {
     public static class Properties
     {

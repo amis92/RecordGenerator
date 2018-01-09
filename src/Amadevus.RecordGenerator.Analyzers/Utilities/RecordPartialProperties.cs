@@ -1,4 +1,4 @@
-﻿namespace Amadevus.RecordGenerator
+﻿namespace Amadevus.RecordGenerator.Analyzers
 {
     internal static class RecordPartialProperties
     {

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <Authors>Amadeusz Sadowski</Authors>
+    <PackageLicenseUrl>https://github.com/amis92/RecordGenerator/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/amis92/RecordGenerator</PackageProjectUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/amis92/RecordGenerator/master/docs/logo.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/amis92/RecordGenerator</RepositoryUrl>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Copyright>Copyright © 2018 Amadeusz Sadowski</Copyright>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <RepositoryType>git</RepositoryType>
+    <Company>Amadevus</Company>
+    <Version>0.3.0</Version>
+    <PackageVersion>$(Version)-manual-build</PackageVersion>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+    <AssemblyFileVersion></AssemblyFileVersion>
+    <AssemblyInformationalVersion></AssemblyInformationalVersion>
+  </PropertyGroup>
+  
+</Project>

@@ -7,10 +7,11 @@ using System;
 using System.Collections;
 using System.Linq;
 
-namespace Amadevus.RecordGenerator.Test
+namespace Amadevus.RecordGenerator.Analyzers.Test
 {
     public class AttributeDeclarationMissingTest : GeneratorCodeFixVerifier
     {
+#pragma warning disable xUnit1026
         //No diagnostics expected to show up
         [Fact]
         public void Given_Empty_Verify_NoDiagnostics()
@@ -29,6 +30,7 @@ namespace Amadevus.RecordGenerator.Test
             VerifyCSharpDiagnostic(sourcePackage.GetInputSources(), diagnosticResults);
             VerifyCSharpGeneratorFix(sourcePackage);
         }
+#pragma warning restore xUnit1026
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
@@ -37,7 +39,7 @@ namespace Amadevus.RecordGenerator.Test
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new RecordGeneratorAnalyzer();
+            return new RecordAttributeAnalyzer();
         }
 
         private class TestCases : TheoryDataProvider
@@ -53,7 +55,7 @@ namespace Amadevus.RecordGenerator.Test
                     SourcePackage = new GeneratorSourcePackage
                     {
                         OldSource = (filename, GetBasicClassDeclaration(typeName, @namespace, "Record")),
-                        AddedSource = GenerateRecordAttributeDeclarationCodeFixProvider.RecordAttributeDeclarationSource(@namespace)
+                        AddedSource = GenerateRecordAttributeDeclarationCodeFixProvider.RecordAttributeDeclarationSource()
                     }.AndFixedSameAsOld(),
                     ExpectedDiagnostics = new[]
                     {
@@ -72,7 +74,7 @@ namespace Amadevus.RecordGenerator.Test
                     SourcePackage = new GeneratorSourcePackage
                     {
                         OldSource = (filename, GetBasicClassDeclaration(typeName, @namespace, "record")),
-                        AddedSource = GenerateRecordAttributeDeclarationCodeFixProvider.RecordAttributeDeclarationSource(@namespace)
+                        AddedSource = GenerateRecordAttributeDeclarationCodeFixProvider.RecordAttributeDeclarationSource()
                     }.AndFixedSameAsOld(),
                     ExpectedDiagnostics = new[]
                     {
@@ -87,41 +89,21 @@ namespace Amadevus.RecordGenerator.Test
                 };
                 yield return new GeneratorTheoryData
                 {
-                    Description = "struct with [Record]",
+                    Description = "struct with [Record] - no diagnostics expected",
                     SourcePackage = new GeneratorSourcePackage
                     {
-                        OldSource = (filename, GetBasicStructDeclaration(typeName, @namespace, "Record")),
-                        AddedSource = GenerateRecordAttributeDeclarationCodeFixProvider.RecordAttributeDeclarationSource(@namespace)
+                        OldSource = (filename, GetBasicStructDeclaration(typeName, @namespace, "Record"))
                     }.AndFixedSameAsOld(),
-                    ExpectedDiagnostics = new[]
-                    {
-                        new DiagnosticResult(RecordAttributeDeclarationMissingDiagnostic.Descriptor, typeName, "Record")
-                        {
-                            Locations =
-                            new[] {
-                                new DiagnosticResultLocation(filename, 4, 10)
-                            }
-                        }
-                    }
+                    ExpectedDiagnostics = new DiagnosticResult[0]
                 };
                 yield return new GeneratorTheoryData
                 {
-                    Description = "struct with [record]",
+                    Description = "struct with [record] - no diagnostics expected",
                     SourcePackage = new GeneratorSourcePackage
                     {
-                        OldSource = (filename, GetBasicStructDeclaration(typeName, @namespace, "record")),
-                        AddedSource = GenerateRecordAttributeDeclarationCodeFixProvider.RecordAttributeDeclarationSource(@namespace)
+                        OldSource = (filename, GetBasicStructDeclaration(typeName, @namespace, "record"))
                     }.AndFixedSameAsOld(),
-                    ExpectedDiagnostics = new[]
-                    {
-                        new DiagnosticResult(RecordAttributeDeclarationMissingDiagnostic.Descriptor, typeName, "record")
-                        {
-                            Locations =
-                            new[] {
-                                new DiagnosticResultLocation(filename, 4, 10)
-                            }
-                        }
-                    }
+                    ExpectedDiagnostics = new DiagnosticResult[0]
                 };
                 yield return new GeneratorTheoryData
                 {
@@ -130,15 +112,15 @@ namespace Amadevus.RecordGenerator.Test
                     {
                         OldSource = GetBasicInterfaceDeclaration(typeName, @namespace, "Record"),
                     }.AndFixedSameAsOld(),
-                    ExpectedDiagnostics = new DiagnosticResult[] { }
+                    ExpectedDiagnostics = new DiagnosticResult[0]
                 };
                 yield return new GeneratorTheoryData
                 {
-                    Description = "attribute exists, only diagnostic to create record partial expected",
+                    Description = "attribute exists - no diagnostics expected",
                     SourcePackage = new GeneratorSourcePackage
                     {
                         OldSource = (filename, GetBasicClassDeclaration(typeName, @namespace, "Record")),
-                        AdditionalSources = new SourceTuple[] { GenerateRecordAttributeDeclarationCodeFixProvider.RecordAttributeDeclarationSource(@namespace) }
+                        AdditionalSources = new SourceTuple[] { GenerateRecordAttributeDeclarationCodeFixProvider.RecordAttributeDeclarationSource() }
                     }.AndFixedSameAsOld(),
                     ExpectedDiagnostics = new DiagnosticResult[0]
                 };

@@ -1,6 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 
-namespace Amadevus.RecordGenerator
+namespace Amadevus.RecordGenerator.Analyzers
 {
     internal static class RecordAttributeDeclarationMissingDiagnostic
     {

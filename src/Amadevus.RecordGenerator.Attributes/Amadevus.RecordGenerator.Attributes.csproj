@@ -5,6 +5,12 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <Description>Defines [Record] (RecordAttribute) in global:: namespace; used to generate "immutable records" support code (constructors, With- mutators, tuple deconstructor etc.). See project site for more details.</Description>
+    <PackageReleaseNotes>Initial release.</PackageReleaseNotes>
+    <PackageTags>record; immutable; attribute; generator; amadevus; codegen</PackageTags>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="CodeGeneration.Roslyn.Attributes" Version="0.4.11" />
     <PackageReference Include="MSBuild.Sdk.Extras" Version="1.1.0" PrivateAssets="all" />

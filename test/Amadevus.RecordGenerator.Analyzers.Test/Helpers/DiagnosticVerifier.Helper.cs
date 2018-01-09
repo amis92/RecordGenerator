@@ -28,13 +28,13 @@ namespace TestHelper
         #region  Get Diagnostics
 
         /// <summary>
-        /// Given classes in the form of strings, their language, and an IDiagnosticAnalyzer to apply to it, return the diagnostics found in the string after converting it to a document.
+        /// Given classes in the form of strings, their language, and an IDiagnosticAnlayzer to apply to it, return the diagnostics found in the string after converting it to a document.
         /// </summary>
         /// <param name="sources">Classes in the form of strings</param>
         /// <param name="language">The language the source classes are in</param>
         /// <param name="analyzer">The analyzer to be run on the sources</param>
         /// <returns>An IEnumerable of Diagnostics that surfaced in the source code, sorted by Location</returns>
-        private static Diagnostic[] GetSortedDiagnostics(string[] sources, string language, DiagnosticAnalyzer analyzer)
+        private static Diagnostic[] GetSortedDiagnostics(SourceTuple[] sources, string language, DiagnosticAnalyzer analyzer)
         {
             return GetSortedDiagnosticsFromDocuments(analyzer, GetDocuments(sources, language));
         }
@@ -104,7 +104,7 @@ namespace TestHelper
         /// <param name="sources">Classes in the form of strings</param>
         /// <param name="language">The language the source code is in</param>
         /// <returns>A Tuple containing the Documents produced from the sources and their TextSpans if relevant</returns>
-        private static Document[] GetDocuments(string[] sources, string language)
+        protected static Document[] GetDocuments(SourceTuple[] sources, string language)
         {
             if (language != LanguageNames.CSharp && language != LanguageNames.VisualBasic)
             {
@@ -116,7 +116,7 @@ namespace TestHelper
 
             if (sources.Length != documents.Length)
             {
-                throw new InvalidOperationException("Amount of sources did not match amount of Documents created");
+                throw new SystemException("Amount of sources did not match amount of Documents created");
             }
 
             return documents;
@@ -128,7 +128,7 @@ namespace TestHelper
         /// <param name="source">Classes in the form of a string</param>
         /// <param name="language">The language the source code is in</param>
         /// <returns>A Document created from the source string</returns>
-        protected static Document CreateDocument(string source, string language = LanguageNames.CSharp)
+        protected static Document CreateDocument(SourceTuple source, string language = LanguageNames.CSharp)
         {
             return CreateProject(new[] { source }, language).Documents.First();
         }
@@ -139,7 +139,7 @@ namespace TestHelper
         /// <param name="sources">Classes in the form of strings</param>
         /// <param name="language">The language the source code is in</param>
         /// <returns>A Project created out of the Documents created from the source strings</returns>
-        private static Project CreateProject(string[] sources, string language = LanguageNames.CSharp)
+        private static Project CreateProject(SourceTuple[] sources, string language = LanguageNames.CSharp)
         {
             string fileNamePrefix = DefaultFilePathPrefix;
             string fileExt = language == LanguageNames.CSharp ? CSharpDefaultFileExt : VisualBasicDefaultExt;
@@ -155,9 +155,9 @@ namespace TestHelper
                 .AddMetadataReference(projectId, CodeAnalysisReference);
 
             int count = 0;
-            foreach (var source in sources)
+            foreach (var (filename, source) in sources)
             {
-                var newFileName = fileNamePrefix + count + "." + fileExt;
+                var newFileName = filename ?? fileNamePrefix + count + "." + fileExt;
                 var documentId = DocumentId.CreateNewId(projectId, debugName: newFileName);
                 solution = solution.AddDocument(documentId, newFileName, SourceText.From(source));
                 count++;
@@ -167,4 +167,3 @@ namespace TestHelper
         #endregion
     }
 }
-

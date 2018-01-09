@@ -7,11 +7,11 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using System.IO;
 using System.Threading;
 
-namespace Amadevus.RecordGenerator
+namespace Amadevus.RecordGenerator.Analyzers
 {
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class RecordGeneratorAnalyzer : DiagnosticAnalyzer
+    public class RecordAttributeAnalyzer : DiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
@@ -24,12 +24,12 @@ namespace Amadevus.RecordGenerator
         public override void Initialize(AnalysisContext context)
         {
             // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/Analyzer%20Actions%20Semantics.md for more information
-            context.RegisterSyntaxNodeAction(AnalyzeClass, SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeAction(AnalyzeClass, SyntaxKind.ClassDeclaration);
         }
 
         private static void AnalyzeClass(SyntaxNodeAnalysisContext context)
         {
-            var typeDeclaration = context.Node as TypeDeclarationSyntax;
+            var typeDeclaration = context.Node as ClassDeclarationSyntax;
             var typeIdentifierText = typeDeclaration.Identifier.ValueText;
 
             var recordNamedAttributes =
