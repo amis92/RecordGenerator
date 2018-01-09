@@ -40,15 +40,13 @@ init:
       echo "ASM_INFORMATIONAL_VERSION='$env:ASM_INFORMATIONAL_VERSION'"
 dotnet_csproj:
   patch: true
-  file: '**\*.Build.props'
+  file: '**\*.csproj;**\*.props'
   version: '$(ASM_VERSION)'
   package_version: '$(PACKAGE_VERSION)'
   file_version: '$(ASM_FILE_VERSION)'
   informational_version: '$(ASM_INFORMATIONAL_VERSION)'
-before_build:
-  - dotnet restore
 build_script:
-  - msbuild /v:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+  - msbuild /v:m /t:Restore,Build /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 notifications:
   - provider: Webhook
     url: https://webhooks.gitter.im/e/7a491795ae7262cd16b3
