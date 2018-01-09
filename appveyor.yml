@@ -45,6 +45,8 @@ dotnet_csproj:
   version: '$(ASM_VERSION)'
   file_version: '$(ASM_FILE_VERSION)'
   informational_version: '$(ASM_INFORMATIONAL_VERSION)'
+before_build:
+  - dotnet restore
 build_script:
   - msbuild /v:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 notifications:
