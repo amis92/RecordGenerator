@@ -40,13 +40,12 @@ init:
       echo "ASM_INFORMATIONAL_VERSION='$env:ASM_INFORMATIONAL_VERSION'"
 dotnet_csproj:
   patch: true
-  file: 'src\**\*.csproj;**\*.props'
+  file: '**\*Build.props'
   package_version: '$(PACKAGE_VERSION)'
   version: '$(ASM_VERSION)'
   file_version: '$(ASM_FILE_VERSION)'
   informational_version: '$(ASM_INFORMATIONAL_VERSION)'
 build:
-  project: Amadevus.RecordGenerator.sln
   verbosity: minimal
 notifications:
   - provider: Webhook
