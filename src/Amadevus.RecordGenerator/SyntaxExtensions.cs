@@ -2,31 +2,91 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Linq;
+using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
+using System.Collections.Generic;
 
 namespace Amadevus.RecordGenerator
 {
     internal static class SyntaxExtensions
     {
-        public static ClassDeclarationSyntax WithPartialModifier(this ClassDeclarationSyntax declaration)
+        public static MethodDeclarationSyntax AddModifiers(this MethodDeclarationSyntax syntax, params SyntaxKind[] modifier)
         {
-            return declaration.AddModifiers(SyntaxFactory.Token(SyntaxKind.PartialKeyword));
-        }
-        public static StructDeclarationSyntax WithPartialModifier(this StructDeclarationSyntax declaration)
-        {
-            return declaration.AddModifiers(SyntaxFactory.Token(SyntaxKind.PartialKeyword));
+            return syntax.AddModifiers(modifier.Select(Token).ToArray());
         }
 
-        public static TypeDeclarationSyntax WithPartialModifier(this TypeDeclarationSyntax declaration)
+        public static PropertyDeclarationSyntax AddModifiers(this PropertyDeclarationSyntax syntax, params SyntaxKind[] modifier)
         {
-            if (declaration is ClassDeclarationSyntax classDeclaration)
-            {
-                return classDeclaration.WithPartialModifier();
-            }
-            if (declaration is StructDeclarationSyntax structDeclaration)
-            {
-                return structDeclaration.WithPartialModifier();
-            }
-            return declaration;
+            return syntax.AddModifiers(modifier.Select(Token).ToArray());
+        }
+
+        public static ConstructorDeclarationSyntax AddModifiers(this ConstructorDeclarationSyntax syntax, params SyntaxKind[] modifier)
+        {
+            return syntax.AddModifiers(modifier.Select(Token).ToArray());
+        }
+
+        public static ClassDeclarationSyntax AddModifiers(this ClassDeclarationSyntax syntax, params SyntaxKind[] modifier)
+        {
+            return syntax.AddModifiers(modifier.Select(Token).ToArray());
+        }
+
+        public static AccessorDeclarationSyntax WithSemicolonToken(this AccessorDeclarationSyntax syntax)
+        {
+            return syntax.WithSemicolonToken(Token(SyntaxKind.SemicolonToken));
+        }
+
+        public static MethodDeclarationSyntax WithSemicolonToken(this MethodDeclarationSyntax syntax)
+        {
+            return syntax.WithSemicolonToken(Token(SyntaxKind.SemicolonToken));
+        }
+
+        public static ConstructorDeclarationSyntax WithParameters(this ConstructorDeclarationSyntax syntax, IEnumerable<ParameterSyntax> parameters)
+        {
+            return syntax.WithParameterList(ParameterList(SeparatedList(parameters)));
+        }
+
+        public static ConstructorDeclarationSyntax WithBodyStatements(this ConstructorDeclarationSyntax syntax, IEnumerable<StatementSyntax> parameters)
+        {
+            return syntax.WithBody(Block(parameters));
+        }
+
+        public static ConstructorDeclarationSyntax WithBodyStatements(this ConstructorDeclarationSyntax syntax, params StatementSyntax[] parameters)
+        {
+            return syntax.WithBody(Block(parameters));
+        }
+
+        public static MethodDeclarationSyntax WithParameters(this MethodDeclarationSyntax syntax, IEnumerable<ParameterSyntax> parameters)
+        {
+            return syntax.WithParameterList(ParameterList(SeparatedList(parameters)));
+        }
+
+        public static MethodDeclarationSyntax WithParameters(this MethodDeclarationSyntax syntax,  params ParameterSyntax[] parameters)
+        {
+            return syntax.WithParameterList(ParameterList(SeparatedList(parameters)));
+        }
+
+        public static MethodDeclarationSyntax WithBodyStatements(this MethodDeclarationSyntax syntax, IEnumerable<StatementSyntax> parameters)
+        {
+            return syntax.WithBody(Block(parameters));
+        }
+
+        public static MethodDeclarationSyntax WithBodyStatements(this MethodDeclarationSyntax syntax, params StatementSyntax[] parameters)
+        {
+            return syntax.WithBody(Block(parameters));
+        }
+
+        public static MethodDeclarationSyntax WithExpressionBody(this MethodDeclarationSyntax syntax, ExpressionSyntax body)
+        {
+            return
+                syntax
+                .WithExpressionBody(
+                    ArrowExpressionClause(body))
+                .WithSemicolonToken(
+                    Token(SyntaxKind.SemicolonToken));
+        }
+
+        public static PropertyDeclarationSyntax WithAccessors(this PropertyDeclarationSyntax syntax, params AccessorDeclarationSyntax[] parameters)
+        {
+            return syntax.WithAccessorList(AccessorList(List(parameters)));
         }
 
         public static bool IsRecordViable(this PropertyDeclarationSyntax property)

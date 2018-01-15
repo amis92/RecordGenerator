@@ -1,4 +1,5 @@
-﻿using CodeGeneration.Roslyn;
+﻿using Amadevus.RecordGenerator.Generators;
+using CodeGeneration.Roslyn;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -28,8 +29,9 @@ namespace Amadevus.RecordGenerator
             return Task.FromResult(generatedMembers);
             IEnumerable<MemberDeclarationSyntax> GenerateRecordPartials(RecordDescriptor descriptor)
             {
-                yield return RecordCorePartialGenerator.Generate(descriptor, cancellationToken);
-                yield return BuilderCorePartialGenerator.Generate(descriptor, cancellationToken);
+                yield return RecordPartialGenerator.Generate(descriptor, cancellationToken);
+                yield return BuilderPartialGenerator.Generate(descriptor, cancellationToken);
+                yield return DeconstructPartialGenerator.Generate(descriptor, cancellationToken);
                 yield break;
             }
         }

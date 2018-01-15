@@ -3,12 +3,12 @@
 namespace Amadevus.RecordGenerator.TestsBase
 {
     [Record]
-    public partial class ContainerCore
+    public partial class Container
     {
         public string Id { get; }
         
         public string Name { get; }
         
-        public ImmutableArray<ItemCore> Items { get; }
+        public ImmutableArray<Item> Items { get; }
     }
 }

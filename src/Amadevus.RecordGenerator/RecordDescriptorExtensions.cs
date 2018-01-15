@@ -62,36 +62,6 @@ namespace Amadevus.RecordGenerator
                 .ToImmutableArray();
         }
 
-        public static string GetNodeTypeName(this RecordDescriptor descriptor)
-        {
-            return descriptor.TypeIdentifier.ValueText.GetNodeTypeNameCore();
-        }
-
-        public static IdentifierNameSyntax GetNodeTypeIdentifierName(this RecordDescriptor descriptor)
-        {
-            return IdentifierName(descriptor.GetNodeTypeName());
-        }
-
-        public static IdentifierNameSyntax GetNodeTypeIdentifierName(this RecordDescriptor.CollectionEntry entry)
-        {
-            return IdentifierName(entry.CollectionTypeParameter.ToString().GetNodeTypeNameCore());
-        }
-
-        public static string GetNodeTypeNameCore(this string typeName)
-        {
-            return typeName.StripSuffixes() + Names.NodeSuffix;
-        }
-
-        public static string StripSuffixes(this string typeName)
-        {
-            return typeName.StripSuffix(Names.CoreSuffix).StripSuffix(Names.NodeSuffix);
-        }
-
-        private static string StripSuffix(this string text, string suffix)
-        {
-            return text.EndsWith(suffix) ? text.Substring(0, text.Length - suffix.Length) : text;
-        }
-
         public static QualifiedNameSyntax ToNestedBuilderType(this NameSyntax type)
         {
             return QualifiedName(
@@ -99,45 +69,9 @@ namespace Amadevus.RecordGenerator
                     IdentifierName(Names.Builder));
         }
 
-        public static TypeSyntax ToListOfBuilderType(this RecordDescriptor.CollectionEntry entry)
+        public static SyntaxToken ToLowerFirstLetter(this SyntaxToken identifier)
         {
-            return entry.CollectionTypeParameter.ToListOfBuilderType();
-        }
-
-        public static TypeSyntax ToListOfBuilderType(this NameSyntax nameSyntax)
-        {
-            return GenericName(Names.ListGeneric)
-                .WithTypeArgumentList(
-                    TypeArgumentList(
-                        SingletonSeparatedList<TypeSyntax>(
-                            nameSyntax.ToNestedBuilderType())))
-                .WithNamespace(Names.ListGenericNamespace);
-        }
-
-        public static TypeSyntax ToIEnumerableType(this TypeSyntax typeArgument)
-        {
-            return GenericName(Names.IEnumerableGeneric)
-                .WithTypeArgumentList(
-                    TypeArgumentList(
-                        SingletonSeparatedList(typeArgument)))
-                .WithNamespace(Names.IEnumerableGenericNamespace);
-        }
-
-        public static TypeSyntax ToImmutableArrayType(this TypeSyntax typeArgument)
-        {
-            return GenericName(Names.ImmutableArray)
-                .WithTypeArgumentList(
-                    TypeArgumentList(
-                        SingletonSeparatedList(typeArgument)))
-                .WithNamespace(Names.ImmutableArrayNamespace);
-        }
-
-        public static TypeSyntax ToNodeListType(this TypeSyntax typeArgument)
-        {
-            return GenericName(Names.NodeList)
-                .WithTypeArgumentList(
-                    TypeArgumentList(
-                        SingletonSeparatedList(typeArgument)));
+            return Identifier(identifier.Text.ToLowerFirstLetter());
         }
 
         public static string ToLowerFirstLetter(this string name)

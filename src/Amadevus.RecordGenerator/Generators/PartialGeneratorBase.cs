@@ -1,10 +1,11 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System;
 using System.Threading;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace Amadevus.RecordGenerator
+namespace Amadevus.RecordGenerator.Generators
 {
     internal abstract class PartialGeneratorBase
     {
@@ -18,11 +19,13 @@ namespace Amadevus.RecordGenerator
 
         protected CancellationToken CancellationToken { get; }
 
-        public virtual TypeDeclarationSyntax GenerateTypeDeclaration()
+        public virtual ClassDeclarationSyntax GenerateTypeDeclaration()
         {
             return
                 ClassDeclaration(
                     GenerateTypeIdentifier())
+                .WithTypeParameterList(
+                    GenerateTypeParameterList())
                 .WithBaseList(
                     GenerateBaseList())
                 .WithModifiers(
@@ -31,7 +34,15 @@ namespace Amadevus.RecordGenerator
                     GenerateMembers());
         }
 
-        protected abstract SyntaxToken GenerateTypeIdentifier();
+        protected virtual TypeParameterListSyntax GenerateTypeParameterList()
+        {
+            return Descriptor.TypeDeclaration.TypeParameterList?.WithoutTrivia();
+        }
+
+        protected virtual SyntaxToken GenerateTypeIdentifier()
+        {
+            return Descriptor.TypeIdentifier.WithoutTrivia();
+        }
 
         protected virtual SyntaxTokenList GenerateModifiers()
         {
