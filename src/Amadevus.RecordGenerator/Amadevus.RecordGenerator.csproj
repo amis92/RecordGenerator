@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <PackageReference Include="CodeGeneration.Roslyn" Version="0.4.11" PrivateAssets="all" />
-    <PackageReference Include="CodeGeneration.Roslyn.BuildTime" Version="0.4.11" />
+    <PackageReference Include="CodeGeneration.Roslyn.BuildTime" Version="0.4.11" PrivateAssets="analyzers;contentFiles" />
     <PackageReference Update="NETStandard.Library" PrivateAssets="all" />
   </ItemGroup>
 
