@@ -30,6 +30,7 @@ namespace Amadevus.RecordGenerator
             {
                 yield return RecordCorePartialGenerator.Generate(descriptor, cancellationToken);
                 yield return BuilderCorePartialGenerator.Generate(descriptor, cancellationToken);
+                yield break;
             }
         }
     }

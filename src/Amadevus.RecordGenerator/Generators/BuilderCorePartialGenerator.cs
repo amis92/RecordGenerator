@@ -29,30 +29,6 @@ namespace Amadevus.RecordGenerator
                 .Add(GenerateBuilder());
         }
 
-        protected override BaseListSyntax GenerateBaseList()
-        {
-            return
-                BaseList(
-                    SingletonSeparatedList(
-                        CreateIBuildableBaseTypeSyntax()));
-            BaseTypeSyntax CreateIBuildableBaseTypeSyntax()
-            {
-                return
-                    SimpleBaseType(
-                        GenericName(
-                            Identifier(Names.IBuildable),
-                            TypeArgumentList(
-                                SeparatedList(
-                                    new TypeSyntax[]
-                                    {
-                                        IdentifierName(Descriptor.TypeIdentifier),
-                                        QualifiedName(
-                                            IdentifierName(Descriptor.TypeIdentifier),
-                                            IdentifierName(Names.Builder))
-                                    }))));
-            }
-        }
-
         private ClassDeclarationSyntax GenerateBuilder()
         {
             return
