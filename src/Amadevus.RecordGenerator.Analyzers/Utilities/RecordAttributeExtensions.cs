@@ -15,8 +15,7 @@ namespace Amadevus.RecordGenerator.Analyzers
         public static bool IsRecordAttributeName(this string text)
         {
             return !string.IsNullOrWhiteSpace(text)
-                && text.ToLower() is var lowerCase
-                && (lowerCase == "Record".ToLower() || lowerCase == "RecordAttribute".ToLower());
+                && (text == "Record" || text == "RecordAttribute");
         }
 
         public static string GetUnqualifiedName(this AttributeSyntax attSyntax)
