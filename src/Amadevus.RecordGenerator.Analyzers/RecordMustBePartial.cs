@@ -17,39 +17,53 @@ namespace Amadevus.RecordGenerator.Analyzers
         {
             // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/Analyzer%20Actions%20Semantics.md for more information
             context.RegisterSyntaxNodeAction(AnalyzeClass, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeAction(AnalyzeOuterType, SyntaxKind.StructDeclaration, SyntaxKind.ClassDeclaration);
         }
 
         private static void AnalyzeClass(SyntaxNodeAnalysisContext context)
         {
-            if (!(context.Node is ClassDeclarationSyntax classDeclaration ))
+            var classDeclaration = (ClassDeclarationSyntax)context.Node;
+            if (classDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword))
             {
                 return;
             }
-            var recordNamedAttributes =
-                classDeclaration.AttributeLists
-                .SelectMany(attListSyntax => attListSyntax.Attributes.Where(att => att.IsRecordAttributeSyntax()))
-                .ToImmutableArray();
             // if no record attributes, stop diagnostic
-            if (recordNamedAttributes.Length == 0)
+            if (!HasAnyRecordAttributes(classDeclaration))
             {
                 return;
             }
-            foreach (var typeSyntax in classDeclaration.AncestorsAndSelf().OfType<TypeDeclarationSyntax>())
+            context.ReportDiagnostic(CreateDiagnostic(classDeclaration));
+        }
+
+        private static void AnalyzeOuterType(SyntaxNodeAnalysisContext context)
+        {
+            var typeDeclaration = (TypeDeclarationSyntax)context.Node;
+            if (typeDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword))
             {
-                if (!typeSyntax.Modifiers.Any(SyntaxKind.PartialKeyword)
-                    && (typeSyntax is ClassDeclarationSyntax || typeSyntax is StructDeclarationSyntax))
-                {
-                    Report(typeSyntax);
-                }
+                return;
             }
-            void Report(TypeDeclarationSyntax typeSyntax)
+            // if no record types, stop diagnostic
+            if (!typeDeclaration.DescendantNodes().OfType<ClassDeclarationSyntax>().Any(HasAnyRecordAttributes))
             {
-                context.ReportDiagnostic(
-                    Diagnostic.Create(
-                        Descriptors.X1000_RecordMustBePartial,
-                        typeSyntax.Identifier.GetLocation(),
-                        typeSyntax.Identifier.ValueText));
+                return;
             }
+            context.ReportDiagnostic(CreateDiagnostic(typeDeclaration));
+        }
+
+        private static Diagnostic CreateDiagnostic(TypeDeclarationSyntax typeSyntax)
+        {
+            return Diagnostic.Create(
+                Descriptors.X1000_RecordMustBePartial,
+                typeSyntax.Identifier.GetLocation(),
+                typeSyntax.Identifier.ValueText);
+        }
+
+        private static bool HasAnyRecordAttributes(TypeDeclarationSyntax typeDeclaration)
+        {
+            return
+                typeDeclaration.AttributeLists
+                .SelectMany(list => list.Attributes.Where(att => att.IsRecordAttributeSyntax()))
+                .Any();
         }
     }
 }

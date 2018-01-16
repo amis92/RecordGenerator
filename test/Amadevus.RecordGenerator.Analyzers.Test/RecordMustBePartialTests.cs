@@ -119,6 +119,41 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                 };
                 yield return new GeneratorTheoryData
                 {
+                    Description = "non-partial parent of partial [Record] class",
+                    OldSource = @"
+                        namespace TestApplication
+                        {
+                            class OuterClass
+                            {
+                                [Record]
+                                partial class RecordClass
+                                {
+                                    public string Name { get; }
+                                }
+                            }
+                        }".CropRawIndent(),
+                    NewSource = @"
+                        namespace TestApplication
+                        {
+                            partial class OuterClass
+                            {
+                                [Record]
+                                partial class RecordClass
+                                {
+                                    public string Name { get; }
+                                }
+                            }
+                        }".CropRawIndent(),
+                    ExpectedDiagnostics = new[]
+                    {
+                        new DiagnosticResult(Descriptors.X1000_RecordMustBePartial)
+                        {
+                            Locations = new DiagnosticResultLocation(filename, 3, 11).ToSingletonArray()
+                        }
+                    }
+                };
+                yield return new GeneratorTheoryData
+                {
                     Description = "partial [Record] interface",
                     OldSource = @"
                         namespace TestApplication

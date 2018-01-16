@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2020
+VisualStudioVersion = 15.0.27130.2024
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{DCB0B0D2-8B70-48B9-ACD3-8B4EC303FDCD}"
 	ProjectSection(SolutionItems) = preProject
@@ -20,7 +20,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amadevus.RecordGenerator", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amadevus.RecordGenerator.TestsBase", "test\Amadevus.RecordGenerator.TestsBase\Amadevus.RecordGenerator.TestsBase.csproj", "{B1C6F024-EE9F-4EC0-8034-5E72805296F5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amadevus.RecordGenerator.Test", "test\Amadevus.RecordGenerator.Test\Amadevus.RecordGenerator.Test.csproj", "{B25288C2-F30F-4231-B5F8-8BEE8DE592C1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amadevus.RecordGenerator.Test", "test\Amadevus.RecordGenerator.Test\Amadevus.RecordGenerator.Test.csproj", "{B25288C2-F30F-4231-B5F8-8BEE8DE592C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

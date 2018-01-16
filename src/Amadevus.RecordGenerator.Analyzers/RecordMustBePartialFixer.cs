@@ -14,6 +14,11 @@ namespace Amadevus.RecordGenerator.Analyzers
         public override ImmutableArray<string> FixableDiagnosticIds { get; }
             = ImmutableArray.Create(Descriptors.X1000_RecordMustBePartial.Id);
 
+        public override FixAllProvider GetFixAllProvider()
+        {
+            return WellKnownFixAllProviders.BatchFixer;
+        }
+
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
