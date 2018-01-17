@@ -12,14 +12,16 @@ namespace Amadevus.RecordGenerator.Analyzers
     static class Descriptors
     {
         const string IdPrefix = "RecordGen";
+        const string HelpUriBase = "https://amis92.github.io/RecordGenerator/analyzers/rules/";
 
         static DiagnosticDescriptor Rule(
             int id, string title, Category category, DiagnosticSeverity defaultSeverity,
             string messageFormat, string description = null)
         {
             var isEnabledByDefault = true;
+            var helpLinkUri = HelpUriBase + id;
             return new DiagnosticDescriptor(
-                IdPrefix + id, title, messageFormat, category.ToString(), defaultSeverity, isEnabledByDefault, description);
+                IdPrefix + id, title, messageFormat, category.ToString(), defaultSeverity, isEnabledByDefault, description, helpLinkUri);
         }
 
         public static DiagnosticDescriptor X1000_RecordMustBePartial { get; } =

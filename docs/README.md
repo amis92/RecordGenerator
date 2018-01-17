@@ -273,7 +273,7 @@ Enclosing type must be declared partial, if it isn't RecordGen1000 error is rais
 The `Amadevus.RecordGenerator.Analyzers` package (pulled in by main package) provides
  diagnostics/codefixes that help you use Records correctly. See [Analyzers].
 
-* [RecordGen1000](/docs/analyzers/rules/RecordGen1000.md) RecordMustBePartial with a codefix.
+* [RecordGen1000](analyzers/rules/RecordGen1000.md) RecordMustBePartial with a codefix.
 
 ## Requirements
 [Requirements]: #requirements
@@ -316,4 +316,4 @@ Visual Studio logo ™ Microsoft Corporation, used without permission.
 
 RecordGenerator logo (on top) © 2017 Amadeusz Sadowski, all rights reserved.
 
-[Analyzers]: /docs/analyzers/index.md
+[Analyzers]: analyzers/
