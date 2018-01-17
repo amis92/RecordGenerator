@@ -22,8 +22,6 @@ C# Record Generator makes creating record classes a breeze! Just adorn your data
 * [Installation]
 * [Usage]
 * [Examples]
-  * [Person]
-  * [Enclosed type]
 * [Diagnostics]
 * [Requirements]
 * [Contributions]
@@ -85,17 +83,14 @@ members which make using your record actually possible. These are currently (v0.
 ## Examples
 [Examples]: #examples
 
-### Person
-[Person]: examples/Person.md
-
-### Enclosed type
-[Enclosed type]: #examples/History.md
+* [Person](examples/Person.md)
+* [Enclosed type](examples/History.md)
 
 ## Diagnostics
 [Diagnostics]: #diagnostics
 
 The `Amadevus.RecordGenerator.Analyzers` package (pulled in by main package) provides
- diagnostics/codefixes that help you use Records correctly. See [Analyzers].
+diagnostics/codefixes that help you use Records correctly. See [Analyzers].
 
 * [RecordGen1000](analyzers/rules/RecordGen1000.md) RecordMustBePartial with a codefix.
 
@@ -121,7 +116,15 @@ Additionally, because some of pulled dependencies are from CoreFx preview feed, 
 ```
 The important part is the 'corefxlab' feed added to configuration.
 
-If you want to use packages separately, these are actual
+If you want to use packages separately, there is more work to do.
+
+* First of all, you can define your own `RecordAttribute`, it needs to have the same name
+  and `[CodeGeneration]` attribute applied, same as [the one defined in the Attributes package](https://github.com/amis92/RecordGenerator/blob/master/src/Amadevus.RecordGenerator.Attributes/RecordAttribute.cs).
+* The project where code will be generated needs to reference `Amadevus.RecordGeneration.Generators`
+  and `CodeGeneration.Roslyn.BuildTime` packages, as well as `dotnet-codegen` DotNetCliTool of the same version
+  that main package (Amadevus.RecordGenerator) of given version does.
+* Analyzers package is optional.
+* If you declare your own RecordAttribute (see above) Attributes package is optional too.
 
 ## Credits
 [Credits]: #credits
