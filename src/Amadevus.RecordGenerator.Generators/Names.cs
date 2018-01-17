@@ -1,4 +1,4 @@
-﻿namespace Amadevus.RecordGenerator
+﻿namespace Amadevus.RecordGenerator.Generators
 {
     internal static class Names
     {

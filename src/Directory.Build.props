@@ -11,8 +11,8 @@
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <RepositoryType>git</RepositoryType>
     <Company>Amadevus</Company>
-    <Version></Version>
-    <PackageVersion></PackageVersion>
+    <Version>0.3.0</Version>
+    <PackageVersion>0.3.0-manual</PackageVersion>
     <AssemblyVersion></AssemblyVersion>
     <FileVersion></FileVersion>
     <InformationalVersion></InformationalVersion>

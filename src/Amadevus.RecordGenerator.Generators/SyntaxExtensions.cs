@@ -5,7 +5,7 @@ using System.Linq;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 using System.Collections.Generic;
 
-namespace Amadevus.RecordGenerator
+namespace Amadevus.RecordGenerator.Generators
 {
     internal static class SyntaxExtensions
     {

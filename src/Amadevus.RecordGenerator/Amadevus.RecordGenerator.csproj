@@ -2,8 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.5</TargetFramework>
-    <IsTool>true</IsTool>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <NuspecFile>Amadevus.RecordGenerator.nuspec</NuspecFile>
+    <NuspecProperties>version=$(PackageVersion);authors=$(Authors);licenseUrl=$(PackageLicenseUrl);projectUrl=$(PackageProjectUrl);iconUrl=$(PackageIconUrl);copyright=$(Copyright);versionOfCodegenRoslyn=0.4.11;requireLicenseAcceptance=false</NuspecProperties>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -12,23 +13,5 @@
     <PackageTags>record; immutable; attribute; generator; amadevus; codegen; code generator; code generation</PackageTags>
     <NoPackageAnalysis>true</NoPackageAnalysis>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Update="build\Amadevus.RecordGenerator.props" Pack="true" PackagePath="" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="CodeGeneration.Roslyn" Version="0.4.11" PrivateAssets="all" />
-    <PackageReference Include="CodeGeneration.Roslyn.BuildTime" Version="0.4.11" PrivateAssets="analyzers;contentFiles" />
-    <PackageReference Update="NETStandard.Library" PrivateAssets="all" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Amadevus.RecordGenerator.Attributes\Amadevus.RecordGenerator.Attributes.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <DotNetCliToolReference Include="dotnet-codegen" Version="0.4.11" />
-  </ItemGroup>
 
 </Project>

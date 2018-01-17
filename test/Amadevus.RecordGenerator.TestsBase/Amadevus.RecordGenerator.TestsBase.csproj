@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Amadevus.RecordGenerator\Amadevus.RecordGenerator.csproj" />
+    <ProjectReference Include="..\..\src\Amadevus.RecordGenerator.Generators\Amadevus.RecordGenerator.Generators.csproj" />
   </ItemGroup>
 
 </Project>

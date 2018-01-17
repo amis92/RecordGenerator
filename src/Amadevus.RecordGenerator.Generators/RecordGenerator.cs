@@ -1,15 +1,13 @@
-﻿using Amadevus.RecordGenerator.Generators;
-using CodeGeneration.Roslyn;
+﻿using CodeGeneration.Roslyn;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Amadevus.RecordGenerator
+namespace Amadevus.RecordGenerator.Generators
 {
     public class RecordGenerator : ICodeGenerator
     {
