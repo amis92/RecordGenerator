@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Authors>Amadeusz Sadowski</Authors>
     <PackageLicenseUrl>https://github.com/amis92/RecordGenerator/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/amis92/RecordGenerator</PackageProjectUrl>
+    <PackageProjectUrl>https://amis92.github.io/RecordGenerator</PackageProjectUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/amis92/RecordGenerator/master/docs/logo.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/amis92/RecordGenerator</RepositoryUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>

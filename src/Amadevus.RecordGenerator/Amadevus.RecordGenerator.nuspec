@@ -15,13 +15,13 @@
     <tags>record immutable attribute generator generation amadevus recordgenerator code codegen codegenerator codegeneration</tags>
     <developmentDependency>true</developmentDependency>
     <dependencies>
-      <group targetFramework=".NETStandard1.5">
-        <dependency id="Amadevus.RecordGenerator.Attributes" version="$version$" />
-        <dependency id="Amadevus.RecordGenerator.Generators" version="$version$" />
-        <dependency id="Amadevus.RecordGenerator.Analyzers" version="$version$" />
-        <dependency id="CodeGeneration.Roslyn.BuildTime" version="$versionOfCodegenRoslyn$" />
-      </group>
+      <dependency id="Amadevus.RecordGenerator.Attributes" version="$version$" />
+      <dependency id="Amadevus.RecordGenerator.Generators" version="$version$" />
+      <dependency id="Amadevus.RecordGenerator.Analyzers" version="$version$" />
+      <dependency id="CodeGeneration.Roslyn.BuildTime" version="$versionOfCodegenRoslyn$" />
     </dependencies>
   </metadata>
-  <files/>
+  <files>
+    <file src="build\**" target="build" />
+  </files>
 </package>

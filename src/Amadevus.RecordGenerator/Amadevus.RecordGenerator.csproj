@@ -7,11 +7,4 @@
     <NuspecProperties>version=$(PackageVersion);authors=$(Authors);licenseUrl=$(PackageLicenseUrl);projectUrl=$(PackageProjectUrl);iconUrl=$(PackageIconUrl);copyright=$(Copyright);versionOfCodegenRoslyn=0.4.11;requireLicenseAcceptance=false</NuspecProperties>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <Description>Code generator for [Record]-marked types. Automatically creates backing code (constructor, With- mutators, deconstructor to tuple, Builder nested type etc.) for immutable record classes. See project site for installation instructions and more details.</Description>
-    <PackageReleaseNotes>Moved generation to build-time using AArnott's CodeGeneration.Roslyn package, requires more installation steps but creates backing code automatically during build which is definitely an improvement.</PackageReleaseNotes>
-    <PackageTags>record; immutable; attribute; generator; amadevus; codegen; code generator; code generation</PackageTags>
-    <NoPackageAnalysis>true</NoPackageAnalysis>
-  </PropertyGroup>
-
 </Project>

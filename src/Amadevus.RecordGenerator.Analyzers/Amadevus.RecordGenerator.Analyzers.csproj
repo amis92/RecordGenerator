@@ -4,11 +4,12 @@
     <TargetFramework>netstandard1.3</TargetFramework>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <DevelopmentDependency>True</DevelopmentDependency>
   </PropertyGroup>
   
   <PropertyGroup>
     <Description>Analyzers and CodeFixes for [Record]-marked types. See project site for more details.</Description>
-    <PackageReleaseNotes>Only left attribute missing diagnostic, removed all others because they were no longer used. See RecordGenerator v0.3.0 release notes.</PackageReleaseNotes>
+    <PackageReleaseNotes>Initial release. Contains RecordMustBePartial rule+codefix. See RecordGenerator v0.3.0 release notes.</PackageReleaseNotes>
     <PackageTags>record; immutable; attribute; generator; amadevus; codegen; analyzer; codefix</PackageTags>
     <NoPackageAnalysis>true</NoPackageAnalysis>
   </PropertyGroup>
@@ -26,10 +27,6 @@
   <ItemGroup>
     <None Update="tools\*.ps1" CopyToOutputDirectory="Always" Pack="true" PackagePath="" />
     <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Amadevus.RecordGenerator.Attributes\Amadevus.RecordGenerator.Attributes.csproj" />
   </ItemGroup>
 
 </Project>
