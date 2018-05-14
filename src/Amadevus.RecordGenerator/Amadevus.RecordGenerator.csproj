@@ -4,7 +4,7 @@
     <TargetFramework>netstandard1.6</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <NuspecFile>Amadevus.RecordGenerator.nuspec</NuspecFile>
-    <NuspecProperties>version=$(PackageVersion);authors=$(Authors);licenseUrl=$(PackageLicenseUrl);projectUrl=$(PackageProjectUrl);iconUrl=$(PackageIconUrl);copyright=$(Copyright);versionOfCodegenRoslyn=0.4.11;requireLicenseAcceptance=false</NuspecProperties>
+    <NuspecProperties>version=$(PackageVersion);authors=$(Authors);licenseUrl=$(PackageLicenseUrl);projectUrl=$(PackageProjectUrl);iconUrl=$(PackageIconUrl);copyright=$(Copyright);versionOfCodegenRoslyn=0.4.42;requireLicenseAcceptance=false</NuspecProperties>
   </PropertyGroup>
 
 </Project>
