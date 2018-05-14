@@ -29,6 +29,11 @@ namespace Amadevus.RecordGenerator.Generators
             return syntax.AddModifiers(modifier.Select(Token).ToArray());
         }
 
+        public static PropertyDeclarationSyntax WithSemicolonToken(this PropertyDeclarationSyntax syntax)
+        {
+            return syntax.WithSemicolonToken(Token(SyntaxKind.SemicolonToken));
+        }
+
         public static AccessorDeclarationSyntax WithSemicolonToken(this AccessorDeclarationSyntax syntax)
         {
             return syntax.WithSemicolonToken(Token(SyntaxKind.SemicolonToken));

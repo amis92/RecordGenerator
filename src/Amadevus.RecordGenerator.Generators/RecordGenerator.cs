@@ -19,7 +19,7 @@ namespace Amadevus.RecordGenerator.Generators
         public Task<SyntaxList<MemberDeclarationSyntax>> GenerateAsync(TransformationContext context, IProgress<Diagnostic> progress, CancellationToken cancellationToken)
         {
             var generatedMembers = SyntaxFactory.List<MemberDeclarationSyntax>();
-            if (context.ProcessingMember is ClassDeclarationSyntax classDeclaration)
+            if (context.ProcessingNode is ClassDeclarationSyntax classDeclaration)
             {
                 var descriptor = classDeclaration.ToRecordDescriptor();
                 generatedMembers = generatedMembers.AddRange(GenerateRecordPartials(descriptor));
