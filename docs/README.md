@@ -34,8 +34,6 @@ As it is a NuGet, it's really simple:
 * Package Manager `Install-Package Amadevus.RecordGenerator`
 * Or from `Manage NuGet packages` search for `Amadevus.RecordGenerator`
 
-Also see [Requirements] for `NuGet.config` setup.
-
 ## Usage
 [Usage]: #usage
 
@@ -64,7 +62,7 @@ the rescue!
 The generator creates new partial for your type with additional members. The generator first
 acquires a list of record entries - properties that are read-only and auto-implemented
 (which basically means they're `public SomeType SomeName { get; }`). Then it generates additional
-members which make using your record actually possible. These are currently (v0.3.0):
+members which make using your record actually possible. These are currently (v0.3.1):
 
 1. Constructor that has a parameter for every record entry, and assigns those parameters
    to corresponding auto-properties.
@@ -99,22 +97,10 @@ diagnostics/codefixes that help you use Records correctly. See [Analyzers].
 
 ![Visual Studio logo](https://upload.wikimedia.org/wikipedia/commons/6/61/Visual_Studio_2017_logo_and_wordmark.svg)
 
-It is a `netstandard1.5` package, and the generation also works with CLI builds, both using `dotnet` and directly `msbuild`.
+It is a `netstandard1.6` package, and the generation also works with CLI builds, both using `dotnet` and directly `msbuild`.
 
 As this contains a Roslyn Analyzer with CodeFix, it requires **Visual Studio 2015+** (~~it should also work
 with **VS Code**~~ nope, until [OmniSharp/omnisharp-vscode#43](https://github.com/OmniSharp/omnisharp-vscode/issues/43)).
-
-Additionally, because some of pulled dependencies are from CoreFx preview feed, you need to have `https://dotnet.myget.org/F/dotnet-corefxlab/api/v3/index.json` NuGet feed added. In the basic case where you don't already have any nuget.config in a directory where your `*.sln` file is, create one with following content (or copy from this repo):
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<configuration>
-  <packageSources>
-    <add key="api.nuget.org" value="https://api.nuget.org/v3/index.json" />
-    <add key="corefxlab" value="https://dotnet.myget.org/F/dotnet-corefxlab/api/v3/index.json" />
-  </packageSources>
-</configuration>
-```
-The important part is the 'corefxlab' feed added to configuration.
 
 If you want to use packages separately, there is more work to do.
 
