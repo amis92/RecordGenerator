@@ -62,7 +62,7 @@ the rescue!
 The generator creates new partial for your type with additional members. The generator first
 acquires a list of record entries - properties that are read-only and auto-implemented
 (which basically means they're `public SomeType SomeName { get; }`). Then it generates additional
-members which make using your record actually possible. These are currently (v0.3.1):
+members which make using your record actually possible. These are currently:
 
 1. Constructor that has a parameter for every record entry, and assigns those parameters
    to corresponding auto-properties.
