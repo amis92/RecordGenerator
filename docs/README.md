@@ -34,6 +34,18 @@ As it is a NuGet, it's really simple:
 * Package Manager `Install-Package Amadevus.RecordGenerator`
 * Or from `Manage NuGet packages` search for `Amadevus.RecordGenerator`
 
+You will also need to add a `DotNetCliToolReference` to your `.csproj` file
+(it's best to use the same version that `Amadevus.RecordGenerator` depends on of `CodeGeneration.Roslyn.BuildTime`):
+
+```xml
+    <Project>
+      ...
+      <ItemGroup>
+        <DotNetCliToolReference Include="dotnet-codegen" Version="0.4.49" />
+      </ItemGroup>
+    </Project>
+```
+
 ## Usage
 [Usage]: #usage
 
@@ -125,7 +137,7 @@ Analyzers in `Amadevus.RecordGenerator.Analyzers` were inspired by [xUnit.net's 
 All contributions are welcome, as well as critique. If you have any issues, problems or suggestions -
 please open an issue.
 
-When commiting a change, two main versioning mechanisms are branch name and version in `appveyor.yml`. Branch name will be used as a suffix when publishing packages on MyGet feed. Version will be used for both MyGet and releasing to NuGet. You might also update version in `/src/Directory.Build.props` - that's used for non-CI builds.
+When commiting a change, two main versioning mechanisms are branch name and version in `appveyor.yml`. Branch name will be used as a suffix when publishing packages on MyGet feed. Version will be used for both MyGet and releasing to NuGet. You might also update version in `Directory.Build.props` - that's used for non-CI builds.
 
 Visual Studio logo ™ Microsoft Corporation, used without permission.
 

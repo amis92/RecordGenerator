@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CodeGeneration.Roslyn" Version="0.4.42" PrivateAssets="all" />
+    <PackageReference Include="CodeGeneration.Roslyn" Version="$(CodeGenerationRoslynPackagesVersion)" PrivateAssets="all" />
     <PackageReference Update="NETStandard.Library" PrivateAssets="all" />
   </ItemGroup>
   

@@ -22,7 +22,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amadevus.RecordGenerator.Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amadevus.RecordGenerator.Test", "test\Amadevus.RecordGenerator.Test\Amadevus.RecordGenerator.Test.csproj", "{B25288C2-F30F-4231-B5F8-8BEE8DE592C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amadevus.RecordGenerator.Generators", "src\Amadevus.RecordGenerator.Generators\Amadevus.RecordGenerator.Generators.csproj", "{81377F14-456A-400F-B61F-D7181DEF01E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amadevus.RecordGenerator.Generators", "src\Amadevus.RecordGenerator.Generators\Amadevus.RecordGenerator.Generators.csproj", "{81377F14-456A-400F-B61F-D7181DEF01E9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{67E76D5B-36E4-4C61-AD66-8BBCD4B7532C}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

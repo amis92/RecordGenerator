@@ -1,6 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<Project>
-  <ItemGroup>
-    <DotNetCliToolReference Include="dotnet-codegen" Version="0.4.42" />
-  </ItemGroup>
-</Project>

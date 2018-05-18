@@ -7,7 +7,9 @@ Documentation available at [amis92.github.io/RecordGenerator](https://amis92.git
 ## Description
 [Description]: #description
 
-C# Record Generator makes creating record classes a breeze! Just adorn your data class with `[Record]` attribute and keep your code clean and simple. The backing code is generated on build-time, including IntelliSense support (just save the file, Visual Studio will make a build in background).
+C# Record Generator makes creating record classes a breeze! Just adorn your data class with `[Record]` attribute
+and keep your code clean and simple. The backing code is generated on build-time, including IntelliSense support
+(just save the file, Visual Studio will make a build in background).
 
 [![NuGet package](https://img.shields.io/nuget/v/Amadevus.RecordGenerator.svg)](https://www.nuget.org/packages/Amadevus.RecordGenerator/)
 [![Build status](https://img.shields.io/appveyor/ci/amis92/recordgenerator.svg)](https://ci.appveyor.com/project/amis92/recordgenerator/branch/master)
@@ -32,7 +34,9 @@ Analyzers in `Amadevus.RecordGenerator.Analyzers` were inspired by [xUnit.net's 
 All contributions are welcome, as well as critique. If you have any issues, problems or suggestions -
 please open an issue.
 
-When commiting a change, two main versioning mechanisms are branch name and version in `appveyor.yml`. Branch name will be used as a suffix when publishing packages on MyGet feed. Version will be used for both MyGet and releasing to NuGet. You might also update version in `/src/Directory.Build.props` - that's used for non-CI builds.
+When commiting a change, two main versioning mechanisms are branch name and version in `appveyor.yml`.
+Branch name will be used as a suffix when publishing packages on MyGet feed. Version will be used for
+both MyGet and releasing to NuGet. You might also update version in `Directory.Build.props` - that's used for non-CI builds.
 
 Visual Studio logo ™ Microsoft Corporation, used without permission.
 
