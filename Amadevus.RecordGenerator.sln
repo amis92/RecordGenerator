@@ -4,9 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.27130.2024
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{DCB0B0D2-8B70-48B9-ACD3-8B4EC303FDCD}"
-	ProjectSection(SolutionItems) = preProject
-		src\Directory.Build.props = src\Directory.Build.props
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{018D08EF-BC96-444D-9C2F-ECAB15EDCAED}"
 EndProject
@@ -26,7 +23,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amadevus.RecordGenerator.Ge
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{67E76D5B-36E4-4C61-AD66-8BBCD4B7532C}"
 	ProjectSection(SolutionItems) = preProject
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		appveyor.yml = appveyor.yml
 		Directory.Build.props = Directory.Build.props
+		LICENSE = LICENSE
+		NuGet.Config = NuGet.Config
+		README.md = README.md
 	EndProjectSection
 EndProject
 Global
