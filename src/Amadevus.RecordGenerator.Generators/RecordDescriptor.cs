@@ -44,19 +44,5 @@ namespace Amadevus.RecordGenerator.Generators
             {
             }
         }
-
-        internal class CollectionEntry : Entry
-        {
-            public CollectionEntry(SyntaxToken Identifier, GenericNameSyntax Type, PropertyDeclarationSyntax PropertySyntax)
-                : base(Identifier, Type, PropertySyntax)
-            {
-                CollectionGenericName = Type;
-                CollectionTypeParameter = (IdentifierNameSyntax)CollectionGenericName.TypeArgumentList.Arguments[0];
-            }
-
-            public GenericNameSyntax CollectionGenericName { get; }
-
-            public IdentifierNameSyntax CollectionTypeParameter { get; }
-        }
     }
 }
