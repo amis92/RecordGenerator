@@ -11,12 +11,7 @@ namespace Amadevus.RecordGenerator.Generators
     {
         public static RecordDescriptor.Entry ToRecordEntry(this PropertyDeclarationSyntax property)
         {
-            return property.IsImmutableArrayType()
-                ? (RecordDescriptor.Entry)  new RecordDescriptor.CollectionEntry(
-                    property.Identifier.WithoutTrivia(),
-                    (GenericNameSyntax)property.Type.WithoutTrivia(),
-                    property.WithoutTrivia())
-                : new RecordDescriptor.SimpleEntry(
+            return new RecordDescriptor.SimpleEntry(
                 property.Identifier.WithoutTrivia(),
                 property.Type.WithoutTrivia(),
                 property.WithoutTrivia());
