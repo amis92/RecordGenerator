@@ -111,7 +111,9 @@ diagnostics/codefixes that help you use Records correctly. See [Analyzers].
 
 It is a `netstandard1.6` package, and the generation also works with CLI builds, both using `dotnet` and directly `msbuild`.
 
-As this contains a Roslyn Analyzer with CodeFix, it requires **Visual Studio 2015+** (~~it should also work
+It depends on `DotNetCliTool` (`dotnet-codegen`), which are only supported in SDK-format `csproj` projects. This project file style/format is only supported in VS2017+/MSBuild 15.0+.
+
+Roslyn Analyzer with CodeFix it requires **Visual Studio 2017+** (~~it should also work
 with **VS Code**~~ nope, until [OmniSharp/omnisharp-vscode#43](https://github.com/OmniSharp/omnisharp-vscode/issues/43)).
 
 If you want to use packages separately, there is more work to do.
