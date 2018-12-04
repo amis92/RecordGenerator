@@ -1,13 +1,12 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="MSBuild.Sdk.Extras">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.0</TargetFramework>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <TargetFrameworks>netstandard1.0;netstandard2.0;net40;portable-net40+win8+wpa81;portable-net45+win8+wpa81+wp8</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup>
     <Description>Defines [Record] (RecordAttribute) in global:: namespace; used to generate "immutable records" support code (constructors, With- mutators, tuple deconstructor etc.). See project site for more details.</Description>
-    <PackageReleaseNotes>Initial release.</PackageReleaseNotes>
+    <PackageReleaseNotes>Add much more target frameworks: netstandard2.0, net40, portable profiles: 92, 259. Updated reference of CodeGeneration.Roslyn to v0.4.88.</PackageReleaseNotes>
     <PackageTags>record; immutable; attribute; generator; amadevus; codegen</PackageTags>
   </PropertyGroup>
 

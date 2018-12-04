@@ -3,13 +3,12 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.6</TargetFramework>
     <IsTool>true</IsTool>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <DevelopmentDependency>True</DevelopmentDependency>
   </PropertyGroup>
 
   <PropertyGroup>
     <Description>Contains code generators for [Record]-marked types. Creates backing code (constructor, With- mutators, deconstructor to tuple, Builder nested type etc.) for immutable record classes. See project site for installation instructions and more details.</Description>
-    <PackageReleaseNotes>Initial release. Moved generation to build-time using AArnott's CodeGeneration.Roslyn package, requires more installation steps but creates backing code automatically during build which is definitely an improvement.</PackageReleaseNotes>
+    <PackageReleaseNotes>Updated reference of CodeGeneration.Roslyn to v0.4.88.</PackageReleaseNotes>
     <PackageTags>record immutable attribute generator generators generation amadevus recordgenerator code codegen codegenerator codegeneration</PackageTags>
     <NoPackageAnalysis>true</NoPackageAnalysis>
   </PropertyGroup>
