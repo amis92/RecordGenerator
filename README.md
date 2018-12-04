@@ -19,7 +19,12 @@ and keep your code clean and simple. The backing code is generated on build-time
 
 ---
 
+## Development
+[Development]: #development
 
+To build the solution, .NET Core SDK v2.1.500 is required, as specified in `global.json`.
+
+It must be built on Windows with MSBuild toolset (min. v15.0), since it targets Windows frameworks in Attributes package.
 
 ## Credits
 [Credits]: #credits

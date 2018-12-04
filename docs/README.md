@@ -24,6 +24,7 @@ C# Record Generator makes creating record classes a breeze! Just adorn your data
 * [Examples]
 * [Diagnostics]
 * [Requirements]
+* [Development]
 * [Contributions]
 
 ## Installation
@@ -33,18 +34,6 @@ As it is a NuGet, it's really simple:
 
 * Package Manager `Install-Package Amadevus.RecordGenerator`
 * Or from `Manage NuGet packages` search for `Amadevus.RecordGenerator`
-
-You will also need to add a `DotNetCliToolReference` to your `.csproj` file
-(it's best to use the same version that `Amadevus.RecordGenerator` depends on of `CodeGeneration.Roslyn.BuildTime`):
-
-```xml
-    <Project>
-      ...
-      <ItemGroup>
-        <DotNetCliToolReference Include="dotnet-codegen" Version="0.4.49" />
-      </ItemGroup>
-    </Project>
-```
 
 ## Usage
 [Usage]: #usage
@@ -109,22 +98,28 @@ diagnostics/codefixes that help you use Records correctly. See [Analyzers].
 
 ![Visual Studio logo](https://upload.wikimedia.org/wikipedia/commons/6/61/Visual_Studio_2017_logo_and_wordmark.svg)
 
-It is a `netstandard1.6` package, and the generation also works with CLI builds, both using `dotnet` and directly `msbuild`.
+It is a `netstandard1.6` package, and the generation also works with CLI builds, both using `dotnet` and `msbuild`.
 
-It depends on `DotNetCliTool` (`dotnet-codegen`), which are only supported in SDK-format `csproj` projects. This project file style/format is only supported in VS2017+/MSBuild 15.0+.
+It depends on `DotNetCliTool` (`dotnet-codegen`). These kind of tools are only supported in SDK-format `csproj` projects, which in turn is only supported in VS2017+/MSBuild 15.0+ (outside of `dotnet` CLI tools).
 
-Roslyn Analyzer with CodeFix it requires **Visual Studio 2017+** (~~it should also work
+Roslyn Analyzer with CodeFix, to be supported in IDE, requires **Visual Studio 2017+** (~~it should also work
 with **VS Code**~~ nope, until [OmniSharp/omnisharp-vscode#43](https://github.com/OmniSharp/omnisharp-vscode/issues/43)).
 
 If you want to use packages separately, there is more work to do.
 
 * First of all, you can define your own `RecordAttribute`, it needs to have the same name
-  and `[CodeGeneration]` attribute applied, same as [the one defined in the Attributes package](https://github.com/amis92/RecordGenerator/blob/master/src/Amadevus.RecordGenerator.Attributes/RecordAttribute.cs).
+  and `[CodeGeneration]` attribute applied, same as [the one defined in the Attributes package][RecordAttribute].
 * The project where code will be generated needs to reference `Amadevus.RecordGeneration.Generators`
-  and `CodeGeneration.Roslyn.BuildTime` packages, as well as `dotnet-codegen` DotNetCliTool of the same version
-  that main package (Amadevus.RecordGenerator) of given version does.
+  and `CodeGeneration.Roslyn.BuildTime` packages.
 * Analyzers package is optional.
-* If you declare your own RecordAttribute (see above) Attributes package is optional too.
+* If you declare your own RecordAttribute (see above), Attributes package is optional too.
+
+## Development
+[Development]: #development
+
+To build the solution, .NET Core SDK v2.1.500 is required, as specified in `global.json`.
+
+It must be built on Windows with MSBuild toolset (min. v15.0), since it targets Windows frameworks in Attributes package.
 
 ## Credits
 [Credits]: #credits
@@ -146,3 +141,4 @@ Visual Studio logo ™ Microsoft Corporation, used without permission.
 RecordGenerator logo (on top) © 2017 Amadeusz Sadowski, all rights reserved.
 
 [Analyzers]: analyzers/
+[RecordAttribute]: https://github.com/amis92/RecordGenerator/blob/339929215b7db49e3cb8824abfcb7c51243239b4/src/Amadevus.RecordGenerator.Attributes/RecordAttribute.cs

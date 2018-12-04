@@ -8,12 +8,12 @@
     <RepositoryUrl>https://github.com/amis92/RecordGenerator</RepositoryUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Copyright>Copyright © 2018 Amadeusz Sadowski</Copyright>
-    <NoPackageAnalysis>true</NoPackageAnalysis>
     <RepositoryType>git</RepositoryType>
     <Company>Amadevus</Company>
-    <CodeGenerationRoslynPackagesVersion>0.4.49</CodeGenerationRoslynPackagesVersion>
-    <Version>0.3.4</Version>
-    <PackageVersion>0.3.4-manual</PackageVersion>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <CodeGenerationRoslynPackagesVersion>0.4.88</CodeGenerationRoslynPackagesVersion>
+    <Version>0.4.0</Version>
+    <PackageVersion>0.4.0-manual</PackageVersion>
     <AssemblyVersion></AssemblyVersion>
     <FileVersion></FileVersion>
     <InformationalVersion></InformationalVersion>

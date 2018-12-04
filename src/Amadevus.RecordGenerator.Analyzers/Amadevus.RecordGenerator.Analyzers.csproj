@@ -1,15 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
     <IncludeBuildOutput>false</IncludeBuildOutput>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <DevelopmentDependency>True</DevelopmentDependency>
   </PropertyGroup>
   
   <PropertyGroup>
     <Description>Analyzers and CodeFixes for [Record]-marked types. See project site for more details.</Description>
-    <PackageReleaseNotes>Initial release. Contains RecordMustBePartial rule+codefix. See RecordGenerator v0.3.0 release notes.</PackageReleaseNotes>
+    <PackageReleaseNotes>No changes.</PackageReleaseNotes>
     <PackageTags>record; immutable; attribute; generator; amadevus; codegen; analyzer; codefix</PackageTags>
     <NoPackageAnalysis>true</NoPackageAnalysis>
   </PropertyGroup>
