@@ -25,8 +25,13 @@ namespace Amadevus.RecordGenerator.Generators
                 generatedMembers = generatedMembers.AddRange(GenerateRecordPartials(descriptor));
             }
             return Task.FromResult(generatedMembers);
+
             IEnumerable<MemberDeclarationSyntax> GenerateRecordPartials(RecordDescriptor descriptor)
             {
+                if (descriptor.Entries.IsEmpty)
+                {
+                    yield break;
+                }
                 yield return RecordPartialGenerator.Generate(descriptor, cancellationToken);
                 yield return BuilderPartialGenerator.Generate(descriptor, cancellationToken);
                 yield return DeconstructPartialGenerator.Generate(descriptor, cancellationToken);
