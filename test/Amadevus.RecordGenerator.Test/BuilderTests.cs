@@ -20,4 +20,25 @@ namespace Amadevus.RecordGenerator.Test
             Assert.Equal(container.Items, builder.Items);
         }
     }
+
+    public partial class X
+    {
+        public X(string thing)
+        {
+            Validate(ref thing);
+            Thing = thing;
+        }
+
+        public string Thing { get; }
+
+        static partial void Validate(ref string thing);
+        static partial void Validate(ref string thing)
+        {
+            if (thing is null) throw new System.Exception();
+        }
+    }
+
+    partial class X
+    {
+    }
 }

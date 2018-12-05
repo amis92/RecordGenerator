@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.9.0" />
     <PackageReference Include="CodeGeneration.Roslyn" Version="$(CodeGenerationRoslynPackagesVersion)" PrivateAssets="all" />
     <PackageReference Update="NETStandard.Library" PrivateAssets="all" />
   </ItemGroup>

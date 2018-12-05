@@ -33,6 +33,8 @@ namespace Amadevus.RecordGenerator.Generators
 
             public SyntaxToken Identifier { get; }
 
+            public IdentifierNameSyntax IdentifierName { get; }
+
             public TypeSyntax Type { get; }
 
             public PropertyDeclarationSyntax PropertySyntax { get; }
