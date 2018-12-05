@@ -15,13 +15,13 @@ namespace Amadevus.RecordGenerator.Test
         [Fact]
         public void Ctor_InvokesValidate_Throwing()
         {
-            Assert.Throws<ArgumentNullException>(nameof(ValidatingRecord.Name),() => new ValidatingRecord(null));
+            Assert.Throws<ArgumentNullException>(nameof(ValidatingRecord.Name),() => new ValidatingRecord(null, "a"));
         }
 
         [Fact]
         public void Ctor_InvokesValidate_Passing()
         {
-            Assert.NotNull(new ValidatingRecord(ItemName));
+            Assert.NotNull(new ValidatingRecord(ItemName, "test"));
         }
     }
 }
