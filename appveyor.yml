@@ -14,13 +14,13 @@ configuration:
 init:
   - appveyor version
   - git config --global core.autocrlf true
-  - dotnet --info
-# checking if release branch
+  # checking if release branch
   - ps: |
       # set release_branch
       $env:release_branch = $env:APPVEYOR_REPO_BRANCH.StartsWith("release")
       echo "release_branch='$env:release_branch'"
- # setting versions
+
+  # setting versions
   - ps: |
       # extract x.y.z from version, join them and generate suffix in form {branch}-build00000 where branch has all non-character replaced with '-' and up to 10 chars
       $major = $env:APPVEYOR_BUILD_VERSION -replace '^(\d*)\.(\d*)\.(\d*).*$', '$1'
@@ -49,7 +49,24 @@ dotnet_csproj:
   file_version: '$(ASM_FILE_VERSION)'
   informational_version: '$(ASM_INFORMATIONAL_VERSION)'
 before_build:
-  - cat Directory.Build.props
+  - ps: Get-Content Directory.Build.props
+  # check and install required .NET Core SDK version
+  - ps: |
+      $requiredDotnetVersion = (Get-Content "global.json" | ConvertFrom-Json).sdk.version
+      Write-Host "Required .NET Core SDK: v$requiredDotnetVersion"
+      $compatibleDotnetVersion = $(dotnet --version 2> $null)
+      if (!$compatibleDotnetVersion) {
+          Write-Host "Installing required .NET Core SDK, no compatible was found"
+          $scriptFile = Join-Path "$env:temp" 'dotnet-install.ps1'
+          (New-Object System.Net.WebClient).DownloadString('https://dot.net/v1/dotnet-install.ps1') | Out-File $scriptFile
+          & "$scriptFile" -Version $requiredDotnetVersion
+          Remove-Item $scriptFile
+          dotnet --version
+          Write-Host "Installed" -ForegroundColor Green
+      }
+      else {
+          Write-Host "Using .NET Core SDK v$compatibleDotnetVersion"
+      }
 build_script:
   - msbuild /v:m /t:Restore,Build /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 notifications:
