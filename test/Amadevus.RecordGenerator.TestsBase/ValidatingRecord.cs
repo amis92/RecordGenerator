@@ -9,6 +9,11 @@ namespace Amadevus.RecordGenerator.TestsBase
     {
         public string Name { get; }
 
+        /// <summary>
+        /// This tests whether lowercasing it doesn't cause compilation error (as a keyword) and is '@'-escaped correctly.
+        /// </summary>
+        public string Switch { get; }
+
         partial void Validate()
         {
             if (Name is null) throw new ArgumentNullException(nameof(Name));

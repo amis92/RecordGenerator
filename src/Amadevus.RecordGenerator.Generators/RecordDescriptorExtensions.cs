@@ -63,11 +63,6 @@ namespace Amadevus.RecordGenerator.Generators
                     IdentifierName(Names.Builder));
         }
 
-        public static SyntaxToken ToLowerFirstLetter(this SyntaxToken identifier)
-        {
-            return Identifier(identifier.Text.ToLowerFirstLetter());
-        }
-
         public static string ToLowerFirstLetter(this string name)
         {
             return string.IsNullOrEmpty(name)
