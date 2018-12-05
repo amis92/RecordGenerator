@@ -43,7 +43,7 @@ namespace Amadevus.RecordGenerator.Generators
                 .WithBodyStatements(
                     Descriptor.Entries
                     .Select(CreateCtorAssignment)
-                    .Concat(new[] { CreateValidateInvocation() }));
+                    .Prepend(CreateValidateInvocation()));
             StatementSyntax CreateCtorAssignment(RecordDescriptor.Entry entry)
             {
                 return
@@ -61,7 +61,16 @@ namespace Amadevus.RecordGenerator.Generators
                 return
                     ExpressionStatement(
                         InvocationExpression(
-                            IdentifierName(Names.Validate)));
+                            IdentifierName(Names.Validate))
+                        .AddArgumentListArguments(
+                            Descriptor.Entries.Select(CreateValidateArgument).ToArray()));
+            }
+            ArgumentSyntax CreateValidateArgument(RecordDescriptor.Entry entry)
+            {
+                return
+                    Argument(
+                        IdentifierName(entry.Identifier))
+                    .WithRefKindKeyword(Token(SyntaxKind.RefKeyword));
             }
         }
 
@@ -125,8 +134,17 @@ namespace Amadevus.RecordGenerator.Generators
                 MethodDeclaration(
                     PredefinedType(Token(SyntaxKind.VoidKeyword)),
                     Names.Validate)
-                .AddModifiers(SyntaxKind.PartialKeyword)
+                .AddParameterListParameters(
+                    Descriptor.Entries.Select(CreateValidateParameter).ToArray())
+                .AddModifiers(SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
                 .WithSemicolonToken();
+            ParameterSyntax CreateValidateParameter(RecordDescriptor.Entry entry)
+            {
+                return 
+                    Parameter(entry.Identifier)
+                    .WithType(entry.Type)
+                    .AddModifiers(Token(SyntaxKind.RefKeyword));
+            }
         }
 
         private static ParameterSyntax CreateParameter(RecordDescriptor.Entry property)
