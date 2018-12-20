@@ -8,7 +8,7 @@
 C# Record Generator makes creating record classes a breeze! Just adorn your data class with `[Record]` attribute and keep your code clean and simple. The backing code is generated on build-time, including IntelliSense support (just save the file, Visual Studio will make a build in background).
 
 [![NuGet package](https://img.shields.io/nuget/v/Amadevus.RecordGenerator.svg)](https://www.nuget.org/packages/Amadevus.RecordGenerator/)
-[![Build status](https://img.shields.io/appveyor/ci/amis92/recordgenerator.svg)](https://ci.appveyor.com/project/amis92/recordgenerator/branch/master)
+[![Build status](https://img.shields.io/appveyor/ci/amis92/recordgenerator/master.svg?label=build%20(master))](https://ci.appveyor.com/project/amis92/recordgenerator/branch/master)
 [![MyGet package](https://img.shields.io/myget/amadevus/v/Amadevus.RecordGenerator.svg?label=myget-ci)](https://www.myget.org/feed/amadevus/package/nuget/Amadevus.RecordGenerator)
 [![Join the chat at gitter!](https://img.shields.io/gitter/room/amis92/recordgenerator.svg)](https://gitter.im/amis92/RecordGenerator?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![License](https://img.shields.io/github/license/amis92/recordgenerator.svg)](https://github.com/amis92/RecordGenerator/blob/master/LICENSE)
@@ -34,6 +34,20 @@ As it is a NuGet, it's really simple:
 
 * Package Manager `Install-Package Amadevus.RecordGenerator`
 * Or from `Manage NuGet packages` search for `Amadevus.RecordGenerator`
+
+You also need to add a `DotNetCliToolReference` of `dotnet-codegen` into `PropertyGroup` in your project file
+ (or `Directory.Build.props` if used). The version of the tool should correspond with the version of
+ `CodeGeneration.Roslyn.BuildTime` this project depends on.
+
+ ```xml
+ <Project>
+    ...
+    <PropertyGroup>
+        <DotNetCliToolReference Include="dotnet-codegen" Version="0.4.88" />
+    </PropertyGroup>
+    ...
+</Project>
+ ```
 
 ## Usage
 [Usage]: #usage
