@@ -1,9 +1,9 @@
 ﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Collections.Generic;
 using System.Linq;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
-using System.Collections.Generic;
 
 namespace Amadevus.RecordGenerator.Generators
 {
@@ -64,7 +64,7 @@ namespace Amadevus.RecordGenerator.Generators
             return syntax.WithParameterList(ParameterList(SeparatedList(parameters)));
         }
 
-        public static MethodDeclarationSyntax WithParameters(this MethodDeclarationSyntax syntax,  params ParameterSyntax[] parameters)
+        public static MethodDeclarationSyntax WithParameters(this MethodDeclarationSyntax syntax, params ParameterSyntax[] parameters)
         {
             return syntax.WithParameterList(ParameterList(SeparatedList(parameters)));
         }
@@ -106,14 +106,16 @@ namespace Amadevus.RecordGenerator.Generators
 
         public static bool HasOnlyGetterWithNoBody(this PropertyDeclarationSyntax pdSyntax)
         {
-            return pdSyntax.AccessorList is AccessorListSyntax accList 
+            return pdSyntax.AccessorList is AccessorListSyntax accList
                 ? accList.Accessors.Count == 1 && accList.Accessors.Single().IsGetterWithNoBody()
                 : false;
         }
 
         public static bool IsGetterWithNoBody(this AccessorDeclarationSyntax accessor)
         {
-            return accessor.Kind() == SyntaxKind.GetAccessorDeclaration && accessor.Body == null;
+            return accessor.Kind() == SyntaxKind.GetAccessorDeclaration
+                && accessor.Body is null
+                && accessor.ExpressionBody is null;
         }
 
         public static bool IsPublic(this PropertyDeclarationSyntax pdSyntax)

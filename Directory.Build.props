@@ -13,8 +13,8 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <LangVersion>7.3</LangVersion>
     <CodeGenerationRoslynPackagesVersion>0.4.88</CodeGenerationRoslynPackagesVersion>
-    <Version>0.4.0</Version>
-    <PackageVersion>0.4.0-manual</PackageVersion>
+    <Version>0.4.1</Version>
+    <PackageVersion>0.4.1-manual</PackageVersion>
     <AssemblyVersion></AssemblyVersion>
     <FileVersion></FileVersion>
     <InformationalVersion></InformationalVersion>
