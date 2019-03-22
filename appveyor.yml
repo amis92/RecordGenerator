@@ -5,7 +5,7 @@
 # Build in Release, publish to Nuget
 
 image: Visual Studio 2017
-version: 0.4.0-{branch}-build{build}
+version: 0.4.1-{branch}-build{build}
 skip_tags: true
 clone_depth: 1
 configuration:
