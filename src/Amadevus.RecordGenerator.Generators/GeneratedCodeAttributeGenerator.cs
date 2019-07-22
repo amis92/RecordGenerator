@@ -12,32 +12,96 @@ namespace Amadevus.RecordGenerator.Generators
 {
     public static class GeneratedCodeAttributeGeneratorExtensions
     {
-        public static TypeDeclarationSyntax WithGeneratedCodeAttribute(
-            this TypeDeclarationSyntax typeSyntax)
+        private static readonly GeneratedCodeAttributeApplier attributeApplier
+            = new GeneratedCodeAttributeApplier(new GeneratedCodeAttributeGenerator());
+
+        public static ClassDeclarationSyntax WithGeneratedCodeAttributeOnMembers(
+            this ClassDeclarationSyntax typeSyntax)
         {
-            return new GeneratedCodeAttributeGenerator(typeSyntax)
-                .GetWithGeneratedCodeAttribute();
+            return attributeApplier.GetWithGeneratedCodeAttributeOnMembers(typeSyntax);
+        }
+    }
+
+    internal sealed class GeneratedCodeAttributeApplier
+    {
+        private readonly GeneratedCodeAttributeGenerator attributeGenerator;
+
+        private readonly IDictionary<Type, Func<MemberReplacementContext, SyntaxNode>> Updates
+            = new Dictionary<Type, Func<MemberReplacementContext, SyntaxNode>>
+        {
+            {
+                typeof(MethodDeclarationSyntax),
+                (context) => ((MethodDeclarationSyntax)context.Member).WithAttributeLists(context.AttributeGenerator.GenerateAttributeListSyntaxList())
+            },
+            {
+                typeof(PropertyDeclarationSyntax),
+                (context) => ((PropertyDeclarationSyntax)context.Member).WithAttributeLists(context.AttributeGenerator.GenerateAttributeListSyntaxList())
+            },
+            {
+                typeof(ConstructorDeclarationSyntax),
+                (context) => ((ConstructorDeclarationSyntax)context.Member).WithAttributeLists(context.AttributeGenerator.GenerateAttributeListSyntaxList())
+            },
+            {
+                typeof(ClassDeclarationSyntax),
+                (context) => context.AttributeApplier.GetWithGeneratedCodeAttributeOnMembers((ClassDeclarationSyntax)context.Member)
+            }
+        };
+
+
+        public GeneratedCodeAttributeApplier(
+            GeneratedCodeAttributeGenerator attributeGenerator)
+        {
+            this.attributeGenerator = attributeGenerator;
+        }
+
+        
+        public ClassDeclarationSyntax GetWithGeneratedCodeAttributeOnMembers(
+            ClassDeclarationSyntax typeDeclaration)
+        {
+            Func<SyntaxNode, bool> toBeReplaced = (node) =>
+            {
+                return Updates.Keys.Any(k => k.IsAssignableFrom(node.GetType()));
+            };
+
+            Func<SyntaxNode, SyntaxNode, SyntaxNode> calculateReplacement = (rootNode, toBeReplacedNode) =>
+            {
+                var context = new MemberReplacementContext(toBeReplacedNode, this, attributeGenerator);
+                var updater = Updates[toBeReplacedNode.GetType()];
+                return updater(context);
+            };
+
+            return typeDeclaration.ReplaceNodes(
+                typeDeclaration.ChildNodes().Where(toBeReplaced),
+                calculateReplacement);
+        }
+
+        private class MemberReplacementContext
+        {
+            public SyntaxNode Member { get; }
+            public GeneratedCodeAttributeApplier AttributeApplier { get; }
+            public GeneratedCodeAttributeGenerator AttributeGenerator { get; }
+
+            public MemberReplacementContext(
+                SyntaxNode member,
+                GeneratedCodeAttributeApplier attributeApplier,
+                GeneratedCodeAttributeGenerator attributeGenerator)
+            {
+                Member = member;
+                AttributeApplier = attributeApplier;
+                AttributeGenerator = attributeGenerator;
+            }
         }
     }
 
     internal sealed class GeneratedCodeAttributeGenerator
     {
-        private readonly TypeDeclarationSyntax typeSyntax;
-
-        public GeneratedCodeAttributeGenerator(
-            TypeDeclarationSyntax typeSyntax)
+        public SyntaxList<AttributeListSyntax> GenerateAttributeListSyntaxList()
         {
-            this.typeSyntax = typeSyntax;
-        }
-
-        public TypeDeclarationSyntax GetWithGeneratedCodeAttribute()
-        {
-            return typeSyntax.WithAttributeLists(
-                SingletonList(
-                    AttributeList(
-                        SingletonSeparatedList(
-                            Attribute(GenerateQualifiedName())
-                            .WithArgumentList(GenerateAttributeArgumentList())))));
+            return SingletonList(
+                AttributeList(
+                    SingletonSeparatedList(
+                        Attribute(GenerateQualifiedName())
+                            .WithArgumentList(GenerateAttributeArgumentList()))));
         } 
 
         private AttributeArgumentListSyntax GenerateAttributeArgumentList()
