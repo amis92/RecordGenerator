@@ -60,7 +60,12 @@ namespace Amadevus.RecordGenerator.Generators
     {
         private const string equalsMethodName = "Equals";
         private const string varIdentifierName = "var";
-        private const string systemNamespace = "System";
+
+        private const string systemNamespaceName = "System";
+        private const string collectionsNamespaceName = "Collections";
+        private const string genericNamespaceName = "Generic";
+        private const string equalityComparerName = "EqualityComparer";
+        private const string equalityComparerDefaultProperty = "Default";
 
         public BaseListSyntax GenerateBaseListSyntax(NameSyntax identifier)
         {
@@ -70,7 +75,7 @@ namespace Amadevus.RecordGenerator.Generators
                 SingletonSeparatedList<BaseTypeSyntax>(
                     SimpleBaseType(
                         QualifiedName(
-                            IdentifierName(systemNamespace),
+                            IdentifierName(systemNamespaceName),
                             GenericName(
                                 Identifier(equotableInterfaceName))
                             .WithTypeArgumentList(
@@ -141,15 +146,42 @@ namespace Amadevus.RecordGenerator.Generators
                         Identifier(otherVariableName))
                     .WithType(identifierName)));
 
-            var equalsExpressions = propertiesToCompare.Select(p =>
+            var equalsExpressions = propertiesToCompare.Select(property =>
             {
-                return BinaryExpression(
-                    SyntaxKind.EqualsExpression,
-                    IdentifierName(p.Identifier.Text),
+               return InvocationExpression(
                     MemberAccessExpression(
                         SyntaxKind.SimpleMemberAccessExpression,
-                        IdentifierName(otherVariableName),
-                        IdentifierName(p.Identifier.Text)));
+                        MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        IdentifierName(systemNamespaceName),
+                                        IdentifierName(collectionsNamespaceName)),
+                                    IdentifierName(genericNamespaceName)),
+                                GenericName(
+                                    Identifier(equalityComparerName))
+                                .WithTypeArgumentList(
+                                    TypeArgumentList(
+                                        SingletonSeparatedList(
+                                            property.Type)))),
+                            IdentifierName(equalityComparerDefaultProperty)),
+                        IdentifierName(equalsMethodName)))
+                .WithArgumentList(
+                    ArgumentList(
+                        SeparatedList<ArgumentSyntax>(
+                            new SyntaxNodeOrToken[]{
+                                Argument(
+                                    IdentifierName(property.Identifier.Text)),
+                                Token(SyntaxKind.CommaToken),
+                                Argument(
+                                    MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        IdentifierName(otherVariableName),
+                                        IdentifierName(property.Identifier.Text)))})));
             }).ToList();  
 
             var chainedAndExpression = BinaryExpression(
@@ -183,10 +215,6 @@ namespace Amadevus.RecordGenerator.Generators
             const string hashCodeVariableName = "hashCode";
             const int hashCodeInitialValue = 2085527896;
             const int hashCodeMultiplicationValue = 1521134295;
-            const string equalityComparerName = "EqualityComparer";
-            const string equalityComparerDefaultProperty = "Default";
-            const string collectionsNamespaceName = "Collections";
-            const string genericNamespaceName = "Generic";
 
             var method = MethodDeclaration(
                         PredefinedType(
@@ -238,7 +266,7 @@ namespace Amadevus.RecordGenerator.Generators
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
-                                                    IdentifierName(systemNamespace),
+                                                    IdentifierName(systemNamespaceName),
                                                     IdentifierName(collectionsNamespaceName)),
                                                 IdentifierName(genericNamespaceName)),
                                             GenericName(
