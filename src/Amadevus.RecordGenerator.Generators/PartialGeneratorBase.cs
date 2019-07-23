@@ -34,7 +34,7 @@ namespace Amadevus.RecordGenerator.Generators
                     GenerateModifiers())
                 .WithMembers(
                     GenerateMembers())
-                .WithGeneratedCodeAttributeOnMembers();
+                .AddGeneratedCodeAttributeOnMembers();
         }
 
         protected virtual TypeParameterListSyntax GenerateTypeParameterList()

@@ -15,10 +15,10 @@ namespace Amadevus.RecordGenerator.Generators
         private static readonly GeneratedCodeAttributeApplier attributeApplier
             = new GeneratedCodeAttributeApplier(new GeneratedCodeAttributeGenerator());
 
-        public static ClassDeclarationSyntax WithGeneratedCodeAttributeOnMembers(
+        public static ClassDeclarationSyntax AddGeneratedCodeAttributeOnMembers(
             this ClassDeclarationSyntax typeSyntax)
         {
-            return attributeApplier.GetWithGeneratedCodeAttributeOnMembers(typeSyntax);
+            return attributeApplier.AddGeneratedCodeAttributeOnMembers(typeSyntax);
         }
     }
 
@@ -31,19 +31,19 @@ namespace Amadevus.RecordGenerator.Generators
         {
             {
                 typeof(MethodDeclarationSyntax),
-                (context) => ((MethodDeclarationSyntax)context.Member).WithAttributeLists(context.AttributeGenerator.GenerateAttributeListSyntaxList())
+                (context) => ((MethodDeclarationSyntax)context.Member).AddAttributeLists(context.AttributeGenerator.GenerateAttributeListSyntax())
             },
             {
                 typeof(PropertyDeclarationSyntax),
-                (context) => ((PropertyDeclarationSyntax)context.Member).WithAttributeLists(context.AttributeGenerator.GenerateAttributeListSyntaxList())
+                (context) => ((PropertyDeclarationSyntax)context.Member).AddAttributeLists(context.AttributeGenerator.GenerateAttributeListSyntax())
             },
             {
                 typeof(ConstructorDeclarationSyntax),
-                (context) => ((ConstructorDeclarationSyntax)context.Member).WithAttributeLists(context.AttributeGenerator.GenerateAttributeListSyntaxList())
+                (context) => ((ConstructorDeclarationSyntax)context.Member).AddAttributeLists(context.AttributeGenerator.GenerateAttributeListSyntax())
             },
             {
                 typeof(ClassDeclarationSyntax),
-                (context) => context.AttributeApplier.GetWithGeneratedCodeAttributeOnMembers((ClassDeclarationSyntax)context.Member)
+                (context) => context.AttributeApplier.AddGeneratedCodeAttributeOnMembers((ClassDeclarationSyntax)context.Member)
             }
         };
 
@@ -55,24 +55,21 @@ namespace Amadevus.RecordGenerator.Generators
         }
 
         
-        public ClassDeclarationSyntax GetWithGeneratedCodeAttributeOnMembers(
+        public ClassDeclarationSyntax AddGeneratedCodeAttributeOnMembers(
             ClassDeclarationSyntax typeDeclaration)
         {
-            Func<SyntaxNode, bool> toBeReplaced = (node) =>
-            {
-                return Updates.Keys.Any(k => k.IsAssignableFrom(node.GetType()));
-            };
+            var nodesToBeReplaced = typeDeclaration
+                .ChildNodes()
+                .Where(node => Updates.Keys.Any(key => key.IsAssignableFrom(node.GetType())));
 
-            Func<SyntaxNode, SyntaxNode, SyntaxNode> calculateReplacement = (rootNode, toBeReplacedNode) =>
+            SyntaxNode calculateReplacement(SyntaxNode rootNode, SyntaxNode toBeReplacedNode)
             {
                 var context = new MemberReplacementContext(toBeReplacedNode, this, attributeGenerator);
                 var updater = Updates[toBeReplacedNode.GetType()];
                 return updater(context);
-            };
+            }
 
-            return typeDeclaration.ReplaceNodes(
-                typeDeclaration.ChildNodes().Where(toBeReplaced),
-                calculateReplacement);
+            return typeDeclaration.ReplaceNodes(nodesToBeReplaced, calculateReplacement);
         }
 
         private class MemberReplacementContext
@@ -95,13 +92,12 @@ namespace Amadevus.RecordGenerator.Generators
 
     internal sealed class GeneratedCodeAttributeGenerator
     {
-        public SyntaxList<AttributeListSyntax> GenerateAttributeListSyntaxList()
+        public AttributeListSyntax GenerateAttributeListSyntax()
         {
-            return SingletonList(
-                AttributeList(
+            return AttributeList(
                     SingletonSeparatedList(
                         Attribute(GenerateQualifiedName())
-                            .WithArgumentList(GenerateAttributeArgumentList()))));
+                        .WithArgumentList(GenerateAttributeArgumentList())));
         } 
 
         private AttributeArgumentListSyntax GenerateAttributeArgumentList()
