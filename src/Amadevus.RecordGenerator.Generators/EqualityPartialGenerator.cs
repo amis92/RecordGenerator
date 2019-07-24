@@ -14,14 +14,7 @@ namespace Amadevus.RecordGenerator.Generators
     internal sealed class EqualityPartialGenerator : PartialGeneratorBase
     {
         private readonly RecordDescriptor descriptor;
-        private readonly EqualityPartialCodeGenerator generator;
-
-        private NameSyntax ClassIdentifier
-        {
-            get => SyntaxExtensions.GetTypeSyntax(descriptor.TypeDeclaration);
-        }
-
-        private IEnumerable<RecordDescriptor.Entry> Entries => descriptor.Entries;
+        private readonly EqualityPartialCodeGenerator generator = new EqualityPartialCodeGenerator();
 
         public EqualityPartialGenerator(
             RecordDescriptor descriptor,
@@ -29,13 +22,22 @@ namespace Amadevus.RecordGenerator.Generators
             : base(descriptor, cancellationToken)
         {
             this.descriptor = descriptor;
-            this.generator = new EqualityPartialCodeGenerator(); 
         }
 
         public static TypeDeclarationSyntax Generate(RecordDescriptor descriptor, CancellationToken cancellationToken)
         {
             var generator = new EqualityPartialGenerator(descriptor, cancellationToken);
             return generator.GenerateTypeDeclaration();
+        }
+
+        private NameSyntax ClassIdentifier
+        {
+            get => SyntaxExtensions.GetTypeSyntax(descriptor.TypeDeclaration);
+        }
+
+        private IEnumerable<RecordDescriptor.Entry> Entries
+        {
+            get => descriptor.Entries;
         }
 
         protected override BaseListSyntax GenerateBaseList()
@@ -59,70 +61,48 @@ namespace Amadevus.RecordGenerator.Generators
         private const string equalsMethodName = "Equals";
         private const string varIdentifierName = "var";
 
-        private const string systemNamespaceName = "System";
-        private const string collectionsNamespaceName = "Collections";
-        private const string genericNamespaceName = "Generic";
         private const string equalityComparerName = "EqualityComparer";
         private const string equalityComparerDefaultProperty = "Default";
 
         public BaseListSyntax GenerateBaseListSyntax(NameSyntax identifier)
         {
-            const string equotableInterfaceName = "IEquatable";
+            const string equotableInterfaceName = "System.IEquatable";
 
             return BaseList(
                 SingletonSeparatedList<BaseTypeSyntax>(
                     SimpleBaseType(
-                        QualifiedName(
-                            IdentifierName(systemNamespaceName),
-                            GenericName(
-                                Identifier(equotableInterfaceName))
-                            .WithTypeArgumentList(
-                                TypeArgumentList(
-                                    SingletonSeparatedList<TypeSyntax>(
-                                        identifier))))))); 
+                        QualifiedNameGenerator.GenerateGenericQualifiedName(
+                            equotableInterfaceName, new[] { identifier }))));
         }
        
         public MemberDeclarationSyntax GenerateGenericEquals(NameSyntax identifier)
         {
             const string objVariableName = "obj";
 
-            var method = MethodDeclaration(
-                PredefinedType(
-                    Token(SyntaxKind.BoolKeyword)),
-                Identifier(equalsMethodName));
+            var methodBuilder = new MethodBuilder();
+            methodBuilder.Identifier = equalsMethodName;
+            methodBuilder.ReturnType = PredefinedType(Token(SyntaxKind.BoolKeyword));
 
-            var modifiers = TokenList(
-                new[] {
-                    Token(SyntaxKind.PublicKeyword),
-                    Token(SyntaxKind.OverrideKeyword)});
+            methodBuilder.Modifiers.Add(SyntaxKind.PublicKeyword);
+            methodBuilder.Modifiers.Add(SyntaxKind.OverrideKeyword);
 
-            var parameterList = ParameterList(
-                SingletonSeparatedList(
-                    Parameter(
-                        Identifier(objVariableName))
-                    .WithType(
-                        PredefinedType(
-                            Token(SyntaxKind.ObjectKeyword)))));
+            methodBuilder.Parameters.Add(
+                objVariableName, PredefinedType(Token(SyntaxKind.ObjectKeyword)));
 
-            var equotableEqualsInvocation = InvocationExpression(
-                    IdentifierName(equalsMethodName))
-                .WithArgumentList(
-                    ArgumentList(
-                        SingletonSeparatedList(
-                            Argument(
-                                BinaryExpression(
-                                    SyntaxKind.AsExpression,
-                                    IdentifierName(objVariableName),
-                                    identifier)))));
-
+            var asExpression = BinaryExpression(
+                SyntaxKind.AsExpression,
+                IdentifierName(objVariableName),
+                identifier);
+            var equotableEqualsInvocation = MemberAccessGenerator.GenerateInvocation(
+                ThisExpression(),
+                equalsMethodName,
+                new[] { asExpression });
             var body = Block(
                 SingletonList<StatementSyntax>(
                     ReturnStatement(equotableEqualsInvocation)));
+            methodBuilder.Body = body;
 
-            return method
-                .WithModifiers(modifiers)
-                .WithParameterList(parameterList)
-                .WithBody(body);
+            return methodBuilder.Create();
         }
 
         public MemberDeclarationSyntax GenerateObjectEquals(
@@ -131,79 +111,54 @@ namespace Amadevus.RecordGenerator.Generators
         {
             const string otherVariableName = "other";
 
-            var method = MethodDeclaration(
-                PredefinedType(
-                    Token(SyntaxKind.BoolKeyword)),
-                Identifier(equalsMethodName));
-
-            var modifiers = TokenList(Token(SyntaxKind.PublicKeyword));
-
-            var parameterList = ParameterList(
-                SingletonSeparatedList(
-                    Parameter(
-                        Identifier(otherVariableName))
-                    .WithType(identifierName)));
+            var methodBuilder = new MethodBuilder();
+            methodBuilder.Identifier = equalsMethodName;
+            methodBuilder.ReturnType = PredefinedType(Token(SyntaxKind.BoolKeyword));
+            methodBuilder.Modifiers.Add(SyntaxKind.PublicKeyword);
+            methodBuilder.Parameters.Add(otherVariableName, identifierName);
 
             var equalsExpressions = propertiesToCompare.Select(property =>
             {
-               return InvocationExpression(
-                    MemberAccessExpression(
-                        SyntaxKind.SimpleMemberAccessExpression,
-                        MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        IdentifierName(systemNamespaceName),
-                                        IdentifierName(collectionsNamespaceName)),
-                                    IdentifierName(genericNamespaceName)),
-                                GenericName(
-                                    Identifier(equalityComparerName))
-                                .WithTypeArgumentList(
-                                    TypeArgumentList(
-                                        SingletonSeparatedList(
-                                            property.Type)))),
-                            IdentifierName(equalityComparerDefaultProperty)),
-                        IdentifierName(equalsMethodName)))
-                .WithArgumentList(
-                    ArgumentList(
-                        SeparatedList<ArgumentSyntax>(
-                            new SyntaxNodeOrToken[]{
-                                Argument(
-                                    IdentifierName(property.Identifier.Text)),
-                                Token(SyntaxKind.CommaToken),
-                                Argument(
-                                    MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        IdentifierName(otherVariableName),
-                                        IdentifierName(property.Identifier.Text)))})));
-            }).ToList();  
+                var equalityComparerAccess = QualifiedNameGenerator.GenerateGenericQualifiedName(
+                    "System.Collections.Generic.EqualityComparer", new[] { property.Type });
+                var defaultEqualityComparerAccess = MemberAccessGenerator.GenerateMemberAccess(
+                    equalityComparerAccess, "Default");
 
-            var chainedAndExpression = BinaryExpression(
+                return MemberAccessGenerator.GenerateInvocation(
+                    defaultEqualityComparerAccess,
+                    equalsMethodName,
+                    new ExpressionSyntax[]
+                    {
+                        IdentifierName(property.Identifier.Text),
+                        MemberAccessGenerator.GenerateMemberAccess(
+                            IdentifierName(otherVariableName),
+                            property.Identifier.Text),
+                    }); 
+            }).Cast<ExpressionSyntax>().ToList();
+
+            var notNullCheck = BinaryExpression(
                 SyntaxKind.NotEqualsExpression,
                 IdentifierName("other"),
-                LiteralExpression(
-                    SyntaxKind.NullLiteralExpression));
+                LiteralExpression(SyntaxKind.NullLiteralExpression));
 
+            equalsExpressions.Insert(0, notNullCheck);
+
+            var checks = notNullCheck;  
             foreach (var equalsExpression in equalsExpressions)
             {
-                chainedAndExpression = BinaryExpression(
+                checks = BinaryExpression(
                     SyntaxKind.LogicalAndExpression,
-                    chainedAndExpression,
-                    equalsExpression);
+                    checks,
+                    equalsExpression); 
             }
 
             var body = Block(
                 SingletonList<StatementSyntax>(
-                    ReturnStatement(chainedAndExpression)));
+                    ReturnStatement(checks)));
 
-            return method
-                .WithModifiers(modifiers)
-                .WithParameterList(parameterList)
-                .WithBody(body);
+            methodBuilder.Body = body;
+
+            return methodBuilder.Create();
         }
 
         public MemberDeclarationSyntax GenerateGetHashCode(
@@ -214,31 +169,30 @@ namespace Amadevus.RecordGenerator.Generators
             const int hashCodeInitialValue = 2085527896;
             const int hashCodeMultiplicationValue = 1521134295;
 
-            var method = MethodDeclaration(
-                        PredefinedType(
-                            Token(SyntaxKind.IntKeyword)),
-                        Identifier(getHashCodeMethodName));
+            var methodBuilder = new MethodBuilder();
 
-            var modifiers = TokenList(
-                new []{
-                    Token(SyntaxKind.PublicKeyword),
-                    Token(SyntaxKind.OverrideKeyword)});
+            methodBuilder.Identifier = getHashCodeMethodName;
+            methodBuilder.ReturnType = PredefinedType(Token(SyntaxKind.IntKeyword));
 
-            var hashCodeVariableDeclaration = LocalDeclarationStatement(
-                VariableDeclaration(
-                    IdentifierName(varIdentifierName))
-                .WithVariables(
-                    SingletonSeparatedList(
-                        VariableDeclarator(
-                            Identifier(hashCodeVariableName))
-                        .WithInitializer(
-                            EqualsValueClause(
-                                LiteralExpression(
-                                    SyntaxKind.NumericLiteralExpression,
-                                    Literal(hashCodeInitialValue)))))));
+            methodBuilder.Modifiers.Add(SyntaxKind.PublicKeyword);
+            methodBuilder.Modifiers.Add(SyntaxKind.OverrideKeyword);
+
+            var hashCodeVariableDeclaration =
+                localVariableDeclarationGenerator.GenerateLocalVariableDeclaration(
+                    hashCodeVariableName,
+                    LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(hashCodeInitialValue)));
 
             var hashCodeAssignments = propertiesToCompare.Select(property =>
             {
+                var equalityComparer = QualifiedNameGenerator.GenerateGenericQualifiedName(
+                    "System.Collections.Generic.EqualityComparer", new[] { property.Type });
+                var defaultEqualityComparer = MemberAccessGenerator.GenerateMemberAccess(
+                    equalityComparer, "Default");
+                var getHashCodeInvocation = MemberAccessGenerator.GenerateInvocation(
+                    defaultEqualityComparer,
+                    getHashCodeMethodName,
+                    new[] { IdentifierName(property.Identifier.Text) });
+
                 return ExpressionStatement(
                     AssignmentExpression(
                         SyntaxKind.SimpleAssignmentExpression,
@@ -253,31 +207,7 @@ namespace Amadevus.RecordGenerator.Generators
                                     LiteralExpression(
                                         SyntaxKind.NumericLiteralExpression,
                                         Literal(hashCodeMultiplicationValue)))),
-                            InvocationExpression(
-                                MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    IdentifierName(systemNamespaceName),
-                                                    IdentifierName(collectionsNamespaceName)),
-                                                IdentifierName(genericNamespaceName)),
-                                            GenericName(
-                                                Identifier(equalityComparerName))
-                                            .WithTypeArgumentList(
-                                                TypeArgumentList(
-                                                    SingletonSeparatedList(property.Type)))),
-                                        IdentifierName(equalityComparerDefaultProperty)),
-                                    IdentifierName(getHashCodeMethodName))).WithArgumentList(
-                                ArgumentList(
-                                    SingletonSeparatedList(
-                                        Argument(
-                                            IdentifierName(property.Identifier.Text))))))));
+                            getHashCodeInvocation)));
             }).Cast<StatementSyntax>();
 
             var returnStatement = ReturnStatement(
@@ -293,9 +223,10 @@ namespace Amadevus.RecordGenerator.Generators
                         SyntaxKind.UncheckedStatement,
                         Block(innerBody))));
 
-            return method
-                .WithModifiers(modifiers)
-                .WithBody(body);
+            methodBuilder.Body = body;
+
+            return methodBuilder.Create();
         }
     }
+
 }

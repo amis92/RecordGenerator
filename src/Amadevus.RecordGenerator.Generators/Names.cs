@@ -17,5 +17,7 @@
 
         public const string ToolName = "Amadevus.RecordGenerator";
         public const string GeneratedCodeAttribute = "System.CodeDom.Compiler.GeneratedCodeAttribute";
+
+        public const string SystemCollectionsGenericNamespace = "System.Collections.Generic";
     }
 }

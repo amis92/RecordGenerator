@@ -119,21 +119,9 @@ namespace Amadevus.RecordGenerator.Generators
                                 Literal(toolVersion)))}));
         }
 
-        private QualifiedNameSyntax GenerateQualifiedName()
+        private NameSyntax GenerateQualifiedName()
         {
-            var namespaceAndIdentifier = Names.GeneratedCodeAttribute.Split('.')
-                .Select(n => IdentifierName(n)).ToList();
-
-            var attributeName = QualifiedName(
-                namespaceAndIdentifier.First(),
-                namespaceAndIdentifier.Skip(1).First());
-
-            foreach (var identifier in namespaceAndIdentifier.Skip(2))
-            {
-                attributeName = QualifiedName(attributeName, identifier);
-            }
-
-            return attributeName; 
+            return QualifiedNameGenerator.GenerateQualifiedName(Names.GeneratedCodeAttribute);
         }
 
         private string GetToolVersion() => GetType().GetTypeInfo().Assembly.GetName().Version.ToString();
