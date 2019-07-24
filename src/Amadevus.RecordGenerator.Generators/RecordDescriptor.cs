@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Immutable;
 
@@ -24,6 +25,8 @@ namespace Amadevus.RecordGenerator.Generators
 
         internal abstract class Entry
         {
+            private (bool, SyntaxToken) identifierInCamelCase;
+
             public Entry(SyntaxToken Identifier, TypeSyntax Type, PropertyDeclarationSyntax PropertySyntax)
             {
                 this.Identifier = Identifier;
@@ -32,6 +35,14 @@ namespace Amadevus.RecordGenerator.Generators
             }
 
             public SyntaxToken Identifier { get; }
+
+            public SyntaxToken IdentifierInCamelCase =>
+                Lazy.EnsureInitialized(ref identifierInCamelCase, this, self =>
+                {
+                    var id = (string)self.Identifier.Value;
+                    var id2 = char.ToLowerInvariant(id[0]) + id.Substring(1);
+                    return SyntaxFactory.Identifier(CSharpKeyword.Is(id2) ? "@" + id2 : id2);
+                });
 
             public TypeSyntax Type { get; }
 

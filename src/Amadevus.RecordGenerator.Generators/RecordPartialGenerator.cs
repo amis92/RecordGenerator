@@ -54,7 +54,7 @@ namespace Amadevus.RecordGenerator.Generators
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 ThisExpression(),
                                 IdentifierName(entry.Identifier)),
-                            IdentifierName(entry.Identifier)));
+                            IdentifierName(entry.IdentifierInCamelCase)));
             }
             StatementSyntax CreateValidateInvocation()
             {
@@ -69,7 +69,7 @@ namespace Amadevus.RecordGenerator.Generators
             {
                 return
                     Argument(
-                        IdentifierName(entry.Identifier))
+                        IdentifierName(entry.IdentifierInCamelCase))
                     .WithRefKindKeyword(Token(SyntaxKind.RefKeyword));
             }
         }
@@ -79,7 +79,7 @@ namespace Amadevus.RecordGenerator.Generators
             var arguments = Descriptor.Entries.Select(x =>
             {
                 return Argument(
-                    IdentifierName(x.Identifier));
+                    IdentifierName(x.IdentifierInCamelCase));
             });
             return MethodDeclaration(Descriptor.Type, Names.Update)
                 .AddModifiers(SyntaxKind.PublicKeyword)
@@ -140,8 +140,8 @@ namespace Amadevus.RecordGenerator.Generators
                 .WithSemicolonToken();
             ParameterSyntax CreateValidateParameter(RecordDescriptor.Entry entry)
             {
-                return 
-                    Parameter(entry.Identifier)
+                return
+                    Parameter(entry.IdentifierInCamelCase)
                     .WithType(entry.Type)
                     .AddModifiers(Token(SyntaxKind.RefKeyword));
             }
@@ -150,7 +150,7 @@ namespace Amadevus.RecordGenerator.Generators
         private static ParameterSyntax CreateParameter(RecordDescriptor.Entry property)
         {
             return Parameter(
-                    property.Identifier)
+                    property.IdentifierInCamelCase)
                 .WithType(property.Type);
         }
 
