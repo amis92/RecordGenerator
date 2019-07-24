@@ -29,9 +29,9 @@ namespace Amadevus.RecordGenerator.Test
             container.WithItems(items);
             var shape = new
             {
-                Id = ContainerId,
-                Name = ContainerName,
-                Items = items.ToString(),
+                container.Id,
+                container.Name,
+                Items = items,
             };
             Assert.Equal(shape.ToString(), container.ToString());
         }
