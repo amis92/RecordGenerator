@@ -25,24 +25,19 @@ namespace Amadevus.RecordGenerator.Generators
 
         internal abstract class Entry
         {
-            private (bool, SyntaxToken) identifierInCamelCase;
-
             public Entry(SyntaxToken Identifier, TypeSyntax Type, PropertyDeclarationSyntax PropertySyntax)
             {
                 this.Identifier = Identifier;
                 this.Type = Type;
                 this.PropertySyntax = PropertySyntax;
+                var id = (string)Identifier.Value;
+                var camelized = char.ToLowerInvariant(id[0]) + id.Substring(1);
+                IdentifierInCamelCase = SyntaxFactory.Identifier(CSharpKeyword.Is(camelized) ? "@" + camelized : camelized);
             }
 
             public SyntaxToken Identifier { get; }
 
-            public SyntaxToken IdentifierInCamelCase =>
-                Lazy.EnsureInitialized(ref identifierInCamelCase, this, self =>
-                {
-                    var id = (string)self.Identifier.Value;
-                    var camelized = char.ToLowerInvariant(id[0]) + id.Substring(1);
-                    return SyntaxFactory.Identifier(CSharpKeyword.Is(camelized) ? "@" + camelized : camelized);
-                });
+            public SyntaxToken IdentifierInCamelCase { get; }
 
             public TypeSyntax Type { get; }
 
