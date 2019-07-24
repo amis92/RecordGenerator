@@ -9,7 +9,7 @@
         // Licensed under the Apache License, Version 2.0:
         // https://www.apache.org/licenses/LICENSE-2.0
 
-        public static bool Is(this string name)
+        public static bool Is(string name)
         {
             switch (name)
             {
