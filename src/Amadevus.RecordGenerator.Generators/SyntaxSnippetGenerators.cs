@@ -39,7 +39,6 @@ namespace Amadevus.RecordGenerator.Generators
 
             return method;
         }
-
     }
 
     internal static class MemberAccessGenerator
@@ -73,6 +72,8 @@ namespace Amadevus.RecordGenerator.Generators
 
     internal static class QualifiedNameGenerator
     {
+        private const char namespaceSeparator = '.';
+
         public static QualifiedNameSyntax GenerateQualifiedName(string qualifiedName)
         {
             var (namespaces, type) = SplitNamespacePartsAndType(qualifiedName);
@@ -81,7 +82,8 @@ namespace Amadevus.RecordGenerator.Generators
             return QualifiedName(ns, IdentifierName(type));
         }
 
-        public static QualifiedNameSyntax GenerateGenericQualifiedName(string qualifiedName, TypeSyntax[] typeArguments)
+        public static QualifiedNameSyntax GenerateGenericQualifiedName(
+            string qualifiedName, TypeSyntax[] typeArguments)
         {
             var (namespaces, type) = SplitNamespacePartsAndType(qualifiedName);
             var ns = GenerateQualifiedNamespaceAccess(namespaces);
@@ -110,7 +112,7 @@ namespace Amadevus.RecordGenerator.Generators
 
         private static (string[],string) SplitNamespacePartsAndType(string qualifiedName)
         {
-            var qualifiedNameParts = qualifiedName.Split('.');
+            var qualifiedNameParts = qualifiedName.Split(namespaceSeparator);
             var namespaces = qualifiedNameParts.Take(qualifiedNameParts.Count() - 1);
             var type = qualifiedNameParts.Last();
 
@@ -123,9 +125,11 @@ namespace Amadevus.RecordGenerator.Generators
         public static LocalDeclarationStatementSyntax GenerateLocalVariableDeclaration(
             string variableName, ExpressionSyntax initializer)
         {
+            const string varKeyWord = "var";
+
             return LocalDeclarationStatement(
                 VariableDeclaration(
-                    IdentifierName("var"))
+                    IdentifierName(varKeyWord))
                 .WithVariables(
                     SingletonSeparatedList(
                         VariableDeclarator(
