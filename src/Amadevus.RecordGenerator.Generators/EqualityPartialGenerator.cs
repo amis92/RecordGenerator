@@ -16,8 +16,6 @@ namespace Amadevus.RecordGenerator.Generators
         private readonly RecordDescriptor descriptor;
         private readonly EqualityPartialCodeGenerator generator;
 
-        //private IdentifierNameSyntax ClassIdentifier => IdentifierName(descriptor.TypeIdentifier.Text);
-
         private NameSyntax ClassIdentifier
         {
             get => SyntaxExtensions.GetTypeSyntax(descriptor.TypeDeclaration);

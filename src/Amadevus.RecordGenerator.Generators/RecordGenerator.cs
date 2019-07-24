@@ -11,9 +11,11 @@ namespace Amadevus.RecordGenerator.Generators
 {
     public class RecordGenerator : ICodeGenerator
     {
+        private readonly RecordGeneratorOptions options;
+
         public RecordGenerator(AttributeData attributeData)
         {
-
+            options = RecordGeneratorOptions.FromAttributeData(attributeData);
         }
 
         public Task<SyntaxList<MemberDeclarationSyntax>> GenerateAsync(TransformationContext context, IProgress<Diagnostic> progress, CancellationToken cancellationToken)
