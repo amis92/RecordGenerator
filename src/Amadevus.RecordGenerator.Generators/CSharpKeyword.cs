@@ -78,10 +78,6 @@
                 case "interface":
                 case "delegate":
                 case "checked":
-                case "get":
-                case "set":
-                case "add":
-                case "remove":
                 case "operator":
                 case "implicit":
                 case "explicit":
