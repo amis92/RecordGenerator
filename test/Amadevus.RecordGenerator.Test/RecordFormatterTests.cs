@@ -3,6 +3,9 @@ using Xunit;
 
 namespace Amadevus.RecordGenerator.Test
 {
+    using System.Collections.Generic;
+    using TestsBase;
+
     public class RecordFormatterTests : RecordTestsBase
     {
         [Fact]
@@ -31,6 +34,31 @@ namespace Amadevus.RecordGenerator.Test
                 Items = items.ToString(),
             };
             Assert.Equal(shape.ToString(), container.ToString());
+        }
+
+        [Fact]
+        public void With_TreeProperty()
+        {
+            const string foo = nameof(foo);
+            const string bar = nameof(bar);
+
+            var builder = new GenericRecord<string>.Builder
+            {
+                Thing      = foo + bar,
+                Things     = ImmutableArray.Create(foo, bar),
+                RecordTree = ImmutableArray.Create((IReadOnlyList<Item>)ImmutableArray.Create(CreateItem())),
+            };
+
+            var record = builder.ToImmutable();
+
+            var shape = new
+            {
+                record.Thing,
+                record.Things,
+                record.RecordTree,
+            };
+
+            Assert.Equal(shape.ToString(), record.ToString());
         }
     }
 }
