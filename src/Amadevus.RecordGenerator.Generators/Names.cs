@@ -14,6 +14,7 @@
         public const string ToBuilder = "ToBuilder";
         public const string ToImmutable = "ToImmutable";
         public const string Validate = "Validate";
+        public const string ToString = nameof(object.ToString);
 
         public const string ToolName = "Amadevus.RecordGenerator";
         public const string GeneratedCodeAttribute = "System.CodeDom.Compiler.GeneratedCodeAttribute";
