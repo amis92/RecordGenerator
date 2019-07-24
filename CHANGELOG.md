@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+* Parameters of generated record methods use camel-casing, as opposed to
+  Pascal-casing previously, to align with naming conventions in .NET.
+
 ### Added
 
 * [`Object.ToString`][objtostr] override for records that follows the same
