@@ -159,7 +159,7 @@ namespace Amadevus.RecordGenerator.Generators
 
             var body = Block();
 
-            body.AddStatements(
+            body = body.AddStatements(
                 localVariableDeclarationGenerator.GenerateLocalVariableDeclaration(
                     hashCodeVariableName,
                     LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(hashCodeInitialValue))));
@@ -183,10 +183,10 @@ namespace Amadevus.RecordGenerator.Generators
                                         Literal(hashCodeMultiplicationValue)))),
                             getHashCodeInvocation)));
 
-                body.AddStatements(hashCodeAssignment);
+                body = body.AddStatements(hashCodeAssignment);
             }
 
-            body.AddStatements(ReturnStatement(
+            body = body.AddStatements(ReturnStatement(
                 IdentifierName(hashCodeVariableName)));
 
             body = Block(SingletonList<StatementSyntax>(
