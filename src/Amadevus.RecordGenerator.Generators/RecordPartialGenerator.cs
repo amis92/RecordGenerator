@@ -31,6 +31,7 @@ namespace Amadevus.RecordGenerator.Generators
                     GenerateUpdateMethod())
                 .AddRange(
                     GenerateMutators())
+                .Add(GenerateToString())
                 .Add(GenerateValidatePartialMethod());
         }
 
@@ -126,6 +127,24 @@ namespace Amadevus.RecordGenerator.Generators
                     return Identifier($"{Names.WithPrefix}{entry.Identifier.ValueText}");
                 }
             }
+        }
+
+        private MemberDeclarationSyntax GenerateToString()
+        {
+            var properties =
+                from e in Descriptor.Entries
+                select AnonymousObjectMemberDeclarator(IdentifierName(e.Identifier));
+            return
+                MethodDeclaration(
+                    PredefinedType(Token(SyntaxKind.StringKeyword)),
+                    Names.ToString)
+                .AddModifiers(SyntaxKind.PublicKeyword, SyntaxKind.OverrideKeyword)
+                .WithExpressionBody(
+                    InvocationExpression(
+                        MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
+                            AnonymousObjectCreationExpression()
+                                .AddInitializers(properties.ToArray()),
+                            IdentifierName(Names.ToString))));
         }
 
         private MemberDeclarationSyntax GenerateValidatePartialMethod()
