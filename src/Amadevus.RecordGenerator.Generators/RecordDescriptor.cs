@@ -40,8 +40,8 @@ namespace Amadevus.RecordGenerator.Generators
                 Lazy.EnsureInitialized(ref identifierInCamelCase, this, self =>
                 {
                     var id = (string)self.Identifier.Value;
-                    var id2 = char.ToLowerInvariant(id[0]) + id.Substring(1);
-                    return SyntaxFactory.Identifier(CSharpKeyword.Is(id2) ? "@" + id2 : id2);
+                    var camelized = char.ToLowerInvariant(id[0]) + id.Substring(1);
+                    return SyntaxFactory.Identifier(CSharpKeyword.Is(camelized) ? "@" + camelized : camelized);
                 });
 
             public TypeSyntax Type { get; }
