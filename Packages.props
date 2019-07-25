@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <CodeGenerationRoslynPackagesVersion>0.4.88</CodeGenerationRoslynPackagesVersion>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Update="Amadevus.RecordGenerator"        Version="[0.4.1]" PrivateAssets="all" />
+    <PackageReference Update="CodeGeneration.Roslyn"           Version="[$(CodeGenerationRoslynPackagesVersion)]" />
+    <PackageReference Update="CodeGeneration.Roslyn.Attributes" Version="[$(CodeGenerationRoslynPackagesVersion)]" />
+    <PackageReference Update="CodeGeneration.Roslyn.BuildTime" Version="[$(CodeGenerationRoslynPackagesVersion)]" PrivateAssets="all" />
+    <PackageReference Update="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="[2.4.0]" />
+    <PackageReference Update="System.Collections.Immutable"    Version="[1.5.0]" />
+  </ItemGroup>
+  
+  <ItemGroup Label="Tests">
+    <PackageReference Update="FluentAssertions"          Version="[5.7.0]" />
+    <PackageReference Update="Microsoft.NET.Test.Sdk"    Version="[16.2.0]" />
+    <PackageReference Update="MSTest.TestAdapter"        Version="[1.4.0]" />
+    <PackageReference Update="MSTest.TestFramework"      Version="[1.4.0]" />
+    <PackageReference Update="xunit"                     Version="[2.4.1]" />
+    <PackageReference Update="xunit.runner.visualstudio" Version="[2.4.1]" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <GlobalPackageReference Include="Microsoft.SourceLink.GitHub"
+                            Version="1.0.0-beta2-19367-01"
+                            Condition=" !$(IsTestingOnlyProject) " />
+    <GlobalPackageReference Include="Nerdbank.GitVersioning"
+                            Version="2.3.183" />
+  </ItemGroup>
+  
+</Project>
