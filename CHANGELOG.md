@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Pascal-casing previously, to align with naming conventions in .NET.
 * The name of the parameter to `With*` methods now always reads `value`
   as opposed to being named after the property verbatim.
+* `RecordAttribute` is now in `Amadevus.RecordGenerator` namespace (previously in global/no namespace)
 
 ### Added
 
