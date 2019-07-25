@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Xunit;
@@ -19,7 +20,15 @@ namespace Amadevus.RecordGenerator.Test
                                                              | BindingFlags.Instance
                                                              | BindingFlags.Static)
             from p in m.GetParameters()
-            select new[] { t.Name, m.Name, p.Name };
+            select new[]
+            {
+                // Trim namespace if present
+                t.Namespace is string ns
+                    ? t.FullName.Substring(ns.Length + 1 /* dot */)
+                    : t.FullName,
+                m.Name,
+                p.Name
+            };
 
         [Theory]
         [MemberData(nameof(ParameterDataSource))]
