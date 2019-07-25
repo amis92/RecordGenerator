@@ -1,8 +1,8 @@
 ﻿using Microsoft.CodeAnalysis;
 using static Microsoft.CodeAnalysis.DiagnosticSeverity;
-using static Amadevus.RecordGenerator.Analyzers.Category;
+using static Amadevus.RecordGenerator.DiagnosticDescriptors.Category;
 
-namespace Amadevus.RecordGenerator.Analyzers
+namespace Amadevus.RecordGenerator.DiagnosticDescriptors
 {
     enum Category
     {
