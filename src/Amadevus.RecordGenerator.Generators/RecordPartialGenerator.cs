@@ -55,7 +55,7 @@ namespace Amadevus.RecordGenerator.Generators
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 ThisExpression(),
                                 IdentifierName(entry.Identifier)),
-                            IdentifierName(entry.Identifier)));
+                            IdentifierName(entry.IdentifierInCamelCase)));
             }
             StatementSyntax CreateValidateInvocation()
             {
@@ -70,7 +70,7 @@ namespace Amadevus.RecordGenerator.Generators
             {
                 return
                     Argument(
-                        IdentifierName(entry.Identifier))
+                        IdentifierName(entry.IdentifierInCamelCase))
                     .WithRefKindKeyword(Token(SyntaxKind.RefKeyword));
             }
         }
@@ -80,7 +80,7 @@ namespace Amadevus.RecordGenerator.Generators
             var arguments = Descriptor.Entries.Select(x =>
             {
                 return Argument(
-                    IdentifierName(x.Identifier));
+                    IdentifierName(x.IdentifierInCamelCase));
             });
             return MethodDeclaration(Descriptor.Type, Names.Update)
                 .AddModifiers(SyntaxKind.PublicKeyword)
@@ -100,11 +100,14 @@ namespace Amadevus.RecordGenerator.Generators
             return Descriptor.Entries.Select(CreateRecordMutator);
             MethodDeclarationSyntax CreateRecordMutator(RecordDescriptor.Entry entry)
             {
+                var valueIdentifier = Identifier(Names.Value);
+
                 var arguments = Descriptor.Entries.Select(x =>
                 {
                     return Argument(
-                        IdentifierName(x.Identifier));
+                        IdentifierName(x == entry ? valueIdentifier : x.Identifier));
                 });
+
                 var mutator =
                     MethodDeclaration(
                         Descriptor.Type,
@@ -112,7 +115,7 @@ namespace Amadevus.RecordGenerator.Generators
                     .AddModifiers(SyntaxKind.PublicKeyword)
                     .WithParameters(
                         Parameter(
-                            entry.Identifier)
+                            valueIdentifier)
                         .WithType(entry.Type))
                     .WithBodyStatements(
                         ReturnStatement(
@@ -160,7 +163,7 @@ namespace Amadevus.RecordGenerator.Generators
             ParameterSyntax CreateValidateParameter(RecordDescriptor.Entry entry)
             {
                 return
-                    Parameter(entry.Identifier)
+                    Parameter(entry.IdentifierInCamelCase)
                     .WithType(entry.Type)
                     .AddModifiers(Token(SyntaxKind.RefKeyword));
             }
@@ -169,7 +172,7 @@ namespace Amadevus.RecordGenerator.Generators
         private static ParameterSyntax CreateParameter(RecordDescriptor.Entry property)
         {
             return Parameter(
-                    property.Identifier)
+                    property.IdentifierInCamelCase)
                 .WithType(property.Type);
         }
 

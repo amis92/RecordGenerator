@@ -9,7 +9,7 @@ namespace Amadevus.RecordGenerator.Test
         [Fact]
         public void Ctor_HasParametersNamedLikeProperties()
         {
-            new Item(Id: ItemId, Name: ItemName);
+            new Item(id: ItemId, name: ItemName);
         }
 
         [Fact]

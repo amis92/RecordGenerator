@@ -16,6 +16,8 @@
         public const string Validate = "Validate";
         public new const string ToString = nameof(object.ToString);
 
+        public const string Value = "value";
+
         public const string ToolName = "Amadevus.RecordGenerator";
         public const string GeneratedCodeAttribute = "System.CodeDom.Compiler.GeneratedCodeAttribute";
     }

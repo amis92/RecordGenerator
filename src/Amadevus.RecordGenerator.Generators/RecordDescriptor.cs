@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Immutable;
 
@@ -29,9 +30,14 @@ namespace Amadevus.RecordGenerator.Generators
                 this.Identifier = Identifier;
                 this.Type = Type;
                 this.PropertySyntax = PropertySyntax;
+                var id = (string)Identifier.Value;
+                var camelized = char.ToLowerInvariant(id[0]) + id.Substring(1);
+                IdentifierInCamelCase = SyntaxFactory.Identifier(CSharpKeyword.Is(camelized) ? "@" + camelized : camelized);
             }
 
             public SyntaxToken Identifier { get; }
+
+            public SyntaxToken IdentifierInCamelCase { get; }
 
             public TypeSyntax Type { get; }
 

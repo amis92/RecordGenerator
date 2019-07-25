@@ -1,11 +1,10 @@
-﻿using System.Collections.Immutable;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using Xunit;
+using Amadevus.RecordGenerator.TestsBase;
 
 namespace Amadevus.RecordGenerator.Test
 {
-    using System.Collections.Generic;
-    using TestsBase;
-
     public class RecordFormatterTests : RecordTestsBase
     {
         [Fact]
