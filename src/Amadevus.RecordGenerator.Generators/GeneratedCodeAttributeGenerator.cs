@@ -121,7 +121,7 @@ namespace Amadevus.RecordGenerator.Generators
 
         private NameSyntax GenerateQualifiedName()
         {
-            return QualifiedNameGenerator.GenerateQualifiedName(Names.GeneratedCodeAttribute);
+            return ParseName(Names.GeneratedCodeAttribute);
         }
 
         private string GetToolVersion() => GetType().GetTypeInfo().Assembly.GetName().Version.ToString();

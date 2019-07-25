@@ -18,7 +18,9 @@
         public const string ToolName = "Amadevus.RecordGenerator";
         public const string GeneratedCodeAttribute = "System.CodeDom.Compiler.GeneratedCodeAttribute";
 
-        public const string EqualityCompararerQualifiedName = "System.Collections.Generic.EqualityComparer";
-        public const string IEquotableQualifiedName = "System.IEquatable";
+        public const string SystemCollectionsGenericNamespace = "System.Collections.Generic";
+        public const string EqualityComparerName = "EqualityComparer";
+        public const string SystemNamespace = "System";
+        public const string IEquatableName = "IEquatable";
     }
 }
