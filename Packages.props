@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  
+  <ItemGroup>
+    <PackageReference Update="Amadevus.RecordGenerator"        Version="[0.4.1]" PrivateAssets="all" />
+    <PackageReference Update="CodeGeneration.Roslyn"           Version="[0.4.88]" />
+    <PackageReference Update="CodeGeneration.Roslyn.Attributes" Version="[0.4.88]" />
+    <PackageReference Update="CodeGeneration.Roslyn.BuildTime" Version="[0.4.88]" PrivateAssets="all" />
+    <PackageReference Update="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="[2.4.0]" />
+    <PackageReference Update="morelinq"                        Version="[3.2.0]" />
+    <PackageReference Update="Newtonsoft.Json"                 Version="[11.0.2]" />
+    <PackageReference Update="Optional"                        Version="[4.0.0]" />
+    <PackageReference Update="Serilog"                         Version="[2.8.0]" />
+    <PackageReference Update="Serilog.Sinks.Console"           Version="[3.1.1]" />
+    <PackageReference Update="System.Collections.Immutable"    Version="[1.5.0]" />
+    <PackageReference Update="System.CommandLine.Experimental" Version="[0.3.0-alpha.19317.1]" />
+  </ItemGroup>
+  
+  <ItemGroup Label="Tests">
+    <PackageReference Update="FluentAssertions"          Version="[5.7.0]" />
+    <PackageReference Update="Microsoft.NET.Test.Sdk"    Version="[16.2.0]" />
+    <PackageReference Update="MSTest.TestAdapter"        Version="[1.4.0]" />
+    <PackageReference Update="MSTest.TestFramework"      Version="[1.4.0]" />
+    <PackageReference Update="NSubstitute"               Version="[3.1.0]" />
+    <PackageReference Update="XmlDiffPatch.Core"         Version="[1.0.1]" />
+    <PackageReference Update="xunit"                     Version="[2.4.1]" />
+    <PackageReference Update="xunit.runner.visualstudio" Version="[2.4.1]" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <GlobalPackageReference Include="Microsoft.SourceLink.GitHub"
+                            Version="1.0.0-beta2-19367-01"
+                            Condition=" !$(IsTestingOnlyProject) " />
+    <GlobalPackageReference Include="Nerdbank.GitVersioning"
+                            Version="2.3.183" />
+  </ItemGroup>
+  
+</Project>
