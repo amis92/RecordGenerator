@@ -12,7 +12,8 @@ and keep your code clean and simple. The backing code is generated on build-time
 (just save the file, Visual Studio will make a build in background).
 
 [![NuGet package](https://img.shields.io/nuget/v/Amadevus.RecordGenerator.svg)](https://www.nuget.org/packages/Amadevus.RecordGenerator/)
-[![Build status](https://img.shields.io/appveyor/ci/amis92/recordgenerator/master.svg?label=build%20(master))](https://ci.appveyor.com/project/amis92/recordgenerator/branch/master)
+[![Build Status](https://dev.azure.com/amadevus/RecordGenerator/_apis/build/status/amis92.RecordGenerator?branchName=master)](https://dev.azure.com/amadevus/RecordGenerator/_build/latest?definitionId=1&branchName=master)
+[![Build status](https://img.shields.io/appveyor/ci/amis92/recordgenerator/master.svg?label=AppVeyor%20(master))](https://ci.appveyor.com/project/amis92/recordgenerator/branch/master)
 [![MyGet package](https://img.shields.io/myget/amadevus/v/Amadevus.RecordGenerator.svg?label=myget-ci)](https://www.myget.org/feed/amadevus/package/nuget/Amadevus.RecordGenerator)
 [![Join the chat at gitter!](https://img.shields.io/gitter/room/amis92/recordgenerator.svg)](https://gitter.im/amis92/RecordGenerator?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![License](https://img.shields.io/github/license/amis92/recordgenerator.svg)](https://github.com/amis92/RecordGenerator/blob/master/LICENSE)
