@@ -1,8 +1,8 @@
 ﻿using Microsoft.CodeAnalysis;
 using static Microsoft.CodeAnalysis.DiagnosticSeverity;
-using static Amadevus.RecordGenerator.DiagnosticDescriptors.Category;
+using static Amadevus.RecordGenerator.Analyzers.Category;
 
-namespace Amadevus.RecordGenerator.DiagnosticDescriptors
+namespace Amadevus.RecordGenerator.Analyzers
 {
     enum Category
     {
@@ -26,5 +26,8 @@ namespace Amadevus.RecordGenerator.DiagnosticDescriptors
 
         public static DiagnosticDescriptor X1000_RecordMustBePartial { get; } =
             Rule(1000, "Record must be partial", Usage, Error, "Add partial modifier to type declaration");
+
+        public static DiagnosticDescriptor X1001_RecordMustBeSealedIfEqualityIsEnabled { get; } =
+            Rule(1001, "Record must be sealed if equality generation is enabled", Usage, Warning, "Add sealed modifier to type '{0}'");
     }
 }

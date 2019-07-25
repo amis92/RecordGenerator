@@ -25,6 +25,7 @@ namespace Amadevus.RecordGenerator.Generators
             {
                 var descriptor = classDeclaration.ToRecordDescriptor();
                 generatedMembers = generatedMembers.AddRange(GenerateRecordPartials(descriptor));
+                foreach (var diagnostic in GenerateDiagnostics(descriptor)) progress.Report(diagnostic); 
             }
             return Task.FromResult(generatedMembers);
 
@@ -39,6 +40,11 @@ namespace Amadevus.RecordGenerator.Generators
                 yield return DeconstructPartialGenerator.Generate(descriptor, cancellationToken);
                 yield return EqualityPartialGenerator.Generate(descriptor, cancellationToken);
                 yield break;
+            }
+
+            IEnumerable<Diagnostic> GenerateDiagnostics(RecordDescriptor descriptor)
+            {
+                foreach (var diagnostic in EqualityUsageAnalyzer.GenerateDiagnostics(descriptor)) yield return diagnostic;
             }
         }
     }

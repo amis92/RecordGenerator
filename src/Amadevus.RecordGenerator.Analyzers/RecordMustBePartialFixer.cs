@@ -5,7 +5,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Amadevus.RecordGenerator.Analyzers.CodeActions;
-using Amadevus.RecordGenerator.DiagnosticDescriptors;
 
 namespace Amadevus.RecordGenerator.Analyzers
 {

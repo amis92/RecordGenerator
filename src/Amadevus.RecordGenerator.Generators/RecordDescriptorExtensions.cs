@@ -23,7 +23,8 @@ namespace Amadevus.RecordGenerator.Generators
                 typeDeclaration.GetTypeSyntax().WithoutTrivia(),
                 typeDeclaration.Identifier.WithoutTrivia(),
                 typeDeclaration.GetRecordProperties(),
-                typeDeclaration.WithoutTrivia());
+                typeDeclaration.WithoutTrivia(),
+                typeDeclaration);
         }
 
         public static RecordDescriptor ToRecordDescriptor(this StructDeclarationSyntax typeDeclaration)
@@ -32,7 +33,8 @@ namespace Amadevus.RecordGenerator.Generators
                 typeDeclaration.GetTypeSyntax().WithoutTrivia(),
                 typeDeclaration.Identifier.WithoutTrivia(),
                 typeDeclaration.GetRecordProperties(),
-                typeDeclaration.WithoutTrivia());
+                typeDeclaration.WithoutTrivia(),
+                typeDeclaration);
         }
 
         private static ImmutableArray<RecordDescriptor.Entry> GetRecordProperties(this TypeDeclarationSyntax typeDeclaration)

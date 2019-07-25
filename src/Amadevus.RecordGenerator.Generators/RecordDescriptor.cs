@@ -6,12 +6,13 @@ namespace Amadevus.RecordGenerator.Generators
 {
     internal partial class RecordDescriptor
     {
-        public RecordDescriptor(TypeSyntax Type, SyntaxToken TypeIdentifier, ImmutableArray<Entry> Entries, TypeDeclarationSyntax TypeDeclaration)
+        public RecordDescriptor(TypeSyntax Type, SyntaxToken TypeIdentifier, ImmutableArray<Entry> Entries, TypeDeclarationSyntax TypeDeclaration, TypeDeclarationSyntax TypeDeclarationWithTrivia)
         {
             this.Type = Type;
             this.TypeIdentifier = TypeIdentifier;
             this.Entries = Entries;
             this.TypeDeclaration = TypeDeclaration;
+            this.TypeDeclarationWithTrivia = TypeDeclarationWithTrivia;
         }
 
         public TypeSyntax Type { get; }
@@ -21,6 +22,8 @@ namespace Amadevus.RecordGenerator.Generators
         public ImmutableArray<Entry> Entries { get; }
 
         public TypeDeclarationSyntax TypeDeclaration { get; }
+
+        public TypeDeclarationSyntax TypeDeclarationWithTrivia { get; }
 
         internal abstract class Entry
         {

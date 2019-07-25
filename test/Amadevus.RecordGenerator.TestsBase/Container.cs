@@ -3,7 +3,7 @@
 namespace Amadevus.RecordGenerator.TestsBase
 {
     [Record]
-    public partial class Container
+    public sealed partial class Container
     {
         public string Id { get; }
         

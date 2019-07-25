@@ -12,10 +12,6 @@
     <PackageTags>record; immutable; attribute; generator; amadevus; codegen; analyzer; codefix</PackageTags>
     <NoPackageAnalysis>true</NoPackageAnalysis>
   </PropertyGroup>
-  
-  <ItemGroup>
-    <Compile Include="..\Amadevus.RecordGenerator.DiagnosticDescriptors\Descriptors.cs" />
-  </ItemGroup>
    
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.4.0" PrivateAssets="all" />
