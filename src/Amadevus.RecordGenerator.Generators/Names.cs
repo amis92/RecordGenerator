@@ -1,8 +1,5 @@
 ﻿namespace Amadevus.RecordGenerator.Generators
 {
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-
     internal static class Names
     {
         public const string WithPrefix = "With";
