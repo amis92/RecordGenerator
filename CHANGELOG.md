@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Parameters of generated record methods use camel-casing, as opposed to
   Pascal-casing previously, to align with naming conventions in .NET.
+* The name of the parameter to `With*` methods now always reads `value`
+  as opposed to being named after the property verbatim.
 
 ### Added
 
