@@ -1,0 +1,57 @@
+
+trigger:
+- master
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  BuildConfiguration: 'Release'
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+
+steps:
+- task: DotNetCoreInstaller@0
+  inputs:
+    version: '2.1.500'
+
+- script: |
+    dotnet tool install --tool-path . nbgv
+    .\nbgv cloud
+  displayName: Set build number
+  #condition: and(succeeded(), ne(variables['system.pullrequest.isfork'], true))
+
+- script: dotnet --info
+  displayName: Show dotnet SDK info
+
+- task: DotNetCoreCLI@2
+  displayName: Restore NuGet packages
+  inputs:
+    command: restore
+    arguments: -v m
+
+- task: DotNetCoreCLI@2
+  displayName: Build solution
+  inputs:
+    command: build
+    arguments: --no-restore -c $(BuildConfiguration)
+
+- task: DotNetCoreCLI@2
+  displayName: Run tests
+  inputs:
+    command: test
+    arguments: --no-build -c $(BuildConfiguration)
+
+- task: CopyFiles@1
+  displayName: Collecting packages
+  inputs:
+    Contents: |
+      bin/Packages/$(BuildConfiguration)/*.nupkg
+      bin/Packages/$(BuildConfiguration)/*.snupkg
+    TargetFolder: $(Build.ArtifactStagingDirectory)/nugets
+    flattenFolders: true
+
+- task: PublishPipelineArtifact@0
+  displayName: Publish nuget artifacts
+  inputs:
+    artifactName: nugets
+    targetPath: $(Build.ArtifactStagingDirectory)/nugets

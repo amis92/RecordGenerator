@@ -6,7 +6,6 @@ init:
   - appveyor version
   - git config --global core.autocrlf true
 before_build:
-  - ps: Get-Content Directory.Build.props
   # check and install required .NET Core SDK version
   - ps: |
       $requiredDotnetVersion = (Get-Content "global.json" | ConvertFrom-Json).sdk.version
@@ -28,8 +27,11 @@ before_build:
       # set build number
       dotnet tool install --tool-path . nbgv
       ./nbgv cloud
+  - dotnet restore
 build_script:
-  - msbuild /v:m /restore /t:Build /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+  - ps: dotnet build -v:m --no-restore -c $env:configuration
+test_script:
+  - ps: dotnet test -v:m --no-build -c $env:configuration
 notifications:
   - provider: Webhook
     url: https://webhooks.gitter.im/e/7a491795ae7262cd16b3
