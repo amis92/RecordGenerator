@@ -5,9 +5,10 @@
     <version>$version$</version>
     <authors>$authors$</authors>
     <owners>$authors$</owners>
-    <licenseUrl>$licenseUrl$</licenseUrl>
+    <license type="expression">$license$</license>
     <projectUrl>$projectUrl$</projectUrl>
     <iconUrl>$iconUrl$</iconUrl>
+    <minClientVersion>$minClientVersion$</minClientVersion>
     <requireLicenseAcceptance>$requireLicenseAcceptance$</requireLicenseAcceptance>
     <description>Code generator for [Record]-marked types. Automatically creates backing code (constructor, With- mutators, deconstructor to tuple, Builder nested type etc.) for immutable record classes. This package references all required and recommended (analyzers) packages. See project site for installation instructions and more details.</description>
     <releaseNotes>Fixed handling of get-only expression body properties (e.g. `int Count { get => 0; }`).</releaseNotes>

@@ -1,9 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Sdk Name="Microsoft.Build.CentralPackageVersions" />
 
   <PropertyGroup>
     <TargetFramework>netstandard1.6</TargetFramework>
     <NuspecFile>Amadevus.RecordGenerator.nuspec</NuspecFile>
-    <NuspecProperties>version=$(PackageVersion);authors=$(Authors);licenseUrl=$(PackageLicenseUrl);projectUrl=$(PackageProjectUrl);iconUrl=$(PackageIconUrl);copyright=$(Copyright);versionOfCodegenRoslyn=$(CodeGenerationRoslynPackagesVersion);requireLicenseAcceptance=false</NuspecProperties>
+    <IncludeSymbols>false</IncludeSymbols>
   </PropertyGroup>
+
+  <Target Name="UpdateNuspecProperties" AfterTargets="GetBuildVersion">
+    <PropertyGroup>
+      <NuspecProperties>
+        version=$(PackageVersion);
+        authors=$(Authors);
+        license=$(PackageLicenseExpression);
+        projectUrl=$(PackageProjectUrl);
+        iconUrl=$(PackageIconUrl);
+        copyright=$(Copyright);
+        versionOfCodegenRoslyn=$(CodeGenerationRoslynPackagesVersion);
+        requireLicenseAcceptance=$(PackageRequireLicenseAcceptance);
+        minClientVersion=$(MinClientVersion)
+      </NuspecProperties>
+    </PropertyGroup>
+  </Target>
 
 </Project>

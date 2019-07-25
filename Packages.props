@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <CodeGenerationRoslynPackagesVersion>0.4.88</CodeGenerationRoslynPackagesVersion>
+  </PropertyGroup>
   
   <ItemGroup>
     <PackageReference Update="Amadevus.RecordGenerator"        Version="[0.4.1]" PrivateAssets="all" />
-    <PackageReference Update="CodeGeneration.Roslyn"           Version="[0.4.88]" />
-    <PackageReference Update="CodeGeneration.Roslyn.Attributes" Version="[0.4.88]" />
-    <PackageReference Update="CodeGeneration.Roslyn.BuildTime" Version="[0.4.88]" PrivateAssets="all" />
+    <PackageReference Update="CodeGeneration.Roslyn"           Version="[$(CodeGenerationRoslynPackagesVersion)]" />
+    <PackageReference Update="CodeGeneration.Roslyn.Attributes" Version="[$(CodeGenerationRoslynPackagesVersion)]" />
+    <PackageReference Update="CodeGeneration.Roslyn.BuildTime" Version="[$(CodeGenerationRoslynPackagesVersion)]" PrivateAssets="all" />
     <PackageReference Update="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="[2.4.0]" />
     <PackageReference Update="morelinq"                        Version="[3.2.0]" />
     <PackageReference Update="Newtonsoft.Json"                 Version="[11.0.2]" />

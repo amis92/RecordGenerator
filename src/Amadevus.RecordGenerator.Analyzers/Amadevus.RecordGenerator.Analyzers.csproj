@@ -5,6 +5,7 @@
     <TargetFramework>netstandard1.3</TargetFramework>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <DevelopmentDependency>True</DevelopmentDependency>
+    <IncludeSymbols>false</IncludeSymbols>
   </PropertyGroup>
   
   <PropertyGroup>

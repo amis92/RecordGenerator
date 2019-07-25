@@ -5,6 +5,7 @@
     <TargetFramework>netstandard1.6</TargetFramework>
     <IsTool>true</IsTool>
     <DevelopmentDependency>True</DevelopmentDependency>
+    <IncludeSymbols>false</IncludeSymbols>
   </PropertyGroup>
 
   <PropertyGroup>
