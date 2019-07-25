@@ -100,11 +100,14 @@ namespace Amadevus.RecordGenerator.Generators
             return Descriptor.Entries.Select(CreateRecordMutator);
             MethodDeclarationSyntax CreateRecordMutator(RecordDescriptor.Entry entry)
             {
+                var valueIdentifier = Identifier(Names.Value);
+
                 var arguments = Descriptor.Entries.Select(x =>
                 {
                     return Argument(
-                        IdentifierName(x.Identifier));
+                        IdentifierName(x == entry ? valueIdentifier : x.Identifier));
                 });
+
                 var mutator =
                     MethodDeclaration(
                         Descriptor.Type,
@@ -112,7 +115,7 @@ namespace Amadevus.RecordGenerator.Generators
                     .AddModifiers(SyntaxKind.PublicKeyword)
                     .WithParameters(
                         Parameter(
-                            Identifier(Names.Value))
+                            valueIdentifier)
                         .WithType(entry.Type))
                     .WithBodyStatements(
                         ReturnStatement(
