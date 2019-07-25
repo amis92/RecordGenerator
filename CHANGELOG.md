@@ -20,6 +20,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [`Object.ToString`][objtostr] override for records that follows the same
   implementation as C# generates for anonymous types
 * `GeneratedCodeAttribute` is added to generated non-type members (methods, properties)
+* `Features` flags enum in Attributes package for requesting specific feature set generation
+* `DefaultRecordFeaturesAttribute`  in Attributes package for setting assembly-default feature set
+* `RecordAttribute(Features)` constructor for customizing feature set generation per class
 
 
 [objtostr]: https://docs.microsoft.com/en-us/dotnet/api/system.object.tostring
