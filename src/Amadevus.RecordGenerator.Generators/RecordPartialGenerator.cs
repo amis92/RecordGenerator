@@ -112,7 +112,7 @@ namespace Amadevus.RecordGenerator.Generators
                     .AddModifiers(SyntaxKind.PublicKeyword)
                     .WithParameters(
                         Parameter(
-                            entry.Identifier)
+                            Identifier(Names.Value))
                         .WithType(entry.Type))
                     .WithBodyStatements(
                         ReturnStatement(
