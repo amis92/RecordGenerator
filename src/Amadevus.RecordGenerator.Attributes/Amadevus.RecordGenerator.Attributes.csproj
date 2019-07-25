@@ -1,7 +1,8 @@
-﻿<Project Sdk="MSBuild.Sdk.Extras">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Sdk Name="Microsoft.Build.CentralPackageVersions" />
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.0;netstandard2.0;net40;portable-net40+win8+wpa81;portable-net45+win8+wpa81+wp8</TargetFrameworks>
+    <TargetFrameworks>netstandard1.0</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -11,6 +12,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CodeGeneration.Roslyn.Attributes" Version="$(CodeGenerationRoslynPackagesVersion)" />
+    <PackageReference Include="CodeGeneration.Roslyn.Attributes" />
   </ItemGroup>
 </Project>
