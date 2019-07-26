@@ -19,7 +19,7 @@ namespace Amadevus.RecordGenerator.Generators
 
             yield return Diagnostic.Create(
                 Descriptors.X1001_RecordMustBeSealedIfEqualityIsEnabled,
-                descriptor.TypeDeclarationWithTrivia.Identifier.GetLocation(),
+                descriptor.TypeDeclarationLocation,
                 descriptor.TypeIdentifier.Text);
         }
         

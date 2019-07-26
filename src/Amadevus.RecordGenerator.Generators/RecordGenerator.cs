@@ -23,7 +23,7 @@ namespace Amadevus.RecordGenerator.Generators
             var generatedMembers = SyntaxFactory.List<MemberDeclarationSyntax>();
             if (context.ProcessingNode is ClassDeclarationSyntax classDeclaration)
             {
-                var descriptor = classDeclaration.ToRecordDescriptor();
+                var descriptor = classDeclaration.ToRecordDescriptor(context.SemanticModel);
                 generatedMembers = generatedMembers.AddRange(GenerateRecordPartials(descriptor));
                 foreach (var diagnostic in GenerateDiagnostics(descriptor)) progress.Report(diagnostic); 
             }

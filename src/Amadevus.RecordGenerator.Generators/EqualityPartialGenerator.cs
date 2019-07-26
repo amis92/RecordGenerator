@@ -1,5 +1,4 @@
 ﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +12,10 @@ namespace Amadevus.RecordGenerator.Generators
     {
         private const string equalsMethodName = "Equals";
         private readonly RecordDescriptor descriptor;
-        private IEnumerable<string> wellKnownTypes { get; } =
-            new [] { BoolKeyword, ByteKeyword, SByteKeyword, CharKeyword, IntKeyword, UIntKeyword, LongKeyword, ULongKeyword, ShortKeyword, UShortKeyword, StringKeyword }
-            .Select(k => k.ToString().ToLower()).Select(k => k.Substring(0, k.Length - "Keyword".Length)).ToArray();
+
+        private string[] wellKnownTypes { get; } =
+            new[] { typeof(bool), typeof(byte), typeof(sbyte), typeof(char), typeof(int), typeof(uint), typeof(long), typeof(ulong), typeof(short), typeof(ushort), typeof(string) }
+            .Select(t => t.FullName).ToArray();
 
         public EqualityPartialGenerator(
             RecordDescriptor descriptor,
@@ -76,7 +76,7 @@ namespace Amadevus.RecordGenerator.Generators
             var asExpression = BinaryExpression(AsExpression,
                 IdentifierName(objVariableName),
                 ClassIdentifier);
-            var equotableEqualsInvocation = InvocationExpression(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
+            var equotableEqualsInvocation = InvocationExpression(MemberAccessExpression(SimpleMemberAccessExpression,
                 ThisExpression(), IdentifierName(equalsMethodName)))
                 .WithArgumentList(ArgumentList(SeparatedList(new[] { Argument(asExpression) })));
             var body = Block(
@@ -107,16 +107,16 @@ namespace Amadevus.RecordGenerator.Generators
 
             var equalsExpressions = Entries.Select<RecordDescriptor.Entry, ExpressionSyntax>(property =>
             {
+                var typeQualifiedName = property.TypeSymbol.GetQualifiedName().TrimEnd('?');
+
                 var otherMemberValueAccess = MemberAccessExpression(SimpleMemberAccessExpression,
                     IdentifierName(otherVariableName),
                     IdentifierName(property.Identifier.Text));
                 var thisMemberValueAccess = IdentifierName(property.Identifier.Text);
 
-                var propertyBaseType = property.Type is NullableTypeSyntax nullable ? nullable.ElementType : property.Type; 
-                if (propertyBaseType is PredefinedTypeSyntax predefinedType)
+                if (wellKnownTypes.Contains(typeQualifiedName))
                 {
-                    if (wellKnownTypes.Contains(predefinedType.Keyword.ValueText))
-                        return BinaryExpression(EqualsExpression, thisMemberValueAccess, otherMemberValueAccess);
+                    return BinaryExpression(EqualsExpression, thisMemberValueAccess, otherMemberValueAccess);
                 }
 
                 return InvocationExpression(MemberAccessExpression(SimpleMemberAccessExpression,
@@ -136,9 +136,7 @@ namespace Amadevus.RecordGenerator.Generators
             var checks = notNullCheck;  
             foreach (var equalsExpression in equalsExpressions)
             {
-                checks = BinaryExpression(LogicalAndExpression,
-                    checks,
-                    equalsExpression); 
+                checks = BinaryExpression(LogicalAndExpression, checks, equalsExpression); 
             }
 
             var body = Block(

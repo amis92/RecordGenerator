@@ -9,37 +9,29 @@ namespace Amadevus.RecordGenerator.Generators
 {
     internal static class RecordDescriptorExtensions
     {
-        public static RecordDescriptor.Entry ToRecordEntry(this PropertyDeclarationSyntax property)
+        public static RecordDescriptor.Entry ToRecordEntry(this PropertyDeclarationSyntax property, ISymbol symbol)
         {
             return new RecordDescriptor.SimpleEntry(
                 property.Identifier.WithoutTrivia(),
                 property.Type.WithoutTrivia(),
-                property.WithoutTrivia());
+                property.WithoutTrivia(),
+                symbol);
         }
 
-        public static RecordDescriptor ToRecordDescriptor(this ClassDeclarationSyntax typeDeclaration)
+        public static RecordDescriptor ToRecordDescriptor(this ClassDeclarationSyntax typeDeclaration, SemanticModel semanticModel)
         {
             return new RecordDescriptor(
                 typeDeclaration.GetTypeSyntax().WithoutTrivia(),
                 typeDeclaration.Identifier.WithoutTrivia(),
-                typeDeclaration.GetRecordProperties(),
+                typeDeclaration.GetRecordProperties(semanticModel),
                 typeDeclaration.WithoutTrivia(),
-                typeDeclaration);
+                typeDeclaration.GetLocation(),
+                semanticModel);
         }
 
-        public static RecordDescriptor ToRecordDescriptor(this StructDeclarationSyntax typeDeclaration)
+        private static ImmutableArray<RecordDescriptor.Entry> GetRecordProperties(this TypeDeclarationSyntax typeDeclaration, SemanticModel semanticModel)
         {
-            return new RecordDescriptor(
-                typeDeclaration.GetTypeSyntax().WithoutTrivia(),
-                typeDeclaration.Identifier.WithoutTrivia(),
-                typeDeclaration.GetRecordProperties(),
-                typeDeclaration.WithoutTrivia(),
-                typeDeclaration);
-        }
-
-        private static ImmutableArray<RecordDescriptor.Entry> GetRecordProperties(this TypeDeclarationSyntax typeDeclaration)
-        {
-            return typeDeclaration.Members.GetRecordProperties().AsRecordEntries();
+            return typeDeclaration.Members.GetRecordProperties().AsRecordEntries(semanticModel);
         }
 
         private static ImmutableArray<PropertyDeclarationSyntax> GetRecordProperties(this SyntaxList<MemberDeclarationSyntax> members)
@@ -51,10 +43,10 @@ namespace Amadevus.RecordGenerator.Generators
                 .ToImmutableArray();
         }
 
-        private static ImmutableArray<RecordDescriptor.Entry> AsRecordEntries(this IEnumerable<PropertyDeclarationSyntax> properties)
+        private static ImmutableArray<RecordDescriptor.Entry> AsRecordEntries(this IEnumerable<PropertyDeclarationSyntax> properties, SemanticModel semanticModel)
         {
             return properties
-                .Select(p => p.ToRecordEntry())
+                .Select(p => p.ToRecordEntry(semanticModel.GetSymbolInfo(p.Type).Symbol))
                 .ToImmutableArray();
         }
 
