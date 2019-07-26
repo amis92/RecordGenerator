@@ -22,7 +22,7 @@ namespace Amadevus.RecordGenerator.Generators
         public Task<SyntaxList<MemberDeclarationSyntax>> GenerateAsync(TransformationContext context, IProgress<Diagnostic> progress, CancellationToken cancellationToken)
         {
             var generatedMembers = SyntaxFactory.List<MemberDeclarationSyntax>();
-            var features = GetFeatures(context);
+            var features = GetFeatures();
 
             if (context.ProcessingNode is ClassDeclarationSyntax classDeclaration)
             {
@@ -47,26 +47,11 @@ namespace Amadevus.RecordGenerator.Generators
             }
         }
 
-        private Features GetFeatures(TransformationContext context)
+        private Features GetFeatures()
         {
-            if (attributeData.ConstructorArguments.Length > 0)
-            {
-                return (Features)attributeData.ConstructorArguments[0].Value;
-            }
-            return GetAssemblyDefault() ?? Features.Default;
-
-            Features? GetAssemblyDefault()
-            {
-                foreach (var attribute in context.Compilation.Assembly.GetAttributes())
-                {
-                    if (attribute.AttributeClass.Name == nameof(DefaultRecordFeaturesAttribute)
-                        && attribute.AttributeClass.ToDisplayString() == "Amadevus.RecordGenerator.DefaultRecordFeaturesAttribute")
-                    {
-                        return (Features)attribute.ConstructorArguments[0].Value;
-                    }
-                }
-                return null;
-            }
+            return attributeData.ConstructorArguments.Length > 0
+                ? (Features)attributeData.ConstructorArguments[0].Value
+                : Features.Default;
         }
     }
 }
