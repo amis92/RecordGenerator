@@ -21,14 +21,9 @@ namespace Amadevus.RecordGenerator
         /// <summary>
         /// With* method per property that creates new record instance with
         /// provided value assigned to the associated property. Also includes
-        /// generation of Update method.
+        /// generation of <c>Update</c> method.
         /// </summary>
         WithPerProperty = 0b_10,
-
-        /// <summary>
-        /// Basic features: <see cref="Constructor"/> and <see cref="WithPerProperty"/>.
-        /// </summary>
-        Basic = Constructor | WithPerProperty,
 
         /// <summary>
         /// <see cref="object.ToString"/> override that generates friendly,
@@ -39,7 +34,7 @@ namespace Amadevus.RecordGenerator
         /// <summary>
         /// <c>Builder</c> nested class - a simple POCO with all record properties,
         /// but read-write (getter and setter). Also creates two mapping methods:
-        /// <c>RecordClass.ToBuilder</c> and <c>RecordClass.Builder.ToImmutable</c>.
+        /// <c>MyRecord.ToBuilder</c> and <c>MyRecord.Builder.ToImmutable</c>.
         /// </summary>
         Builder = 0b_1000,
 
@@ -50,19 +45,13 @@ namespace Amadevus.RecordGenerator
         Deconstruct = 0b_10000,
 
         /// <summary>
-        /// Default features: <see cref="Basic"/>, <see cref="ToString"/>,
-        /// <see cref="Builder"/> and <see cref="Deconstruct"/>.
+        /// Default feature set.
         /// </summary>
-        Default = Basic | ToString | Builder | Deconstruct,
+        Default = Constructor | WithPerProperty | ToString | Builder | Deconstruct,
 
         //ObjectEquals = 0b_100000,
         //EquatableEquals = 0b_1000000,
         //OperatorEquals = 0b_10000000,
-        //Equality = ObjectEquals | EquatableEquals | OperatorEquals,
-
-        /// <summary>
-        /// All features available.
-        /// </summary>
-        All = -1
+        //Equality = ObjectEquals | EquatableEquals | OperatorEquals
     }
 }
