@@ -10,29 +10,19 @@
 
   <PropertyGroup>
     <Description>Contains code generators for [Record]-marked types. Creates backing code (constructor, With- mutators, deconstructor to tuple, Builder nested type etc.) for immutable record classes. See project site for installation instructions and more details.</Description>
-    <PackageReleaseNotes>Fixed handling of get-only expression body properties (e.g. `int Count { get => 0; }`).</PackageReleaseNotes>
+    <PackageReleaseNotes>Fixed handling of get-only expression body properties (e.g. `int Count { get =&gt; 0; }`).</PackageReleaseNotes>
     <PackageTags>record immutable attribute generator generators generation amadevus recordgenerator code codegen codegenerator codegeneration</PackageTags>
     <NoPackageAnalysis>true</NoPackageAnalysis>
-    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
   </PropertyGroup>
 
   <ItemGroup>
     <None Update="build/Amadevus.RecordGenerator.Generators.props" Pack="true" PackagePath="" />
+    <Compile Include="../Amadevus.RecordGenerator.Attributes/**/*.cs" Link="Attributes/%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CodeGeneration.Roslyn" PrivateAssets="all" />
     <PackageReference Update="NETStandard.Library" PrivateAssets="all" />
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Amadevus.RecordGenerator.Attributes\Amadevus.RecordGenerator.Attributes.csproj" PrivateAssets="all" />
-  </ItemGroup>
-
-  <Target Name="CopyProjectReferencesToPackage" DependsOnTargets="ResolveReferences">
-    <ItemGroup>
-      <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths->WithMetadataValue('ReferenceSourceTarget', 'ProjectReference'))" />
-    </ItemGroup>
-  </Target>
-
+  
 </Project>
