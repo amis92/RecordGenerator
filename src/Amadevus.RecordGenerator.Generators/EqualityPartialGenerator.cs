@@ -112,8 +112,6 @@ namespace Amadevus.RecordGenerator.Generators
                     IdentifierName(property.Identifier.Text));
                 var thisMemberValueAccess = IdentifierName(property.Identifier.Text);
 
-                System.Diagnostics.Debugger.Launch();
-
                 var propertyBaseType = property.Type is NullableTypeSyntax nullable ? nullable.ElementType : property.Type; 
                 if (propertyBaseType is PredefinedTypeSyntax predefinedType)
                 {
