@@ -14,8 +14,7 @@ namespace Amadevus.RecordGenerator.Generators
     {
         public static IEnumerable<Diagnostic> GenerateDiagnostics(RecordDescriptor descriptor)
         {
-            var sealedToken = SyntaxFactory.Token(SyntaxKind.SealedKeyword);
-            if (descriptor.TypeDeclaration.Modifiers.Contains(sealedToken)) yield break;
+            if (descriptor.TypeDeclaration.Modifiers.Any(t => t.IsKind(SyntaxKind.SealedKeyword))) yield break;
 
             yield return Diagnostic.Create(
                 Descriptors.X1001_RecordMustBeSealedIfEqualityIsEnabled,
