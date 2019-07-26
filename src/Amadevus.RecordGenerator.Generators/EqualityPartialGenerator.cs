@@ -114,7 +114,8 @@ namespace Amadevus.RecordGenerator.Generators
 
                 System.Diagnostics.Debugger.Launch();
 
-                if (property.Type is PredefinedTypeSyntax predefinedType)
+                var propertyBaseType = property.Type is NullableTypeSyntax nullable ? nullable.ElementType : property.Type; 
+                if (propertyBaseType is PredefinedTypeSyntax predefinedType)
                 {
                     if (wellKnownTypes.Contains(predefinedType.Keyword.ValueText))
                         return BinaryExpression(EqualsExpression, thisMemberValueAccess, otherMemberValueAccess);
