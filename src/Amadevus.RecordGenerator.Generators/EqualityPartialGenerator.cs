@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using static Microsoft.CodeAnalysis.CSharp.SyntaxKind;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Amadevus.RecordGenerator.Generators
@@ -12,6 +13,9 @@ namespace Amadevus.RecordGenerator.Generators
     {
         private const string equalsMethodName = "Equals";
         private readonly RecordDescriptor descriptor;
+        private IEnumerable<string> wellKnownTypes { get; } =
+            new [] { BoolKeyword, ByteKeyword, SByteKeyword, CharKeyword, IntKeyword, UIntKeyword, LongKeyword, ULongKeyword, ShortKeyword, UShortKeyword, StringKeyword }
+            .Select(k => k.ToString().ToLower()).Select(k => k.Substring(0, k.Length - "Keyword".Length)).ToArray();
 
         public EqualityPartialGenerator(
             RecordDescriptor descriptor,
@@ -45,31 +49,31 @@ namespace Amadevus.RecordGenerator.Generators
         {
             return List(new MemberDeclarationSyntax[]
             {
-                GenerateGenericEquals(),
                 GenerateObjectEquals(),
+                GenerateGenericEquals(),
                 GenerateGetHashCode(),
             });
         }
 
-        public MemberDeclarationSyntax GenerateGenericEquals()
+        public MemberDeclarationSyntax GenerateObjectEquals()
         {
             const string objVariableName = "obj";
 
             var method = MethodDeclaration(
-                PredefinedType(Token(SyntaxKind.BoolKeyword)),
+                PredefinedType(Token(BoolKeyword)),
                 equalsMethodName);
 
             method = method.AddModifiers(new [] 
             {
-                Token(SyntaxKind.PublicKeyword),
-                Token(SyntaxKind.OverrideKeyword)
+                Token(PublicKeyword),
+                Token(OverrideKeyword)
             });
 
             method = method.WithParameters( 
                 Parameter(Identifier(objVariableName))
-                .WithType(PredefinedType(Token(SyntaxKind.ObjectKeyword))));
+                .WithType(PredefinedType(Token(ObjectKeyword))));
 
-            var asExpression = BinaryExpression(SyntaxKind.AsExpression,
+            var asExpression = BinaryExpression(AsExpression,
                 IdentifierName(objVariableName),
                 ClassIdentifier);
             var equotableEqualsInvocation = InvocationExpression(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
@@ -84,47 +88,56 @@ namespace Amadevus.RecordGenerator.Generators
             return method;
         }
 
-        public MemberDeclarationSyntax GenerateObjectEquals()
+        public MemberDeclarationSyntax GenerateGenericEquals()
         {
             const string otherVariableName = "other";
 
             var method = MethodDeclaration(
-                PredefinedType(Token(SyntaxKind.BoolKeyword)),
+                PredefinedType(Token(BoolKeyword)),
                 equalsMethodName);
 
             method = method.AddModifiers(new[]
             {
-                Token(SyntaxKind.PublicKeyword)
+                Token(PublicKeyword)
             });
 
             method = method.WithParameters(
                 Parameter(Identifier(otherVariableName))
                 .WithType(ClassIdentifier));
 
-            var equalsExpressions = Entries.Select(property =>
+            var equalsExpressions = Entries.Select<RecordDescriptor.Entry, ExpressionSyntax>(property =>
             {
-                return InvocationExpression(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
+                var otherMemberValueAccess = MemberAccessExpression(SimpleMemberAccessExpression,
+                    IdentifierName(otherVariableName),
+                    IdentifierName(property.Identifier.Text));
+                var thisMemberValueAccess = IdentifierName(property.Identifier.Text);
+
+                System.Diagnostics.Debugger.Launch();
+
+                if (property.Type is PredefinedTypeSyntax predefinedType)
+                {
+                    if (wellKnownTypes.Contains(predefinedType.Keyword.ValueText))
+                        return BinaryExpression(EqualsExpression, thisMemberValueAccess, otherMemberValueAccess);
+                }
+
+                return InvocationExpression(MemberAccessExpression(SimpleMemberAccessExpression,
                     GenerateEqualityComparerDefaultExpression(property.Type), IdentifierName(equalsMethodName)))
                 .WithArgumentList(ArgumentList(SeparatedList<ArgumentSyntax>(new SyntaxNodeOrToken[] 
                 {
-                    Argument(IdentifierName(property.Identifier.Text)),
-                    Token(SyntaxKind.CommaToken),
-                    Argument(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
-                        IdentifierName(otherVariableName),
-                        IdentifierName(property.Identifier.Text))),
+                    Argument(thisMemberValueAccess),
+                    Token(CommaToken),
+                    Argument(otherMemberValueAccess),
                 })));
             }).Cast<ExpressionSyntax>().ToList();
 
-            var notNullCheck = BinaryExpression(SyntaxKind.NotEqualsExpression,
+            var notNullCheck = BinaryExpression(NotEqualsExpression,
                 IdentifierName(otherVariableName),
-                LiteralExpression(SyntaxKind.NullLiteralExpression));
-
-            equalsExpressions.Insert(0, notNullCheck);
+                LiteralExpression(NullLiteralExpression));
 
             var checks = notNullCheck;  
             foreach (var equalsExpression in equalsExpressions)
             {
-                checks = BinaryExpression(SyntaxKind.LogicalAndExpression,
+                checks = BinaryExpression(LogicalAndExpression,
                     checks,
                     equalsExpression); 
             }
@@ -147,12 +160,12 @@ namespace Amadevus.RecordGenerator.Generators
             const int hashCodeMultiplicationValue = 1521134295;
 
             var method = MethodDeclaration(
-                PredefinedType(Token(SyntaxKind.IntKeyword)),
+                PredefinedType(Token(IntKeyword)),
                 Identifier(getHashCodeMethodName));
 
             method = method.AddModifiers(
-                SyntaxKind.PublicKeyword,
-                SyntaxKind.OverrideKeyword);
+                PublicKeyword,
+                OverrideKeyword);
 
             var body = Block();
 
@@ -161,24 +174,24 @@ namespace Amadevus.RecordGenerator.Generators
                 .WithVariables(SingletonSeparatedList(
                     VariableDeclarator(Identifier(hashCodeVariableName))
                     .WithInitializer(
-                        EqualsValueClause(LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(hashCodeInitialValue))))))));
+                        EqualsValueClause(LiteralExpression(NumericLiteralExpression, Literal(hashCodeInitialValue))))))));
 
             foreach (var property in Entries)
             {
                 var defaultEqualityComparer = GenerateEqualityComparerDefaultExpression(property.Type);
 
-                var getHashCodeInvocation = InvocationExpression(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
+                var getHashCodeInvocation = InvocationExpression(MemberAccessExpression(SimpleMemberAccessExpression,
                         defaultEqualityComparer, IdentifierName(getHashCodeMethodName)))
                     .WithArgumentList(ArgumentList(SeparatedList(new [] { Argument(IdentifierName(property.Identifier.Text)) })));
 
                 var hashCodeAssignment = ExpressionStatement(
-                    AssignmentExpression(SyntaxKind.SimpleAssignmentExpression,
+                    AssignmentExpression(SimpleAssignmentExpression,
                         IdentifierName(hashCodeVariableName),
-                        BinaryExpression(SyntaxKind.AddExpression,
-                            BinaryExpression(SyntaxKind.MultiplyExpression,
+                        BinaryExpression(AddExpression,
+                            BinaryExpression(MultiplyExpression,
                                 IdentifierName(hashCodeVariableName),
-                                PrefixUnaryExpression(SyntaxKind.UnaryMinusExpression,
-                                    LiteralExpression(SyntaxKind.NumericLiteralExpression,
+                                PrefixUnaryExpression(UnaryMinusExpression,
+                                    LiteralExpression(NumericLiteralExpression,
                                         Literal(hashCodeMultiplicationValue)))),
                             getHashCodeInvocation)));
 
@@ -189,7 +202,7 @@ namespace Amadevus.RecordGenerator.Generators
                 IdentifierName(hashCodeVariableName)));
 
             body = Block(SingletonList<StatementSyntax>(
-                CheckedStatement(SyntaxKind.UncheckedStatement, body)));
+                CheckedStatement(UncheckedStatement, body)));
 
             method = method.WithBody(body);
 
@@ -205,7 +218,7 @@ namespace Amadevus.RecordGenerator.Generators
                 .WithTypeArgumentList(TypeArgumentList(SeparatedList(new[] { comparerType })));
             var equalityComparer = QualifiedName(equalityComparerQN, equalityComparerGeneric);
 
-            return MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
+            return MemberAccessExpression(SimpleMemberAccessExpression,
                 equalityComparer, IdentifierName(defaultMemberName));
         }
     }
