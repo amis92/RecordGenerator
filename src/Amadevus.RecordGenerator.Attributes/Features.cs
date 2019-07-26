@@ -20,7 +20,8 @@ namespace Amadevus.RecordGenerator
 
         /// <summary>
         /// With* method per property that creates new record instance with
-        /// provided value assigned to the associated property.
+        /// provided value assigned to the associated property. Also includes
+        /// generation of Update method.
         /// </summary>
         WithPerProperty = 0b_10,
 
@@ -62,6 +63,6 @@ namespace Amadevus.RecordGenerator
         /// <summary>
         /// All features available.
         /// </summary>
-        All = int.MinValue
+        All = -1
     }
 }

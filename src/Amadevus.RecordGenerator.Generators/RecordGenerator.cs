@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,7 +27,10 @@ namespace Amadevus.RecordGenerator.Generators
             if (context.ProcessingNode is ClassDeclarationSyntax classDeclaration)
             {
                 var descriptor = classDeclaration.ToRecordDescriptor(features);
-                generatedMembers = generatedMembers.AddRange(GenerateRecordPartials(descriptor));
+                generatedMembers = generatedMembers
+                    .AddRange(
+                        GenerateRecordPartials(descriptor)
+                        .Where(x => x != null));
             }
             return Task.FromResult(generatedMembers);
 
