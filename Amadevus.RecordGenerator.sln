@@ -33,6 +33,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amadevus.RecordGenerator.Generators.UnitTests", "test\Amadevus.RecordGenerator.Generators.UnitTests\Amadevus.RecordGenerator.Generators.UnitTests.csproj", "{C9EB98E3-4AC4-457F-935C-EA872B86B087}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +69,10 @@ Global
 		{81377F14-456A-400F-B61F-D7181DEF01E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{81377F14-456A-400F-B61F-D7181DEF01E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{81377F14-456A-400F-B61F-D7181DEF01E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9EB98E3-4AC4-457F-935C-EA872B86B087}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9EB98E3-4AC4-457F-935C-EA872B86B087}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9EB98E3-4AC4-457F-935C-EA872B86B087}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9EB98E3-4AC4-457F-935C-EA872B86B087}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -79,6 +85,7 @@ Global
 		{B1C6F024-EE9F-4EC0-8034-5E72805296F5} = {018D08EF-BC96-444D-9C2F-ECAB15EDCAED}
 		{B25288C2-F30F-4231-B5F8-8BEE8DE592C1} = {018D08EF-BC96-444D-9C2F-ECAB15EDCAED}
 		{81377F14-456A-400F-B61F-D7181DEF01E9} = {DCB0B0D2-8B70-48B9-ACD3-8B4EC303FDCD}
+		{C9EB98E3-4AC4-457F-935C-EA872B86B087} = {018D08EF-BC96-444D-9C2F-ECAB15EDCAED}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {936FE680-563E-42E2-9BE5-F8F6251AABF7}

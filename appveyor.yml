@@ -1,55 +1,11 @@
-# configuration for all except 'release' branch
-# Build in Debug, publish to MyGet
-
-# configuration for only 'release' branch
-# Build in Release, publish to Nuget
-
 image: Visual Studio 2017
-version: 0.4.1-{branch}-build{build}
 skip_tags: true
-clone_depth: 1
 configuration:
-  - Debug
   - Release
 init:
   - appveyor version
   - git config --global core.autocrlf true
-  # checking if release branch
-  - ps: |
-      # set release_branch
-      $env:release_branch = $env:APPVEYOR_REPO_BRANCH.StartsWith("release")
-      echo "release_branch='$env:release_branch'"
-
-  # setting versions
-  - ps: |
-      # extract x.y.z from version, join them and generate suffix in form {branch}-build00000 where branch has all non-character replaced with '-' and up to 10 chars
-      $major = $env:APPVEYOR_BUILD_VERSION -replace '^(\d*)\.(\d*)\.(\d*).*$', '$1'
-      $minor = $env:APPVEYOR_BUILD_VERSION -replace '^(\d*)\.(\d*)\.(\d*).*$', '$2'
-      $patch = $env:APPVEYOR_BUILD_VERSION -replace '^(\d*)\.(\d*)\.(\d*).*$', '$3'
-      $version_base = "$major.$minor.$patch"
-      $version_suffix = (($env:APPVEYOR_REPO_BRANCH -replace '[^\w\d]', '-')[0..9] -join "") + '-build' + "$env:APPVEYOR_BUILD_NUMBER".PadLeft(5, "0")
-      # set versions
-      $env:ASM_VERSION = "$major.0.0.0"
-      $env:ASM_FILE_VERSION = "$version_base.$env:APPVEYOR_BUILD_NUMBER"
-      $env:ASM_INFORMATIONAL_VERSION = "$version_base-$version_suffix"
-      $env:PACKAGE_VERSION = if ($env:release_branch -eq $True) { "$version_base" } else { "$env:ASM_INFORMATIONAL_VERSION" }
-      # print
-      echo "version_base='$version_base'"
-      echo "version_suffix='$version_suffix'"
-      echo "PACKAGE_VERSION='$env:PACKAGE_VERSION'"
-      echo "ASM_VERSION='$env:ASM_VERSION'"
-      echo "ASM_FILE_VERSION='$env:ASM_FILE_VERSION'"
-      echo "ASM_INFORMATIONAL_VERSION='$env:ASM_INFORMATIONAL_VERSION'"
-dotnet_csproj:
-  patch: true
-  file: '**\*.props'
-  version: '$(ASM_VERSION)'
-  assembly_version: '$(ASM_VERSION)'
-  package_version: '$(PACKAGE_VERSION)'
-  file_version: '$(ASM_FILE_VERSION)'
-  informational_version: '$(ASM_INFORMATIONAL_VERSION)'
 before_build:
-  - ps: Get-Content Directory.Build.props
   # check and install required .NET Core SDK version
   - ps: |
       $requiredDotnetVersion = (Get-Content "global.json" | ConvertFrom-Json).sdk.version
@@ -67,33 +23,18 @@ before_build:
       else {
           Write-Host "Using .NET Core SDK v$compatibleDotnetVersion"
       }
+  - ps: |
+      # set build number
+      dotnet tool install --tool-path . nbgv
+      ./nbgv cloud
+  - dotnet restore
 build_script:
-  - msbuild /v:m /t:Restore,Build /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+  - ps: dotnet build -v:m --no-restore -c $env:configuration
+test_script:
+  - ps: dotnet test -v:m --no-build -c $env:configuration
 notifications:
   - provider: Webhook
     url: https://webhooks.gitter.im/e/7a491795ae7262cd16b3
     on_build_success: true
     on_build_failure: true
     on_build_status_changed: true
-artifacts:
-  - path: '**\Amadevus.RecordGenerator.*.nupkg'
-deploy:
-  - provider: NuGet
-    server: https://www.myget.org/F/amadevus/api/v2/package
-    symbol_server: https://www.myget.org/F/amadevus/symbols/api/v2/package
-    api_key:
-      secure: 1xqXXkTjhe96ttKDaPOqzaoeulcSO4cb2FMu3nXvHmrFMRq2gJJ6DkKlu1VUu2bO
-    skip_symbols: false
-    artifact: /.*\.nupkg/
-    on:
-      release_branch: false
-      configuration: Debug
-
-  - provider: NuGet
-    api_key:
-      secure: c95gPEKjDNy5e4jQLMtJ1TxcFbxWxBytFlfV12ivQJ/zcJYurlH7/lNkTe/azD7z
-    skip_symbols: false
-    artifact: /.*\.nupkg/
-    on:
-      release_branch: true
-      configuration: Release

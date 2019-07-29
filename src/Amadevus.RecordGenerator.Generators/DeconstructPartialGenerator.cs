@@ -37,7 +37,7 @@ namespace Amadevus.RecordGenerator.Generators
             ParameterSyntax CreateParameter(RecordDescriptor.Entry entry)
             {
                 return
-                    Parameter(entry.Identifier)
+                    Parameter(entry.IdentifierInCamelCase)
                     .WithType(entry.Type)
                     .AddModifiers(Token(SyntaxKind.OutKeyword));
             }
@@ -47,7 +47,7 @@ namespace Amadevus.RecordGenerator.Generators
                     ExpressionStatement(
                         AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
-                            IdentifierName(entry.Identifier),
+                            IdentifierName(entry.IdentifierInCamelCase),
                             MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 ThisExpression(),

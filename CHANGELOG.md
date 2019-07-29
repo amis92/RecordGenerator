@@ -7,5 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+* Parameters of generated record methods use camel-casing, as opposed to
+  Pascal-casing previously, to align with naming conventions in .NET.
+* The name of the parameter to `With*` methods now always reads `value`
+  as opposed to being named after the property verbatim.
+
 ### Added
+
+* [`Object.ToString`][objtostr] override for records that follows the same
+  implementation as C# generates for anonymous types
 * `GeneratedCodeAttribute` is added to generated non-type members (methods, properties)
+
+
+[objtostr]: https://docs.microsoft.com/en-us/dotnet/api/system.object.tostring

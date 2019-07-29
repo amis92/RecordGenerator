@@ -1,23 +1,46 @@
 <Project>
 
-  <PropertyGroup>
+    <PropertyGroup>
     <Authors>Amadeusz Sadowski</Authors>
-    <PackageLicenseUrl>https://github.com/amis92/RecordGenerator/blob/master/LICENSE</PackageLicenseUrl>
+    <Company>Amadevus</Company>
+    <Copyright>Copyright © Amadeusz Sadowski</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageProjectUrl>https://amis92.github.io/RecordGenerator</PackageProjectUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/amis92/RecordGenerator/master/docs/logo.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/amis92/RecordGenerator</RepositoryUrl>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Copyright>Copyright © 2018 Amadeusz Sadowski</Copyright>
-    <RepositoryType>git</RepositoryType>
-    <Company>Amadevus</Company>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <LangVersion>7.3</LangVersion>
-    <CodeGenerationRoslynPackagesVersion>0.4.88</CodeGenerationRoslynPackagesVersion>
-    <Version>0.4.1</Version>
-    <PackageVersion>0.4.1-manual</PackageVersion>
-    <AssemblyVersion></AssemblyVersion>
-    <FileVersion></FileVersion>
-    <InformationalVersion></InformationalVersion>
+    <ReleaseNotes>https://github.com/amis92/RecordGenerator/blob/master/CHANGELOG.md</ReleaseNotes>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <LangVersion>7.3</LangVersion>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <WarningsAsErrors Condition=" '$(Configuration)' == Release ">true</WarningsAsErrors>
+    <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
+    <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)obj/$(MSBuildProjectName)/</BaseIntermediateOutputPath>
+    <OutputPath>$(MSBuildThisFileDirectory)bin/$(MSBuildProjectName)/$(Configuration)/</OutputPath>
+    <PackageOutputPath>$(MSBuildThisFileDirectory)bin/Packages/$(Configuration)/</PackageOutputPath>
+    <IsTestingOnlyProject>$(MSBuildProjectName.Contains('Test'))</IsTestingOnlyProject>
+    <NoWarn>$(NoWarn);CS1591;NU5105</NoWarn>
+    <MinClientVersion>4.3.0</MinClientVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" !$(IsTestingOnlyProject) ">
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <EnableSourceLink>true</EnableSourceLink>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" $(IsTestingOnlyProject) ">
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <DotNetCliToolReference Include="dotnet-codegen" Version="$(CodeGenerationRoslynPackagesVersion)" />
+    <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
+  </ItemGroup>
   
 </Project>
