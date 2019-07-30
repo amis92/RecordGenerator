@@ -21,8 +21,15 @@ namespace Amadevus.RecordGenerator.Generators
 
         protected CancellationToken CancellationToken { get; }
 
-        public virtual ClassDeclarationSyntax GenerateTypeDeclaration()
+        protected abstract Features TriggeringFeatures { get; }
+
+        public ClassDeclarationSyntax GenerateTypeDeclaration()
         {
+            if ((Descriptor.Features & TriggeringFeatures) == 0)
+            {
+                // skip generation if no features from this generator are requested
+                return null;
+            }
             return
                 ClassDeclaration(
                     GenerateTypeIdentifier())

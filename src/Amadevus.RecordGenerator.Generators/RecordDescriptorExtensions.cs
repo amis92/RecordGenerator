@@ -17,18 +17,20 @@ namespace Amadevus.RecordGenerator.Generators
                 property.WithoutTrivia());
         }
 
-        public static RecordDescriptor ToRecordDescriptor(this ClassDeclarationSyntax typeDeclaration)
+        public static RecordDescriptor ToRecordDescriptor(this ClassDeclarationSyntax typeDeclaration, Features features)
         {
             return new RecordDescriptor(
+                features,
                 typeDeclaration.GetTypeSyntax().WithoutTrivia(),
                 typeDeclaration.Identifier.WithoutTrivia(),
                 typeDeclaration.GetRecordProperties(),
                 typeDeclaration.WithoutTrivia());
         }
 
-        public static RecordDescriptor ToRecordDescriptor(this StructDeclarationSyntax typeDeclaration)
+        public static RecordDescriptor ToRecordDescriptor(this StructDeclarationSyntax typeDeclaration, Features features)
         {
             return new RecordDescriptor(
+                features,
                 typeDeclaration.GetTypeSyntax().WithoutTrivia(),
                 typeDeclaration.Identifier.WithoutTrivia(),
                 typeDeclaration.GetRecordProperties(),

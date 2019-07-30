@@ -19,6 +19,8 @@ namespace Amadevus.RecordGenerator.Generators
             return generator.GenerateTypeDeclaration();
         }
 
+        protected override Features TriggeringFeatures => Features.Deconstruct;
+
         protected override SyntaxList<MemberDeclarationSyntax> GenerateMembers()
         {
             return SingletonList(GenerateDeconstruct());

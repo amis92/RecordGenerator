@@ -27,7 +27,7 @@ steps:
   displayName: Restore NuGet packages
   inputs:
     command: restore
-    arguments: -v m
+    verbosityRestore: Minimal
 
 - task: DotNetCoreCLI@2
   displayName: Build solution

@@ -3,6 +3,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.0</TargetFrameworks>
+    <RootNamespace>Amadevus.RecordGenerator</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup>
