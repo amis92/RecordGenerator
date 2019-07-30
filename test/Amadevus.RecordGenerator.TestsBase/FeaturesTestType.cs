@@ -17,11 +17,11 @@
             }
         }
 
-        [Record(Features.WithPerProperty)]
-        public partial class FeatureWithPerProperty
+        [Record(Features.Withers)]
+        public partial class FeatureWithers
         {
             // ctor needed for Update method to compile
-            public FeatureWithPerProperty(string name) { }
+            public FeatureWithers(string name) { }
 
             public string Name { get; }
         }

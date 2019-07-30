@@ -23,7 +23,7 @@ namespace Amadevus.RecordGenerator.Generators
         }
 
         protected override Features TriggeringFeatures =>
-            Features.Constructor | Features.WithPerProperty | Features.ToString;
+            Features.Constructor | Features.Withers | Features.ToString;
 
         protected override SyntaxList<MemberDeclarationSyntax> GenerateMembers()
         {
@@ -36,7 +36,7 @@ namespace Amadevus.RecordGenerator.Generators
                     yield return GenerateConstructor();
                     yield return GenerateValidatePartialMethod();
                 }
-                if (Descriptor.Features.HasFlag(Features.WithPerProperty))
+                if (Descriptor.Features.HasFlag(Features.Withers))
                 {
                     yield return GenerateUpdateMethod();
                     yield return GenerateMutators();

@@ -23,7 +23,7 @@ namespace Amadevus.RecordGenerator
         /// provided value assigned to the associated property. Also includes
         /// generation of <c>Update</c> method.
         /// </summary>
-        WithPerProperty = 0b_10,
+        Withers = 0b_10,
 
         /// <summary>
         /// <see cref="object.ToString"/> override that generates friendly,
@@ -47,7 +47,7 @@ namespace Amadevus.RecordGenerator
         /// <summary>
         /// Default feature set.
         /// </summary>
-        Default = Constructor | WithPerProperty | ToString | Builder | Deconstruct,
+        Default = Constructor | Withers | ToString | Builder | Deconstruct,
 
         //ObjectEquals = 0b_100000,
         //EquatableEquals = 0b_1000000,

@@ -16,8 +16,8 @@ namespace Amadevus.RecordGenerator.Test
 
         [Theory]
         [InlineData(Features.Constructor, ".ctor")]
-        [InlineData(Features.WithPerProperty, "WithName")]
-        [InlineData(Features.WithPerProperty, "Update")]
+        [InlineData(Features.Withers, "WithName")]
+        [InlineData(Features.Withers, "Update")]
         [InlineData(Features.Builder, "Builder")]
         [InlineData(Features.Builder, "ToBuilder")]
         [InlineData(Features.ToString, "ToString")]
