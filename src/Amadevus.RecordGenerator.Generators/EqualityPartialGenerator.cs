@@ -13,6 +13,8 @@ namespace Amadevus.RecordGenerator.Generators
         private const string equalsMethodName = "Equals";
         private readonly RecordDescriptor descriptor;
 
+        protected override Features TriggeringFeatures => Features.Equality;
+
         private string[] wellKnownTypes { get; } =
             new[] { typeof(bool), typeof(byte), typeof(sbyte), typeof(char), typeof(int), typeof(uint), typeof(long), typeof(ulong), typeof(short), typeof(ushort), typeof(string) }
             .Select(t => t.FullName).ToArray();
@@ -33,6 +35,7 @@ namespace Amadevus.RecordGenerator.Generators
 
         private NameSyntax ClassIdentifier => SyntaxExtensions.GetTypeSyntax(descriptor.TypeDeclaration);
         private IEnumerable<RecordDescriptor.Entry> Entries => descriptor.Entries;
+
 
         protected override BaseListSyntax GenerateBaseList()
         {

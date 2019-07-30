@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,20 +12,25 @@ namespace Amadevus.RecordGenerator.Generators
 {
     public class RecordGenerator : ICodeGenerator
     {
-        private readonly RecordGeneratorOptions options;
+        private readonly AttributeData attributeData;
 
         public RecordGenerator(AttributeData attributeData)
         {
-            options = RecordGeneratorOptions.FromAttributeData(attributeData);
+            this.attributeData = attributeData;
         }
 
         public Task<SyntaxList<MemberDeclarationSyntax>> GenerateAsync(TransformationContext context, IProgress<Diagnostic> progress, CancellationToken cancellationToken)
         {
             var generatedMembers = SyntaxFactory.List<MemberDeclarationSyntax>();
+            var features = GetFeatures();
+
             if (context.ProcessingNode is ClassDeclarationSyntax classDeclaration)
             {
-                var descriptor = classDeclaration.ToRecordDescriptor(context.SemanticModel);
-                generatedMembers = generatedMembers.AddRange(GenerateRecordPartials(descriptor));
+                var descriptor = classDeclaration.ToRecordDescriptor(features, context.SemanticModel);
+                generatedMembers = generatedMembers
+                    .AddRange(
+                        GenerateRecordPartials(descriptor)
+                        .Where(x => x != null));
                 foreach (var diagnostic in GenerateDiagnostics(descriptor)) progress.Report(diagnostic); 
             }
             return Task.FromResult(generatedMembers);
@@ -46,6 +52,13 @@ namespace Amadevus.RecordGenerator.Generators
             {
                 foreach (var diagnostic in EqualityUsageAnalyzer.GenerateDiagnostics(descriptor)) yield return diagnostic;
             }
+        }
+
+        private Features GetFeatures()
+        {
+            return attributeData.ConstructorArguments.Length > 0
+                ? (Features)attributeData.ConstructorArguments[0].Value
+                : Features.Default;
         }
     }
 }

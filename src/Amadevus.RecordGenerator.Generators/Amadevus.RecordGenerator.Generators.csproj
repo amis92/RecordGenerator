@@ -16,11 +16,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\Amadevus.RecordGenerator.Analyzers\Descriptors.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="build\Amadevus.RecordGenerator.Generators.props" Pack="true" PackagePath="" />
+    <None Update="build/Amadevus.RecordGenerator.Generators.props" Pack="true" PackagePath="" />
+    <Compile Include="../Amadevus.RecordGenerator.Analyzers/Descriptors.cs" />
+    <Compile Include="../Amadevus.RecordGenerator.Attributes/**/*.cs" Link="Attributes/%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>

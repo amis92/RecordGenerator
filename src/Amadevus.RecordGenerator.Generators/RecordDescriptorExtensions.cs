@@ -18,18 +18,19 @@ namespace Amadevus.RecordGenerator.Generators
                 symbol);
         }
 
-        public static RecordDescriptor ToRecordDescriptor(this ClassDeclarationSyntax typeDeclaration, SemanticModel semanticModel)
+        public static RecordDescriptor ToRecordDescriptor(this ClassDeclarationSyntax typeDeclaration, Features features, SemanticModel semanticModel)
         {
             return new RecordDescriptor(
+                features,
                 typeDeclaration.GetTypeSyntax().WithoutTrivia(),
                 typeDeclaration.Identifier.WithoutTrivia(),
-                typeDeclaration.GetRecordProperties(semanticModel),
+                typeDeclaration.GetRecordProperties(features, semanticModel),
                 typeDeclaration.WithoutTrivia(),
                 typeDeclaration.GetLocation(),
                 semanticModel);
         }
 
-        private static ImmutableArray<RecordDescriptor.Entry> GetRecordProperties(this TypeDeclarationSyntax typeDeclaration, SemanticModel semanticModel)
+        private static ImmutableArray<RecordDescriptor.Entry> GetRecordProperties(this TypeDeclarationSyntax typeDeclaration, Features features, SemanticModel semanticModel)
         {
             return typeDeclaration.Members.GetRecordProperties().AsRecordEntries(semanticModel);
         }

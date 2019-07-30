@@ -1,4 +1,5 @@
-﻿using Amadevus.RecordGenerator.Analyzers;
+﻿using Amadevus.RecordGenerator;
+using Amadevus.RecordGenerator.Analyzers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;

@@ -21,22 +21,36 @@ namespace Amadevus.RecordGenerator.Generators
             return generator.GenerateTypeDeclaration();
         }
 
+        protected override Features TriggeringFeatures =>
+            Features.Constructor | Features.Withers | Features.ToString;
+
         protected override SyntaxList<MemberDeclarationSyntax> GenerateMembers()
         {
-            return
-                SingletonList<MemberDeclarationSyntax>(
-                    GenerateConstructor())
-                .Add(
-                    GenerateUpdateMethod())
-                .AddRange(
-                    GenerateMutators())
-                .Add(GenerateToString())
-                .Add(GenerateValidatePartialMethod());
+            return List(_().SelectMany(x => x));
+
+            IEnumerable<IEnumerable<MemberDeclarationSyntax>> _()
+            {
+                if (Descriptor.Features.HasFlag(Features.Constructor))
+                {
+                    yield return GenerateConstructor();
+                    yield return GenerateValidatePartialMethod();
+                }
+                if (Descriptor.Features.HasFlag(Features.Withers))
+                {
+                    yield return GenerateUpdateMethod();
+                    yield return GenerateMutators();
+                }
+                if (Descriptor.Features.HasFlag(Features.ToString))
+                {
+                    yield return GenerateToString();
+                }
+            }
         }
 
-        private ConstructorDeclarationSyntax GenerateConstructor()
+        private IEnumerable<ConstructorDeclarationSyntax> GenerateConstructor()
         {
-            return ConstructorDeclaration(Descriptor.TypeIdentifier)
+            yield return
+                ConstructorDeclaration(Descriptor.TypeIdentifier)
                 .AddModifiers(SyntaxKind.PublicKeyword)
                 .WithParameters(
                     Descriptor.Entries.Select(CreateParameter))
@@ -74,14 +88,15 @@ namespace Amadevus.RecordGenerator.Generators
             }
         }
 
-        private MethodDeclarationSyntax GenerateUpdateMethod()
+        private IEnumerable<MethodDeclarationSyntax> GenerateUpdateMethod()
         {
             var arguments = Descriptor.Entries.Select(x =>
             {
                 return Argument(
                     IdentifierName(x.IdentifierInCamelCase));
             });
-            return MethodDeclaration(Descriptor.Type, Names.Update)
+            yield return
+                MethodDeclaration(Descriptor.Type, Names.Update)
                 .AddModifiers(SyntaxKind.PublicKeyword)
                 .WithParameters(
                     Descriptor.Entries.Select(CreateParameter))
@@ -131,12 +146,12 @@ namespace Amadevus.RecordGenerator.Generators
             }
         }
 
-        private MemberDeclarationSyntax GenerateToString()
+        private IEnumerable<MemberDeclarationSyntax> GenerateToString()
         {
             var properties =
                 from e in Descriptor.Entries
                 select AnonymousObjectMemberDeclarator(IdentifierName(e.Identifier));
-            return
+            yield return
                 MethodDeclaration(
                     PredefinedType(Token(SyntaxKind.StringKeyword)),
                     Names.ToString)
@@ -149,9 +164,9 @@ namespace Amadevus.RecordGenerator.Generators
                             IdentifierName(Names.ToString))));
         }
 
-        private MemberDeclarationSyntax GenerateValidatePartialMethod()
+        private IEnumerable<MemberDeclarationSyntax> GenerateValidatePartialMethod()
         {
-            return
+            yield return
                 MethodDeclaration(
                     PredefinedType(Token(SyntaxKind.VoidKeyword)),
                     Names.Validate)
