@@ -1,64 +1,43 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Amadevus.RecordGenerator.Generators
 {
-    internal class RecordPartialGenerator : PartialGeneratorBase
+    internal static class RecordPartialGenerator
     {
-        protected RecordPartialGenerator(RecordDescriptor descriptor, CancellationToken cancellationToken)
-            : base(descriptor, cancellationToken)
+        public static IPartialGenerator Instance =>
+            PartialGenerator.Combine(ConstructorGenerator,
+                                     WithersGenerator,
+                                     ToStringGenerator);
+
+        private static readonly IPartialGenerator ConstructorGenerator =
+            PartialGenerator.Create(Features.Constructor, descriptor =>
+                Generation.Empty.AddMembers(GenerateConstructor(descriptor),
+                                            GenerateValidatePartialMethod(descriptor)));
+
+        private static readonly IPartialGenerator WithersGenerator =
+            PartialGenerator.Create(Features.Withers, descriptor =>
+                Generation.Empty.AddMember(GenerateUpdateMethod(descriptor))
+                                .AddMembers(GenerateMutators(descriptor)));
+
+        private static readonly IPartialGenerator ToStringGenerator =
+            PartialGenerator.Member(Features.ToString, GenerateToString);
+
+        private static ConstructorDeclarationSyntax GenerateConstructor(RecordDescriptor descriptor)
         {
-        }
-
-        public static TypeDeclarationSyntax Generate(RecordDescriptor descriptor, CancellationToken cancellationToken)
-        {
-            var generator = new RecordPartialGenerator(descriptor, cancellationToken);
-            return generator.GenerateTypeDeclaration();
-        }
-
-        protected override Features TriggeringFeatures =>
-            Features.Constructor | Features.Withers | Features.ToString;
-
-        protected override SyntaxList<MemberDeclarationSyntax> GenerateMembers()
-        {
-            return List(_().SelectMany(x => x));
-
-            IEnumerable<IEnumerable<MemberDeclarationSyntax>> _()
-            {
-                if (Descriptor.Features.HasFlag(Features.Constructor))
-                {
-                    yield return GenerateConstructor();
-                    yield return GenerateValidatePartialMethod();
-                }
-                if (Descriptor.Features.HasFlag(Features.Withers))
-                {
-                    yield return GenerateUpdateMethod();
-                    yield return GenerateMutators();
-                }
-                if (Descriptor.Features.HasFlag(Features.ToString))
-                {
-                    yield return GenerateToString();
-                }
-            }
-        }
-
-        private IEnumerable<ConstructorDeclarationSyntax> GenerateConstructor()
-        {
-            yield return
-                ConstructorDeclaration(Descriptor.TypeIdentifier)
-                .AddModifiers(SyntaxKind.PublicKeyword)
-                .WithParameters(
-                    Descriptor.Entries.Select(CreateParameter))
-                .WithBodyStatements(
-                    Descriptor.Entries
-                    .Select(CreateCtorAssignment)
-                    .Prepend(CreateValidateInvocation()));
+            return
+                ConstructorDeclaration(descriptor.TypeIdentifier)
+                    .AddModifiers(SyntaxKind.PublicKeyword)
+                    .WithParameters(
+                        descriptor.Entries.Select(CreateParameter))
+                    .WithBodyStatements(
+                        descriptor.Entries
+                            .Select(CreateCtorAssignment)
+                            .Prepend(CreateValidateInvocation()));
             StatementSyntax CreateCtorAssignment(RecordDescriptor.Entry entry)
             {
                 return
@@ -76,48 +55,48 @@ namespace Amadevus.RecordGenerator.Generators
                 return
                     ExpressionStatement(
                         InvocationExpression(
-                            IdentifierName(Names.Validate))
-                        .AddArgumentListArguments(
-                            Descriptor.Entries.Select(CreateValidateArgument).ToArray()));
+                                IdentifierName(Names.Validate))
+                            .AddArgumentListArguments(
+                                descriptor.Entries.Select(CreateValidateArgument).ToArray()));
             }
             ArgumentSyntax CreateValidateArgument(RecordDescriptor.Entry entry)
             {
                 return
                     Argument(
-                        IdentifierName(entry.IdentifierInCamelCase))
-                    .WithRefKindKeyword(Token(SyntaxKind.RefKeyword));
+                            IdentifierName(entry.IdentifierInCamelCase))
+                        .WithRefKindKeyword(Token(SyntaxKind.RefKeyword));
             }
         }
 
-        private IEnumerable<MethodDeclarationSyntax> GenerateUpdateMethod()
+        private static MethodDeclarationSyntax GenerateUpdateMethod(RecordDescriptor descriptor)
         {
-            var arguments = Descriptor.Entries.Select(x =>
+            var arguments = descriptor.Entries.Select(x =>
             {
                 return Argument(
                     IdentifierName(x.IdentifierInCamelCase));
             });
-            yield return
-                MethodDeclaration(Descriptor.Type, Names.Update)
-                .AddModifiers(SyntaxKind.PublicKeyword)
-                .WithParameters(
-                    Descriptor.Entries.Select(CreateParameter))
-                .WithBodyStatements(
-                    ReturnStatement(
-                        ObjectCreationExpression(
-                            Descriptor.Type)
-                        .WithArgumentList(
-                            ArgumentList(
-                                SeparatedList(arguments)))));
+            return
+                MethodDeclaration(descriptor.Type, Names.Update)
+                    .AddModifiers(SyntaxKind.PublicKeyword)
+                    .WithParameters(
+                        descriptor.Entries.Select(CreateParameter))
+                    .WithBodyStatements(
+                        ReturnStatement(
+                            ObjectCreationExpression(
+                                    descriptor.Type)
+                                .WithArgumentList(
+                                    ArgumentList(
+                                        SeparatedList(arguments)))));
         }
 
-        private IEnumerable<MemberDeclarationSyntax> GenerateMutators()
+        private static IEnumerable<MemberDeclarationSyntax> GenerateMutators(RecordDescriptor descriptor)
         {
-            return Descriptor.Entries.Select(CreateRecordMutator);
+            return descriptor.Entries.Select(CreateRecordMutator);
             MethodDeclarationSyntax CreateRecordMutator(RecordDescriptor.Entry entry)
             {
                 var valueIdentifier = Identifier(Names.Value);
 
-                var arguments = Descriptor.Entries.Select(x =>
+                var arguments = descriptor.Entries.Select(x =>
                 {
                     return Argument(
                         IdentifierName(x == entry ? valueIdentifier : x.Identifier));
@@ -125,20 +104,20 @@ namespace Amadevus.RecordGenerator.Generators
 
                 var mutator =
                     MethodDeclaration(
-                        Descriptor.Type,
-                        GetMutatorIdentifier())
-                    .AddModifiers(SyntaxKind.PublicKeyword)
-                    .WithParameters(
-                        Parameter(
-                            valueIdentifier)
-                        .WithType(entry.Type))
-                    .WithBodyStatements(
-                        ReturnStatement(
-                            InvocationExpression(
-                                IdentifierName(Names.Update))
-                            .WithArgumentList(
-                                ArgumentList(
-                                    SeparatedList(arguments)))));
+                            descriptor.Type,
+                            GetMutatorIdentifier())
+                        .AddModifiers(SyntaxKind.PublicKeyword)
+                        .WithParameters(
+                            Parameter(
+                                    valueIdentifier)
+                                .WithType(entry.Type))
+                        .WithBodyStatements(
+                            ReturnStatement(
+                                InvocationExpression(
+                                        IdentifierName(Names.Update))
+                                    .WithArgumentList(
+                                        ArgumentList(
+                                            SeparatedList(arguments)))));
                 return mutator;
                 SyntaxToken GetMutatorIdentifier()
                 {
@@ -147,40 +126,40 @@ namespace Amadevus.RecordGenerator.Generators
             }
         }
 
-        private IEnumerable<MemberDeclarationSyntax> GenerateToString()
+        public static MemberDeclarationSyntax GenerateToString(RecordDescriptor descriptor)
         {
             var properties =
-                from e in Descriptor.Entries
+                from e in descriptor.Entries
                 select AnonymousObjectMemberDeclarator(IdentifierName(e.Identifier));
-            yield return
+            return
                 MethodDeclaration(
-                    PredefinedType(Token(SyntaxKind.StringKeyword)),
-                    Names.ToString)
-                .AddModifiers(SyntaxKind.PublicKeyword, SyntaxKind.OverrideKeyword)
-                .WithExpressionBody(
-                    InvocationExpression(
-                        MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
-                            AnonymousObjectCreationExpression()
-                                .AddInitializers(properties.ToArray()),
-                            IdentifierName(Names.ToString))));
+                        PredefinedType(Token(SyntaxKind.StringKeyword)),
+                        Names.ToString)
+                    .AddModifiers(SyntaxKind.PublicKeyword, SyntaxKind.OverrideKeyword)
+                    .WithExpressionBody(
+                        InvocationExpression(
+                            MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
+                                AnonymousObjectCreationExpression()
+                                    .AddInitializers(properties.ToArray()),
+                                IdentifierName(Names.ToString))));
         }
 
-        private IEnumerable<MemberDeclarationSyntax> GenerateValidatePartialMethod()
+        private static MemberDeclarationSyntax GenerateValidatePartialMethod(RecordDescriptor descriptor)
         {
-            yield return
+            return
                 MethodDeclaration(
-                    PredefinedType(Token(SyntaxKind.VoidKeyword)),
-                    Names.Validate)
-                .AddParameterListParameters(
-                    Descriptor.Entries.Select(CreateValidateParameter).ToArray())
-                .AddModifiers(SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
-                .WithSemicolonToken();
+                        PredefinedType(Token(SyntaxKind.VoidKeyword)),
+                        Names.Validate)
+                    .AddParameterListParameters(
+                        descriptor.Entries.Select(CreateValidateParameter).ToArray())
+                    .AddModifiers(SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
+                    .WithSemicolonToken();
             ParameterSyntax CreateValidateParameter(RecordDescriptor.Entry entry)
             {
                 return
                     Parameter(entry.IdentifierInCamelCase)
-                    .WithType(entry.Type)
-                    .AddModifiers(Token(SyntaxKind.RefKeyword));
+                        .WithType(entry.Type)
+                        .AddModifiers(Token(SyntaxKind.RefKeyword));
             }
         }
 
@@ -189,13 +168,6 @@ namespace Amadevus.RecordGenerator.Generators
             return Parameter(
                     property.IdentifierInCamelCase)
                 .WithType(property.Type);
-        }
-
-        private ParameterListSyntax GenerateFullParameterList()
-        {
-            return ParameterList(
-                    SeparatedList(
-                        Descriptor.Entries.Select(CreateParameter)));
         }
     }
 }

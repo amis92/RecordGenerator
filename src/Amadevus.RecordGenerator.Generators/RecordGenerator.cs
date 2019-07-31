@@ -4,15 +4,22 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Amadevus.RecordGenerator.Generators
 {
     public class RecordGenerator : ICodeGenerator
     {
         private readonly AttributeData attributeData;
+
+        private static readonly ImmutableArray<IPartialGenerator> PartialGenerators =
+            ImmutableArray.Create(RecordPartialGenerator.Instance,
+                                  BuilderPartialGenerator.Instance,
+                                  DeconstructPartialGenerator.Instance);
 
         public RecordGenerator(AttributeData attributeData)
         {
@@ -21,29 +28,42 @@ namespace Amadevus.RecordGenerator.Generators
 
         public Task<SyntaxList<MemberDeclarationSyntax>> GenerateAsync(TransformationContext context, IProgress<Diagnostic> progress, CancellationToken cancellationToken)
         {
-            var generatedMembers = SyntaxFactory.List<MemberDeclarationSyntax>();
-            var features = GetFeatures();
-
-            if (context.ProcessingNode is ClassDeclarationSyntax classDeclaration)
+            switch (context.ProcessingNode)
             {
-                var descriptor = classDeclaration.ToRecordDescriptor(features);
-                generatedMembers = generatedMembers
-                    .AddRange(
-                        GenerateRecordPartials(descriptor)
-                        .Where(x => x != null));
-            }
-            return Task.FromResult(generatedMembers);
-
-            IEnumerable<MemberDeclarationSyntax> GenerateRecordPartials(RecordDescriptor descriptor)
-            {
-                if (descriptor.Entries.IsEmpty)
+                case ClassDeclarationSyntax classDeclaration:
                 {
-                    yield break;
+                    var descriptor = classDeclaration.ToRecordDescriptor();
+                    if (descriptor.Entries.IsEmpty)
+                        goto default;
+
+                    var generatedMembers = new List<MemberDeclarationSyntax>();
+                    var features = GetFeatures();
+                    var partialKeyword = Token(SyntaxKind.PartialKeyword);
+
+                    var partials =
+                        from g in PartialGenerators
+                        select g.Generate(descriptor, features) into g
+                        where g != null
+                        select
+                            ClassDeclaration(classDeclaration.Identifier.WithoutTrivia())
+                                .WithTypeParameterList(classDeclaration.TypeParameterList?.WithoutTrivia())
+                                .WithBaseList(g.BaseTypes.IsEmpty ? null : BaseList(SeparatedList(g.BaseTypes)))
+                                .WithModifiers(TokenList(g.Modifiers.Except(new[] { partialKeyword })
+                                                                    .Append(partialKeyword)))
+                                .WithMembers(List(g.Members))
+                                .AddGeneratedCodeAttributeOnMembers();
+
+                    foreach (var partial in partials)
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                        generatedMembers.Add(partial);
+                    }
+
+                    return Task.FromResult(List(generatedMembers));
                 }
-                yield return RecordPartialGenerator.Generate(descriptor, cancellationToken);
-                yield return BuilderPartialGenerator.Generate(descriptor, cancellationToken);
-                yield return DeconstructPartialGenerator.Generate(descriptor, cancellationToken);
-                yield break;
+
+                default:
+                    return Task.FromResult(List<MemberDeclarationSyntax>());
             }
         }
 

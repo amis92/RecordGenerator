@@ -1,47 +1,31 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Linq;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Linq;
-using System.Threading;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Amadevus.RecordGenerator.Generators
 {
-    internal class DeconstructPartialGenerator : PartialGeneratorBase
+    internal static class DeconstructPartialGenerator
     {
-        protected DeconstructPartialGenerator(RecordDescriptor descriptor, CancellationToken cancellationToken) : base(descriptor, cancellationToken)
-        {
-        }
+        public static IPartialGenerator Instance =>
+            PartialGenerator.Member(Features.Deconstruct, GenerateDeconstruct);
 
-        public static TypeDeclarationSyntax Generate(RecordDescriptor descriptor, CancellationToken cancellationToken)
-        {
-            var generator = new DeconstructPartialGenerator(descriptor, cancellationToken);
-            return generator.GenerateTypeDeclaration();
-        }
-
-        protected override Features TriggeringFeatures => Features.Deconstruct;
-
-        protected override SyntaxList<MemberDeclarationSyntax> GenerateMembers()
-        {
-            return SingletonList(GenerateDeconstruct());
-        }
-
-        private MemberDeclarationSyntax GenerateDeconstruct()
+        private static MemberDeclarationSyntax GenerateDeconstruct(RecordDescriptor descriptor)
         {
             return
                 MethodDeclaration(
-                    PredefinedType(Token(SyntaxKind.VoidKeyword)), Names.Deconstruct)
-                .AddModifiers(SyntaxKind.PublicKeyword)
-                .WithParameters(
-                    Descriptor.Entries.Select(CreateParameter))
-                .WithBodyStatements(
-                    Descriptor.Entries.Select(CreateAssignment));
+                        PredefinedType(Token(SyntaxKind.VoidKeyword)), Names.Deconstruct)
+                    .AddModifiers(SyntaxKind.PublicKeyword)
+                    .WithParameters(
+                        descriptor.Entries.Select(CreateParameter))
+                    .WithBodyStatements(
+                        descriptor.Entries.Select(CreateAssignment));
             ParameterSyntax CreateParameter(RecordDescriptor.Entry entry)
             {
                 return
                     Parameter(entry.IdentifierInCamelCase)
-                    .WithType(entry.Type)
-                    .AddModifiers(Token(SyntaxKind.OutKeyword));
+                        .WithType(entry.Type)
+                        .AddModifiers(Token(SyntaxKind.OutKeyword));
             }
             StatementSyntax CreateAssignment(RecordDescriptor.Entry entry)
             {

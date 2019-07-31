@@ -17,10 +17,9 @@ namespace Amadevus.RecordGenerator.Generators
                 property.WithoutTrivia());
         }
 
-        public static RecordDescriptor ToRecordDescriptor(this ClassDeclarationSyntax typeDeclaration, Features features)
+        public static RecordDescriptor ToRecordDescriptor(this ClassDeclarationSyntax typeDeclaration)
         {
             return new RecordDescriptor(
-                features,
                 typeDeclaration.GetTypeSyntax().WithoutTrivia(),
                 typeDeclaration.Identifier.WithoutTrivia(),
                 typeDeclaration.GetRecordProperties(),
@@ -30,7 +29,6 @@ namespace Amadevus.RecordGenerator.Generators
         public static RecordDescriptor ToRecordDescriptor(this StructDeclarationSyntax typeDeclaration, Features features)
         {
             return new RecordDescriptor(
-                features,
                 typeDeclaration.GetTypeSyntax().WithoutTrivia(),
                 typeDeclaration.Identifier.WithoutTrivia(),
                 typeDeclaration.GetRecordProperties(),

@@ -15,8 +15,8 @@ namespace Amadevus.RecordGenerator.Generators
         private static readonly GeneratedCodeAttributeApplier attributeApplier
             = new GeneratedCodeAttributeApplier(new GeneratedCodeAttributeGenerator());
 
-        public static ClassDeclarationSyntax AddGeneratedCodeAttributeOnMembers(
-            this ClassDeclarationSyntax typeSyntax)
+        public static TypeDeclarationSyntax AddGeneratedCodeAttributeOnMembers(
+            this TypeDeclarationSyntax typeSyntax)
         {
             return attributeApplier.AddGeneratedCodeAttributeOnMembers(typeSyntax);
         }
@@ -55,8 +55,8 @@ namespace Amadevus.RecordGenerator.Generators
         }
 
         
-        public ClassDeclarationSyntax AddGeneratedCodeAttributeOnMembers(
-            ClassDeclarationSyntax typeDeclaration)
+        public TypeDeclarationSyntax AddGeneratedCodeAttributeOnMembers(
+            TypeDeclarationSyntax typeDeclaration)
         {
             var nodesToBeReplaced = typeDeclaration
                 .ChildNodes()
