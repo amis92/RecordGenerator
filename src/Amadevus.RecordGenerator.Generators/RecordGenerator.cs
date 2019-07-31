@@ -44,7 +44,8 @@ namespace Amadevus.RecordGenerator.Generators
                 yield return RecordPartialGenerator.Generate(descriptor, cancellationToken);
                 yield return BuilderPartialGenerator.Generate(descriptor, cancellationToken);
                 yield return DeconstructPartialGenerator.Generate(descriptor, cancellationToken);
-                yield return EqualityPartialGenerator.Generate(descriptor, cancellationToken);
+                yield return ObjectEqualsGenerator.Generate(descriptor, cancellationToken);
+                yield return EquatableEqualsPartialGenerator.Generate(descriptor, cancellationToken);
                 yield break;
             }
 
