@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Linq;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Amadevus.RecordGenerator.Generators
 {
-    using System.Collections.Generic;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-
     internal interface IPartialGenerator
     {
         GenerationResult Generate(RecordDescriptor descriptor, Features features);
