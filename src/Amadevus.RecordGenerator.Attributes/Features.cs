@@ -51,11 +51,10 @@ namespace Amadevus.RecordGenerator
 
         /// <summary>
         /// <see cref="object.Equals(object)"/> and <see cref="object.GetHashCode()"/> overrides. 
-        /// <see cref="object.Equals(object)"/> implements a equality comparison which compares 
-        /// all record entries (properties that are read-only and auto-implemented) 
+        /// <see cref="object.Equals(object)"/> implements an equality comparison which compares 
+        /// all record entries properties.
         /// of the other <see cref="object"/> with it's own values. 
-        /// <see cref="object.GetHashCode()"/> implements a hash code calculation which calculates
-        /// a hash code using all record entries.
+        /// <see cref="object.GetHashCode()"/> override which calculates a hash code using all record properties.
         /// <see cref="object.GetHashCode()"/>
         /// </summary>
         /// <remarks>
@@ -72,7 +71,7 @@ namespace Amadevus.RecordGenerator
         EquatableEquals = 0b_1000_000,
 
         /// <summary>
-        /// Overrides a the <see langword="==" /> by using the <see cref="object.Equals(object)"/> method.
+        /// Overrides the <see langword="==" /> operator by using the <see cref="object.Equals(object)"/> method.
         /// Is dependent on the feature <see cref="ObjectEquals"/>.
         /// </summary>
         OperatorEquals = 0b_1000_0000,
