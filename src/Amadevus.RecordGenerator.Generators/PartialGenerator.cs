@@ -8,18 +8,18 @@ namespace Amadevus.RecordGenerator.Generators
 
     internal interface IPartialGenerator
     {
-        Generation Generate(RecordDescriptor descriptor, Features features);
+        GenerationResult Generate(RecordDescriptor descriptor, Features features);
     }
 
     static class PartialGenerator
     {
-        public static IPartialGenerator Create(Func<RecordDescriptor, Features, Generation> generator) =>
+        public static IPartialGenerator Create(Func<RecordDescriptor, Features, GenerationResult> generator) =>
             new DelegatingPartialGenerator(generator);
 
-        public static IPartialGenerator Create(Features implementedFeatures, Func<RecordDescriptor, Features, Generation> generator) =>
+        public static IPartialGenerator Create(Features implementedFeatures, Func<RecordDescriptor, Features, GenerationResult> generator) =>
             Create(generator).IntersectFeatures(implementedFeatures);
 
-        public static IPartialGenerator Create(Features implementedFeatures, Func<RecordDescriptor, Generation> generator) =>
+        public static IPartialGenerator Create(Features implementedFeatures, Func<RecordDescriptor, GenerationResult> generator) =>
             Create(implementedFeatures, (descriptor, _) => generator(descriptor));
 
         public static IPartialGenerator IntersectFeatures(this IPartialGenerator generator, Features features) =>
@@ -28,22 +28,22 @@ namespace Amadevus.RecordGenerator.Generators
                              : null);
 
         public static IPartialGenerator Member(Features features, Func<RecordDescriptor, MemberDeclarationSyntax> member) =>
-            Create(features, descriptor => Generation.Empty.AddMember(member(descriptor)));
+            Create(features, descriptor => GenerationResult.Empty.AddMember(member(descriptor)));
 
         public static IPartialGenerator Combine(params IPartialGenerator[] generators) =>
             Create((descriptor, features) =>
-                generators.Aggregate(Generation.Empty, (r, g) => r.Add(g.Generate(descriptor, features) ?? Generation.Empty)));
+                generators.Aggregate(GenerationResult.Empty, (r, g) => r.Add(g.Generate(descriptor, features) ?? GenerationResult.Empty)));
 
         private sealed class DelegatingPartialGenerator : IPartialGenerator
         {
-            private readonly Func<RecordDescriptor, Features, Generation> generator;
+            private readonly Func<RecordDescriptor, Features, GenerationResult> generator;
 
-            public DelegatingPartialGenerator(Func<RecordDescriptor, Features, Generation> generator)
+            public DelegatingPartialGenerator(Func<RecordDescriptor, Features, GenerationResult> generator)
             {
                 this.generator = generator ?? throw new ArgumentNullException(nameof(generator));
             }
 
-            public Generation Generate(RecordDescriptor descriptor, Features features) =>
+            public GenerationResult Generate(RecordDescriptor descriptor, Features features) =>
                 generator(descriptor, features);
         }
     }
