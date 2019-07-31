@@ -102,7 +102,7 @@ namespace Amadevus.RecordGenerator.Generators
         private AttributeArgumentListSyntax GenerateAttributeArgumentList()
         {
             var toolName = Names.ToolName;
-            var toolVersion = GetToolVersion();
+            var toolVersion = ThisAssembly.AssemblyVersion;
 
             return AttributeArgumentList(
                 SeparatedList<AttributeArgumentSyntax>(
@@ -122,7 +122,5 @@ namespace Amadevus.RecordGenerator.Generators
         {
             return ParseName(Names.GeneratedCodeAttribute);
         }
-
-        private string GetToolVersion() => GetType().GetTypeInfo().Assembly.GetName().Version.ToString();
     }
 }
