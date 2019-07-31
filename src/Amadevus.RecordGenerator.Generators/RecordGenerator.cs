@@ -26,6 +26,9 @@ namespace Amadevus.RecordGenerator.Generators
             this.attributeData = attributeData;
         }
 
+        static readonly Task<SyntaxList<MemberDeclarationSyntax>> EmptyResultTask =
+            Task.FromResult(List<MemberDeclarationSyntax>());
+
         public Task<SyntaxList<MemberDeclarationSyntax>> GenerateAsync(TransformationContext context, IProgress<Diagnostic> progress, CancellationToken cancellationToken)
         {
             switch (context.ProcessingNode)
@@ -34,7 +37,7 @@ namespace Amadevus.RecordGenerator.Generators
                 {
                     var descriptor = classDeclaration.ToRecordDescriptor();
                     if (descriptor.Entries.IsEmpty)
-                        goto default;
+                        return EmptyResultTask;
 
                     var generatedMembers = new List<MemberDeclarationSyntax>();
                     var features = GetFeatures();
@@ -59,11 +62,13 @@ namespace Amadevus.RecordGenerator.Generators
                         generatedMembers.Add(partial);
                     }
 
-                    return Task.FromResult(List(generatedMembers));
+                    return generatedMembers.Count > 0
+                         ? Task.FromResult(List(generatedMembers))
+                         : EmptyResultTask;
                 }
 
                 default:
-                    return Task.FromResult(List<MemberDeclarationSyntax>());
+                    return EmptyResultTask;
             }
         }
 
