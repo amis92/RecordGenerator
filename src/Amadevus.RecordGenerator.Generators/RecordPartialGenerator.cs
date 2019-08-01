@@ -16,12 +16,12 @@ namespace Amadevus.RecordGenerator.Generators
 
         private static readonly IPartialGenerator ConstructorGenerator =
             PartialGenerator.Create(Features.Constructor, descriptor =>
-                GenerationResult.Empty.AddMembers(GenerateConstructor(descriptor),
+                PartialGenerationResult.Empty.AddMembers(GenerateConstructor(descriptor),
                                             GenerateValidatePartialMethod(descriptor)));
 
         private static readonly IPartialGenerator WithersGenerator =
             PartialGenerator.Create(Features.Withers, descriptor =>
-                GenerationResult.Empty.AddMember(GenerateUpdateMethod(descriptor))
+                PartialGenerationResult.Empty.AddMember(GenerateUpdateMethod(descriptor))
                                 .AddMembers(GenerateMutators(descriptor)));
 
         private static readonly IPartialGenerator ToStringGenerator =
