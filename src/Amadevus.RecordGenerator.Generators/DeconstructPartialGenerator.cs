@@ -14,18 +14,18 @@ namespace Amadevus.RecordGenerator.Generators
         {
             return
                 MethodDeclaration(
-                        PredefinedType(Token(SyntaxKind.VoidKeyword)), Names.Deconstruct)
-                    .AddModifiers(SyntaxKind.PublicKeyword)
-                    .WithParameters(
-                        descriptor.Entries.Select(CreateParameter))
-                    .WithBodyStatements(
-                        descriptor.Entries.Select(CreateAssignment));
+                    PredefinedType(Token(SyntaxKind.VoidKeyword)), Names.Deconstruct)
+                .AddModifiers(SyntaxKind.PublicKeyword)
+                .WithParameters(
+                    descriptor.Entries.Select(CreateParameter))
+                .WithBodyStatements(
+                    descriptor.Entries.Select(CreateAssignment));
             ParameterSyntax CreateParameter(RecordDescriptor.Entry entry)
             {
                 return
                     Parameter(entry.IdentifierInCamelCase)
-                        .WithType(entry.Type)
-                        .AddModifiers(Token(SyntaxKind.OutKeyword));
+                    .WithType(entry.Type)
+                    .AddModifiers(Token(SyntaxKind.OutKeyword));
             }
             StatementSyntax CreateAssignment(RecordDescriptor.Entry entry)
             {
