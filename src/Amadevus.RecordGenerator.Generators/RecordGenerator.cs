@@ -49,7 +49,7 @@ namespace Amadevus.RecordGenerator.Generators
                     from g in PartialGenerators
                     select g.Generate(descriptor, features)
                     into g
-                    where g != null
+                    where !g.IsEmpty
                     select
                         ClassDeclaration(classDeclaration.Identifier.WithoutTrivia())
                             .WithTypeParameterList(classDeclaration.TypeParameterList?.WithoutTrivia())

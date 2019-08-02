@@ -7,7 +7,7 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Amadevus.RecordGenerator.Generators
 {
-    internal class PartialGenerationResult
+    internal sealed class PartialGenerationResult
     {
         public static readonly PartialGenerationResult Empty =
             new PartialGenerationResult(TokenList(),
@@ -27,30 +27,40 @@ namespace Amadevus.RecordGenerator.Generators
             BaseTypes = baseTypes;
         }
 
+        public bool IsEmpty => ReferenceEquals(this, Empty);
+
         public PartialGenerationResult Add(PartialGenerationResult result)
             => result is null ? throw new ArgumentNullException(nameof(result))
-             : ReferenceEquals(result, Empty) ? this
-             : ReferenceEquals(this, Empty) ? result
-             : new PartialGenerationResult(Modifiers.AddRange(result.Modifiers),
-                                           BaseTypes.AddRange(result.BaseTypes),
-                                           Members.AddRange(result.Members));
+             : result.IsEmpty ? this
+             : this.IsEmpty ? result
+             : Update(Modifiers.AddRange(result.Modifiers),
+                      BaseTypes.AddRange(result.BaseTypes),
+                      Members.AddRange(result.Members));
 
         public PartialGenerationResult WithModifiers(SyntaxTokenList value) =>
-            new PartialGenerationResult(value, BaseTypes, Members);
+            Update(value, BaseTypes, Members);
 
         public PartialGenerationResult WithBaseList(ImmutableArray<BaseTypeSyntax> value) =>
-            new PartialGenerationResult(Modifiers, value, Members);
+            Update(Modifiers, value, Members);
 
         public PartialGenerationResult WithMembers(ImmutableArray<MemberDeclarationSyntax> value) =>
-            new PartialGenerationResult(Modifiers, BaseTypes, value);
+            Update(Modifiers, BaseTypes, value);
 
         public PartialGenerationResult AddMember(MemberDeclarationSyntax member) =>
-            new PartialGenerationResult(Modifiers, BaseTypes, Members.Add(member));
+            Update(Modifiers, BaseTypes, Members.Add(member));
 
         public PartialGenerationResult AddMembers(IEnumerable<MemberDeclarationSyntax> members) =>
-            new PartialGenerationResult(Modifiers, BaseTypes, Members.AddRange(members));
+            Update(Modifiers, BaseTypes, Members.AddRange(members));
 
         public PartialGenerationResult AddMembers(params MemberDeclarationSyntax[] members) =>
-            new PartialGenerationResult(Modifiers, BaseTypes, Members.AddRange(members));
+            Update(Modifiers, BaseTypes, Members.AddRange(members));
+
+        private PartialGenerationResult Update(
+                SyntaxTokenList modifiers,
+                ImmutableArray<BaseTypeSyntax> baseTypes,
+                ImmutableArray<MemberDeclarationSyntax> members)
+            => modifiers.Count == 0 && baseTypes.IsEmpty && members.IsEmpty
+             ? Empty
+             : new PartialGenerationResult(modifiers, baseTypes, members);
     }
 }

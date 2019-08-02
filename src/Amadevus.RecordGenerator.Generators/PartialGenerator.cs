@@ -23,7 +23,7 @@ namespace Amadevus.RecordGenerator.Generators
         public static IPartialGenerator IntersectFeatures(this IPartialGenerator generator, Features features) =>
             Create((rd, fs) => (fs & features) != Features.None
                              ? generator.Generate(rd, fs)
-                             : null);
+                             : PartialGenerationResult.Empty);
 
         public static IPartialGenerator Member(Features features, Func<RecordDescriptor, MemberDeclarationSyntax> member) =>
             Create(features, descriptor => PartialGenerationResult.Empty.AddMember(member(descriptor)));
