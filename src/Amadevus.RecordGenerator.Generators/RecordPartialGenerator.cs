@@ -88,7 +88,7 @@ namespace Amadevus.RecordGenerator.Generators
                 .WithBodyStatements(
                     ReturnStatement(
                         ObjectCreationExpression(
-                                descriptor.Type)
+                            descriptor.Type)
                         .WithArgumentList(
                             ArgumentList(
                                 SeparatedList(arguments)))));
