@@ -1,6 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxKind;
@@ -30,10 +29,40 @@ namespace Amadevus.RecordGenerator.Generators
             return MemberAccessExpression(SimpleMemberAccessExpression,
                 equalityComparer, IdentifierName(defaultMemberName));
         }
+
+        protected ExpressionSyntax[] GenerateEqualsExpressions(string otherVariableName)
+        {
+
+            return Descriptor.Entries.Select<RecordDescriptor.Entry, ExpressionSyntax>(property =>
+            {
+                var typeQualifiedName = property.TypeSymbol.GetQualifiedName().TrimEnd('?');
+
+                var otherMemberValueAccess = MemberAccessExpression(SimpleMemberAccessExpression,
+                    IdentifierName(otherVariableName),
+                    IdentifierName(property.Identifier.Text));
+                var thisMemberValueAccess = IdentifierName(property.Identifier.Text);
+
+                if (wellKnownTypes.Contains(typeQualifiedName))
+                {
+                    return BinaryExpression(EqualsExpression, thisMemberValueAccess, otherMemberValueAccess);
+                }
+
+                return InvocationExpression(MemberAccessExpression(SimpleMemberAccessExpression,
+                    GenerateEqualityComparerDefaultExpression(property.Type),
+                    IdentifierName(EqualsMethodName)))
+                .WithArgumentList(ArgumentList(SeparatedList<ArgumentSyntax>(new SyntaxNodeOrToken[] 
+                {
+                    Argument(thisMemberValueAccess),
+                    Token(CommaToken),
+                    Argument(otherMemberValueAccess),
+                })));
+            }).Cast<ExpressionSyntax>().ToArray();
+        }
     }
 
     internal sealed class ObjectEqualsGenerator : EqualityPartialGeneratorBase
     {
+        private const string objVariableName = "obj";
         public ObjectEqualsGenerator(RecordDescriptor descriptor, CancellationToken token) : base(descriptor, token) { }
 
         protected override Features TriggeringFeatures => Features.ObjectEquals;
@@ -45,17 +74,21 @@ namespace Amadevus.RecordGenerator.Generators
 
         protected override SyntaxList<MemberDeclarationSyntax> GenerateMembers()
         {
-            return List(new [] { GenerateObjectEquals(), GenerateGetHashCode() });
+            return List(new [] 
+            {
+                GenerateObjectEquals(Descriptor.Features.HasFlag(Features.EquatableEquals) 
+                    ? GenerateObjectEqualsWithCallToEquatableEquals()
+                    : GenerateFullObjectEquals()),
+                GenerateGetHashCode()
+            });
         }
 
-        public MemberDeclarationSyntax GenerateObjectEquals()
+        public MemberDeclarationSyntax GenerateObjectEquals(BlockSyntax body)
         {
-            const string objVariableName = "obj";
-
             var method = MethodDeclaration(
                 PredefinedType(Token(BoolKeyword)),
                 EqualsMethodName);
-
+            
             method = method.AddModifiers(new [] 
             {
                 Token(PublicKeyword),
@@ -66,19 +99,46 @@ namespace Amadevus.RecordGenerator.Generators
                 Parameter(Identifier(objVariableName))
                 .WithType(PredefinedType(Token(ObjectKeyword))));
 
-            var asExpression = BinaryExpression(AsExpression,
-                IdentifierName(objVariableName),
-                SyntaxExtensions.GetTypeSyntax(Descriptor.TypeDeclaration));
-            var equotableEqualsInvocation = InvocationExpression(MemberAccessExpression(SimpleMemberAccessExpression,
-                ThisExpression(), IdentifierName(EqualsMethodName)))
-                .WithArgumentList(ArgumentList(SeparatedList(new[] { Argument(asExpression) })));
-            var body = Block(
-                SingletonList<StatementSyntax>(
-                    ReturnStatement(equotableEqualsInvocation)));
-
             method = method.WithBody(body);
 
             return method;
+        }
+
+        public BlockSyntax GenerateFullObjectEquals()
+        {
+            const string otherVariableName = "other";
+
+            ExpressionSyntax notNullCheck = IsPatternExpression(
+                IdentifierName(objVariableName),
+                DeclarationPattern(
+                    SyntaxExtensions.GetTypeSyntax(Descriptor.TypeDeclaration),
+                        SingleVariableDesignation(
+                            Identifier(otherVariableName))));
+
+            var checks = notNullCheck;  
+            foreach (var equalsExpression in GenerateEqualsExpressions(otherVariableName))
+            {
+                checks = BinaryExpression(LogicalAndExpression, checks, equalsExpression); 
+            }
+
+            return Block(
+                SingletonList<StatementSyntax>(
+                    ReturnStatement(checks)));
+        }
+
+        public BlockSyntax GenerateObjectEqualsWithCallToEquatableEquals()
+        {
+            var asExpression = BinaryExpression(AsExpression,
+                IdentifierName(objVariableName),
+                SyntaxExtensions.GetTypeSyntax(Descriptor.TypeDeclaration));
+
+            var equotableEqualsInvocation = InvocationExpression(MemberAccessExpression(SimpleMemberAccessExpression,
+                ThisExpression(), IdentifierName(EqualsMethodName)))
+                .WithArgumentList(ArgumentList(SeparatedList(new[] { Argument(asExpression) })));
+
+            return Block(
+                SingletonList<StatementSyntax>(
+                    ReturnStatement(equotableEqualsInvocation)));
         }
 
         public MemberDeclarationSyntax GenerateGetHashCode()
@@ -183,30 +243,7 @@ namespace Amadevus.RecordGenerator.Generators
                 Parameter(Identifier(otherVariableName))
                 .WithType(SyntaxExtensions.GetTypeSyntax(Descriptor.TypeDeclaration)));
 
-            var equalsExpressions = Descriptor.Entries.Select<RecordDescriptor.Entry, ExpressionSyntax>(property =>
-            {
-                var typeQualifiedName = property.TypeSymbol.GetQualifiedName().TrimEnd('?');
-
-                var otherMemberValueAccess = MemberAccessExpression(SimpleMemberAccessExpression,
-                    IdentifierName(otherVariableName),
-                    IdentifierName(property.Identifier.Text));
-                var thisMemberValueAccess = IdentifierName(property.Identifier.Text);
-
-                if (wellKnownTypes.Contains(typeQualifiedName))
-                {
-                    return BinaryExpression(EqualsExpression, thisMemberValueAccess, otherMemberValueAccess);
-                }
-
-                return InvocationExpression(MemberAccessExpression(SimpleMemberAccessExpression,
-                    GenerateEqualityComparerDefaultExpression(property.Type),
-                    IdentifierName(EqualsMethodName)))
-                .WithArgumentList(ArgumentList(SeparatedList<ArgumentSyntax>(new SyntaxNodeOrToken[] 
-                {
-                    Argument(thisMemberValueAccess),
-                    Token(CommaToken),
-                    Argument(otherMemberValueAccess),
-                })));
-            }).Cast<ExpressionSyntax>().ToList();
+            var equalsExpressions = GenerateEqualsExpressions(otherVariableName);
 
             var notNullCheck = BinaryExpression(NotEqualsExpression,
                 IdentifierName(otherVariableName),

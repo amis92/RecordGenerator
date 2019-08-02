@@ -7,8 +7,15 @@ using System.Threading.Tasks;
 
 namespace Amadevus.RecordGenerator.TestsBase
 {
-    [Record(Features.Equality)]
-    public sealed partial class EqualityRecord
+    [Record(Features.EquatableEquals | Features.ObjectEquals)]
+    public sealed partial class EqualityRecordWithEquatableAndObjectEquals
+    {
+        public string StringProperty { get; }
+        public Regex RegexProperty { get; }
+    }
+
+    [Record(Features.ObjectEquals)]
+    public sealed partial class EqualityRecordWithObjectEquals
     {
         public string StringProperty { get; }
         public Regex RegexProperty { get; }

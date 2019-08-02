@@ -66,7 +66,6 @@ namespace Amadevus.RecordGenerator
         /// <summary>
         /// <see cref="IEquatable{T}.Equals(T)"/> implementation that provides a call to the 
         /// <see cref="object.Equals(object)"/> method in a type safe way. 
-        /// Is dependent on the feature <see cref="ObjectEquals"/>.
         /// </summary>
         EquatableEquals = 0b_1000_000,
 
