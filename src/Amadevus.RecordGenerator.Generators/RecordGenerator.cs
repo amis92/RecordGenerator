@@ -52,12 +52,15 @@ namespace Amadevus.RecordGenerator.Generators
                     where !g.IsEmpty
                     select
                         ClassDeclaration(classDeclaration.Identifier.WithoutTrivia())
-                            .WithTypeParameterList(classDeclaration.TypeParameterList?.WithoutTrivia())
-                            .WithBaseList(g.BaseTypes.IsEmpty ? null : BaseList(SeparatedList(g.BaseTypes)))
-                            .WithModifiers(TokenList(g.Modifiers.Except(new[] {partialKeyword})
+                        .WithTypeParameterList(classDeclaration.TypeParameterList?.WithoutTrivia())
+                        .WithBaseList(g.BaseTypes.IsEmpty ? null : BaseList(SeparatedList(g.BaseTypes)))
+                        .WithModifiers(
+                            TokenList(
+                                g.Modifiers
+                                .Except(new[] {partialKeyword})
                                 .Append(partialKeyword)))
-                            .WithMembers(List(g.Members))
-                            .AddGeneratedCodeAttributeOnMembers();
+                        .WithMembers(List(g.Members))
+                        .AddGeneratedCodeAttributeOnMembers();
 
                 foreach (var partial in partials)
                 {
