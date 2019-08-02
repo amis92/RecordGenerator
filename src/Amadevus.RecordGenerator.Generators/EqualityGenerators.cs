@@ -5,6 +5,7 @@ using System.Threading;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxKind;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 using System.Collections.Immutable;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace Amadevus.RecordGenerator.Generators
 {
@@ -266,4 +267,77 @@ namespace Amadevus.RecordGenerator.Generators
         }
     }
 
+    internal sealed class OperatorEqualityPartialGenerator : EqualityPartialGeneratorBase
+    {
+        private const string rightVariableName = "right";
+        private const string leftVariableName = "left";
+
+        public OperatorEqualityPartialGenerator(RecordDescriptor descriptor, CancellationToken cancellationToken) : base(descriptor, cancellationToken) { }
+
+        protected override Features TriggeringFeatures => Features.OperatorEquals;
+
+        public static TypeDeclarationSyntax Generate(RecordDescriptor descriptor, CancellationToken cancellationToken)
+        {
+            return new OperatorEqualityPartialGenerator(descriptor, cancellationToken).GenerateTypeDeclaration();
+        }
+
+        protected override SyntaxList<MemberDeclarationSyntax> GenerateMembers()
+        {
+            return List(new MemberDeclarationSyntax[] 
+            {
+                GenerateOperatorDeclarationBase(EqualsEqualsToken).WithBody(GenerateEqualsEqualsBody()),
+                GenerateOperatorDeclarationBase(ExclamationEqualsToken).WithBody(GenerateExclamationEqualsBody()),
+            });
+        }
+
+        private OperatorDeclarationSyntax GenerateOperatorDeclarationBase(SyntaxKind token)
+        {
+            var @operator = OperatorDeclaration(
+                    PredefinedType(Token(BoolKeyword)),
+                    Token(token));
+
+            @operator = @operator.WithModifiers(TokenList(new[]{
+                    Token(PublicKeyword),
+                    Token(StaticKeyword)}));
+
+            @operator = @operator.WithParameterList(ParameterList(
+                    SeparatedList<ParameterSyntax>(
+                        new SyntaxNodeOrToken[]{
+                            Parameter(Identifier(leftVariableName))
+                            .WithType(SyntaxExtensions.GetTypeSyntax(Descriptor.TypeDeclaration)),
+                            Token(CommaToken),
+                            Parameter(Identifier(rightVariableName))
+                            .WithType(SyntaxExtensions.GetTypeSyntax(Descriptor.TypeDeclaration))})));
+
+            return @operator;
+        }
+
+        private BlockSyntax GenerateExclamationEqualsBody()
+        {
+            return Block(
+                SingletonList<StatementSyntax>(
+                    ReturnStatement(
+                        PrefixUnaryExpression(LogicalNotExpression,
+                            ParenthesizedExpression(
+                                BinaryExpression(EqualsExpression,
+                                    IdentifierName(leftVariableName),
+                                    IdentifierName(rightVariableName)))))));
+        }
+
+        private BlockSyntax GenerateEqualsEqualsBody()
+        {
+            return Block(SingletonList<StatementSyntax>(
+                ReturnStatement(
+                    InvocationExpression(
+                        MemberAccessExpression(SimpleMemberAccessExpression,
+                            GenerateEqualityComparerDefaultExpression(SyntaxExtensions.GetTypeSyntax(Descriptor.TypeDeclaration)),
+                            IdentifierName(EqualsMethodName)))
+                    .WithArgumentList(ArgumentList(SeparatedList<ArgumentSyntax>(new SyntaxNodeOrToken[] 
+                    {
+                        Argument(IdentifierName(leftVariableName)),
+                        Token(CommaToken),
+                        Argument(IdentifierName(rightVariableName)),
+                    }))))));
+        }
+    }
 }

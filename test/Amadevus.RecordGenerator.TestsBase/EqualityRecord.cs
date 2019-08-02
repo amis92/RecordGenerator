@@ -20,4 +20,11 @@ namespace Amadevus.RecordGenerator.TestsBase
         public string StringProperty { get; }
         public Regex RegexProperty { get; }
     }
+
+    [Record(Features.OperatorEquals)]
+    public sealed partial class EqualityRecordWithOperatorEquals
+    {
+        public string StringProperty { get; }
+        public Regex RegexProperty { get; }
+    }
 }
