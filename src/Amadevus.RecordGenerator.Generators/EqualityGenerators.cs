@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxKind;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
+using System.Collections.Immutable;
 
 namespace Amadevus.RecordGenerator.Generators
 {
@@ -12,8 +13,8 @@ namespace Amadevus.RecordGenerator.Generators
         protected const string EqualsMethodName = "Equals";
         protected const string GetHashCodeMethodName = "GetHashCode";
 
-        protected string[] wellKnownTypes { get; } = new[] { typeof(bool), typeof(byte), typeof(sbyte), typeof(char), typeof(int), typeof(uint), typeof(long), typeof(ulong), typeof(short), typeof(ushort), typeof(string) }
-            .Select(t => t.FullName).ToArray();
+        protected ImmutableArray<string> OperatorEqualityTypes => new[] { typeof(bool), typeof(byte), typeof(sbyte), typeof(char), typeof(int), typeof(uint), typeof(long), typeof(ulong), typeof(short), typeof(ushort), typeof(string) }
+            .Select(t => t.FullName).ToImmutableArray();
 
         protected EqualityPartialGeneratorBase(RecordDescriptor descriptor, CancellationToken cancellationToken) : base(descriptor, cancellationToken) { }
 
@@ -42,7 +43,7 @@ namespace Amadevus.RecordGenerator.Generators
                     IdentifierName(property.Identifier.Text));
                 var thisMemberValueAccess = IdentifierName(property.Identifier.Text);
 
-                if (wellKnownTypes.Contains(typeQualifiedName))
+                if (OperatorEqualityTypes.Contains(typeQualifiedName))
                 {
                     return BinaryExpression(EqualsExpression, thisMemberValueAccess, otherMemberValueAccess);
                 }
