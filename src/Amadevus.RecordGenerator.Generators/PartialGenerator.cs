@@ -36,10 +36,8 @@ namespace Amadevus.RecordGenerator.Generators
         {
             private readonly Func<RecordDescriptor, Features, PartialGenerationResult> generator;
 
-            public DelegatingPartialGenerator(Func<RecordDescriptor, Features, PartialGenerationResult> generator)
-            {
+            public DelegatingPartialGenerator(Func<RecordDescriptor, Features, PartialGenerationResult> generator) =>
                 this.generator = generator ?? throw new ArgumentNullException(nameof(generator));
-            }
 
             public PartialGenerationResult Generate(RecordDescriptor descriptor, Features features) =>
                 generator(descriptor, features);

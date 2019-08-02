@@ -15,14 +15,19 @@ namespace Amadevus.RecordGenerator.Generators
                                      ToStringGenerator);
 
         private static readonly IPartialGenerator ConstructorGenerator =
-            PartialGenerator.Create(Features.Constructor, descriptor =>
-                PartialGenerationResult.Empty.AddMembers(GenerateConstructor(descriptor),
-                                            GenerateValidatePartialMethod(descriptor)));
+            PartialGenerator.Create(Features.Constructor,
+                descriptor =>
+                    PartialGenerationResult.Empty
+                        .AddMembers(
+                            GenerateConstructor(descriptor),
+                            GenerateValidatePartialMethod(descriptor)));
 
         private static readonly IPartialGenerator WithersGenerator =
-            PartialGenerator.Create(Features.Withers, descriptor =>
-                PartialGenerationResult.Empty.AddMember(GenerateUpdateMethod(descriptor))
-                                .AddMembers(GenerateMutators(descriptor)));
+            PartialGenerator.Create(Features.Withers,
+                descriptor =>
+                    PartialGenerationResult.Empty
+                        .AddMember(GenerateUpdateMethod(descriptor))
+                        .AddMembers(GenerateMutators(descriptor)));
 
         private static readonly IPartialGenerator ToStringGenerator =
             PartialGenerator.Member(Features.ToString, GenerateToString);

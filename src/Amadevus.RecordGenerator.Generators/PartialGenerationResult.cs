@@ -18,9 +18,10 @@ namespace Amadevus.RecordGenerator.Generators
         public ImmutableArray<BaseTypeSyntax> BaseTypes { get; }
         public ImmutableArray<MemberDeclarationSyntax> Members;
 
-        PartialGenerationResult(SyntaxTokenList modifiers,
-                   ImmutableArray<BaseTypeSyntax> baseTypes,
-                   ImmutableArray<MemberDeclarationSyntax> members)
+        PartialGenerationResult(
+            SyntaxTokenList modifiers,
+            ImmutableArray<BaseTypeSyntax> baseTypes,
+            ImmutableArray<MemberDeclarationSyntax> members)
         {
             Members = members;
             Modifiers = modifiers;
@@ -55,7 +56,8 @@ namespace Amadevus.RecordGenerator.Generators
         public PartialGenerationResult AddMembers(params MemberDeclarationSyntax[] members) =>
             Update(Modifiers, BaseTypes, Members.AddRange(members));
 
-        private PartialGenerationResult Update(
+        private PartialGenerationResult
+            Update(
                 SyntaxTokenList modifiers,
                 ImmutableArray<BaseTypeSyntax> baseTypes,
                 ImmutableArray<MemberDeclarationSyntax> members)

@@ -11,8 +11,9 @@ namespace Amadevus.RecordGenerator.Generators
     {
         public static IPartialGenerator Instance =>
             PartialGenerator.Create(Features.Builder, (descriptor, _) =>
-                PartialGenerationResult.Empty.AddMembers(GenerateToBuilderMethod(descriptor),
-                                            GenerateBuilder(descriptor)));
+                PartialGenerationResult.Empty
+                    .AddMembers(GenerateToBuilderMethod(descriptor),
+                                GenerateBuilder(descriptor)));
 
         private static ClassDeclarationSyntax GenerateBuilder(RecordDescriptor descriptor)
         {

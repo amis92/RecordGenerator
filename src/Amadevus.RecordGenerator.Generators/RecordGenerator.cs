@@ -66,8 +66,8 @@ namespace Amadevus.RecordGenerator.Generators
                 }
 
                 return generatedMembers.Count > 0
-                    ? Task.FromResult(List(generatedMembers))
-                    : EmptyResultTask;
+                     ? Task.FromResult(List(generatedMembers))
+                     : EmptyResultTask;
             }
         }
 
