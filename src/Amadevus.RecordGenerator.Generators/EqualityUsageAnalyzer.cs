@@ -10,19 +10,16 @@ namespace Amadevus.RecordGenerator.Generators
     {
         public static IEnumerable<Diagnostic> GenerateDiagnostics(RecordDescriptor descriptor)
         {
-            if (!descriptor.Features.HasFlag(Features.EquatableEquals) 
-             && !descriptor.Features.HasFlag(Features.ObjectEquals)
-             && !descriptor.Features.HasFlag(Features.OperatorEquals)
-             || descriptor.TypeDeclaration.Modifiers.Any(t => t.IsKind(SyntaxKind.SealedKeyword)))
+            if ((descriptor.Features.HasFlag(Features.EquatableEquals) 
+                 || descriptor.Features.HasFlag(Features.ObjectEquals)
+                 || descriptor.Features.HasFlag(Features.OperatorEquals))
+                && !descriptor.TypeDeclaration.Modifiers.Any(t => t.IsKind(SyntaxKind.SealedKeyword)))
             {
-                yield break;
+                yield return Diagnostic.Create(
+                    Descriptors.X1001_RecordMustBeSealedIfEqualityIsEnabled,
+                    descriptor.TypeDeclarationLocation,
+                    descriptor.TypeIdentifier.Text);
             }
-
-            yield return Diagnostic.Create(
-                Descriptors.X1001_RecordMustBeSealedIfEqualityIsEnabled,
-                descriptor.TypeDeclarationLocation,
-                descriptor.TypeIdentifier.Text);
         }
-        
     }
 }
