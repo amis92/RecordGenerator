@@ -41,8 +41,8 @@ namespace Amadevus.RecordGenerator.Generators
                     descriptor.Entries.Select(CreateParameter))
                 .WithBodyStatements(
                     descriptor.Entries
-                        .Select(CreateCtorAssignment)
-                        .Prepend(CreateValidateInvocation()));
+                    .Select(CreateCtorAssignment)
+                    .Prepend(CreateValidateInvocation()));
             StatementSyntax CreateCtorAssignment(RecordDescriptor.Entry entry)
             {
                 return
@@ -89,9 +89,9 @@ namespace Amadevus.RecordGenerator.Generators
                     ReturnStatement(
                         ObjectCreationExpression(
                                 descriptor.Type)
-                            .WithArgumentList(
-                                ArgumentList(
-                                    SeparatedList(arguments)))));
+                        .WithArgumentList(
+                            ArgumentList(
+                                SeparatedList(arguments)))));
         }
 
         private static IEnumerable<MemberDeclarationSyntax> GenerateMutators(RecordDescriptor descriptor)
@@ -114,15 +114,15 @@ namespace Amadevus.RecordGenerator.Generators
                     .AddModifiers(SyntaxKind.PublicKeyword)
                     .WithParameters(
                         Parameter(
-                                valueIdentifier)
-                            .WithType(entry.Type))
+                            valueIdentifier)
+                        .WithType(entry.Type))
                     .WithBodyStatements(
                         ReturnStatement(
                             InvocationExpression(
-                                    IdentifierName(Names.Update))
-                                .WithArgumentList(
-                                    ArgumentList(
-                                        SeparatedList(arguments)))));
+                                IdentifierName(Names.Update))
+                            .WithArgumentList(
+                                ArgumentList(
+                                    SeparatedList(arguments)))));
                 return mutator;
                 SyntaxToken GetMutatorIdentifier()
                 {
