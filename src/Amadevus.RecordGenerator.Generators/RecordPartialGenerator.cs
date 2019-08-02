@@ -10,27 +10,22 @@ namespace Amadevus.RecordGenerator.Generators
     internal static class RecordPartialGenerator
     {
         public static IPartialGenerator Instance =>
-            PartialGenerator.Combine(ConstructorGenerator,
-                                     WithersGenerator,
-                                     ToStringGenerator);
-
-        private static readonly IPartialGenerator ConstructorGenerator =
-            PartialGenerator.Create(Features.Constructor,
-                descriptor =>
-                    PartialGenerationResult.Empty
+            PartialGenerator.Combine(
+                // constructor
+                PartialGenerator.Create(Features.Constructor,
+                    descriptor =>
+                        PartialGenerationResult.Empty
                         .AddMembers(
                             GenerateConstructor(descriptor),
-                            GenerateValidatePartialMethod(descriptor)));
-
-        private static readonly IPartialGenerator WithersGenerator =
-            PartialGenerator.Create(Features.Withers,
-                descriptor =>
-                    PartialGenerationResult.Empty
+                            GenerateValidatePartialMethod(descriptor))),
+                // withers
+                PartialGenerator.Create(Features.Withers,
+                    descriptor =>
+                        PartialGenerationResult.Empty
                         .AddMember(GenerateUpdateMethod(descriptor))
-                        .AddMembers(GenerateMutators(descriptor)));
-
-        private static readonly IPartialGenerator ToStringGenerator =
-            PartialGenerator.Member(Features.ToString, GenerateToString);
+                        .AddMembers(GenerateMutators(descriptor))),
+                // string formatting
+                PartialGenerator.Member(Features.ToString, GenerateToString));
 
         private static ConstructorDeclarationSyntax GenerateConstructor(RecordDescriptor descriptor)
         {
