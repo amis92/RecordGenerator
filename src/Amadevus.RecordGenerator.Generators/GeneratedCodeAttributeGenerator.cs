@@ -1,11 +1,10 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Amadevus.RecordGenerator.Generators
@@ -54,7 +53,7 @@ namespace Amadevus.RecordGenerator.Generators
             this.attributeGenerator = attributeGenerator;
         }
 
-        
+
         public TypeDeclarationSyntax AddGeneratedCodeAttributeOnMembers(
             TypeDeclarationSyntax typeDeclaration)
         {
@@ -98,44 +97,27 @@ namespace Amadevus.RecordGenerator.Generators
                     SingletonSeparatedList(
                         Attribute(GenerateQualifiedName())
                         .WithArgumentList(GenerateAttributeArgumentList())));
-        } 
+        }
 
         private AttributeArgumentListSyntax GenerateAttributeArgumentList()
         {
-            var toolName = Names.ToolName;
-            var toolVersion = GetToolVersion();
-
             return AttributeArgumentList(
                 SeparatedList<AttributeArgumentSyntax>(
                     new SyntaxNodeOrToken[]{
                         AttributeArgument(
                             LiteralExpression(
                                 SyntaxKind.StringLiteralExpression,
-                                Literal(toolName))),
+                                Literal(Names.ToolName))),
                         Token(SyntaxKind.CommaToken),
                         AttributeArgument(
                             LiteralExpression(
                                 SyntaxKind.StringLiteralExpression,
-                                Literal(toolVersion)))}));
+                                Literal(ThisAssembly.AssemblyVersion)))}));
         }
 
-        private QualifiedNameSyntax GenerateQualifiedName()
+        private NameSyntax GenerateQualifiedName()
         {
-            var namespaceAndIdentifier = Names.GeneratedCodeAttribute.Split('.')
-                .Select(n => IdentifierName(n)).ToList();
-
-            var attributeName = QualifiedName(
-                namespaceAndIdentifier.First(),
-                namespaceAndIdentifier.Skip(1).First());
-
-            foreach (var identifier in namespaceAndIdentifier.Skip(2))
-            {
-                attributeName = QualifiedName(attributeName, identifier);
-            }
-
-            return attributeName; 
+            return ParseName(Names.GeneratedCodeAttribute);
         }
-
-        private string GetToolVersion() => GetType().GetTypeInfo().Assembly.GetName().Version.ToString();
     }
 }

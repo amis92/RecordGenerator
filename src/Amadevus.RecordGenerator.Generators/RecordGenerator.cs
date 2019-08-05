@@ -1,13 +1,13 @@
-﻿using CodeGeneration.Roslyn;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using CodeGeneration.Roslyn;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Amadevus.RecordGenerator.Generators
@@ -19,7 +19,10 @@ namespace Amadevus.RecordGenerator.Generators
         private static readonly ImmutableArray<IPartialGenerator> PartialGenerators =
             ImmutableArray.Create(RecordPartialGenerator.Instance,
                                   BuilderPartialGenerator.Instance,
-                                  DeconstructPartialGenerator.Instance);
+                                  DeconstructPartialGenerator.Instance,
+                                  EqualityPartialGenerator.ObjectEqualsGenerator,
+                                  EqualityPartialGenerator.EquatableEqualsPartialGenerator,
+                                  EqualityPartialGenerator.OperatorEqualityPartialGenerator);
 
         public RecordGenerator(AttributeData attributeData)
         {
@@ -37,7 +40,7 @@ namespace Amadevus.RecordGenerator.Generators
 
             Task<SyntaxList<MemberDeclarationSyntax>> GenerateAsync(ClassDeclarationSyntax classDeclaration)
             {
-                var descriptor = classDeclaration.ToRecordDescriptor();
+                var descriptor = classDeclaration.ToRecordDescriptor(context.SemanticModel);
                 if (descriptor.Entries.IsEmpty)
                     return EmptyResultTask;
 
@@ -68,9 +71,16 @@ namespace Amadevus.RecordGenerator.Generators
                     generatedMembers.Add(partial);
                 }
 
+                foreach (var diagnostic in GenerateDiagnostics(descriptor, features)) progress.Report(diagnostic);
+
                 return generatedMembers.Count > 0
                      ? Task.FromResult(List(generatedMembers))
                      : EmptyResultTask;
+            }
+
+            IEnumerable<Diagnostic> GenerateDiagnostics(RecordDescriptor descriptor, Features features)
+            {
+                foreach (var diagnostic in EqualityUsageAnalyzer.GenerateDiagnostics(descriptor, features)) yield return diagnostic;
             }
         }
 
