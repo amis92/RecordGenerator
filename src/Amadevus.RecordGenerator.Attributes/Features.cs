@@ -51,27 +51,28 @@ namespace Amadevus.RecordGenerator
 
         /// <summary>
         /// <see cref="object.Equals(object)"/> and <see cref="object.GetHashCode()"/> overrides. 
-        /// <see cref="object.Equals(object)"/> implements an equality comparison which compares 
-        /// all record entries properties.
-        /// of the other <see cref="object"/> with it's own values. 
-        /// <see cref="object.GetHashCode()"/> override which calculates a hash code using all record properties.
-        /// <see cref="object.GetHashCode()"/>
+        /// <see cref="object.Equals(object)"/> override compares all record properties with
+        /// the corresponding record properties of the other object using either
+        /// <see langword="=="/> for integral value types, or
+        /// <see cref="System.Collections.Generic.EqualityComparer{T}.Default"/> for the others.
+        /// <see cref="object.GetHashCode()"/> override calculates a hash code using all record properties.
         /// </summary>
         /// <remarks>
-        /// <see cref="object.Equals(object)"/> returns <see langword="true" /> if all values match 
-        /// and returns <see langword="false"/> if <see langword="null" /> is passed, another type is passed or at least one value doesn't mach.
+        /// <see cref="object.Equals(object)"/> returns <see langword="true" /> if and only if:
+        /// other object is not <see langword="null" />, is of the same type, and all record
+        /// properties' values match.
         /// </remarks>
         ObjectEquals = 0b_10_0000,
 
         /// <summary>
         /// <see cref="IEquatable{T}.Equals(T)"/> implementation that provides a call to the 
-        /// <see cref="object.Equals(object)"/> method in a type safe way. 
+        /// <see cref="object.Equals(object)"/> method in a type safe way.
         /// </summary>
         EquatableEquals = 0b_100_0000,
 
         /// <summary>
         /// Overrides the <see langword="==" /> operator by using the <see cref="object.Equals(object)"/> method.
-        /// Is dependent on the feature <see cref="ObjectEquals"/>.
+        /// Depends on the feature <see cref="ObjectEquals"/>.
         /// </summary>
         OperatorEquals = 0b_1000_0000,
 
