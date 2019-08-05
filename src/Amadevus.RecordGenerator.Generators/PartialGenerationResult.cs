@@ -34,6 +34,9 @@ namespace Amadevus.RecordGenerator.Generators
 
         public bool IsEmpty => ReferenceEquals(this, Empty);
 
+        public bool ContainsDiagnosticsOnly =>
+            Modifiers.Count == 0 && BaseTypes.IsEmpty && Members.IsEmpty;
+
         public PartialGenerationResult Add(PartialGenerationResult result)
             => result is null ? throw new ArgumentNullException(nameof(result))
              : result.IsEmpty ? this

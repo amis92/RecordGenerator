@@ -56,23 +56,27 @@ namespace Amadevus.RecordGenerator.Generators
                     select new
                     {
                         Declaration =
-                            ClassDeclaration(classDeclaration.Identifier.WithoutTrivia())
-                            .WithTypeParameterList(classDeclaration.TypeParameterList?.WithoutTrivia())
-                            .WithBaseList(g.BaseTypes.IsEmpty ? null : BaseList(SeparatedList(g.BaseTypes)))
-                            .WithModifiers(
-                                TokenList(
-                                    g.Modifiers
-                                    .Except(new[] {partialKeyword})
-                                    .Append(partialKeyword)))
-                            .WithMembers(List(g.Members))
-                            .AddGeneratedCodeAttributeOnMembers(),
+                            g.ContainsDiagnosticsOnly
+                            ? null
+                            : ClassDeclaration(classDeclaration.Identifier.WithoutTrivia())
+                              .WithTypeParameterList(classDeclaration.TypeParameterList?.WithoutTrivia())
+                              .WithBaseList(g.BaseTypes.IsEmpty ? null : BaseList(SeparatedList(g.BaseTypes)))
+                              .WithModifiers(
+                                  TokenList(
+                                      g.Modifiers
+                                      .Except(new[] {partialKeyword})
+                                      .Append(partialKeyword)))
+                              .WithMembers(List(g.Members))
+                              .AddGeneratedCodeAttributeOnMembers(),
                         g.Diagnostics
                     };
 
                 foreach (var partial in partials)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    generatedMembers.Add(partial.Declaration);
+
+                    if (partial.Declaration != null)
+                        generatedMembers.Add(partial.Declaration);
 
                     foreach (var diagnostic in partial.Diagnostics)
                         progress.Report(diagnostic);
