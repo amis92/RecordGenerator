@@ -80,7 +80,7 @@ namespace Amadevus.RecordGenerator.Generators
 
         private const string objVariableName = "obj";
 
-        public static IPartialGenerator ObjectEqualsGenerator =
+        public static readonly IPartialGenerator ObjectEqualsGenerator =
             PartialGenerator.Create(Features.ObjectEquals,
                 (descriptor, features) =>
                     descriptor.Symbol.IsSealed
@@ -224,7 +224,7 @@ namespace Amadevus.RecordGenerator.Generators
             }
         }
 
-        public static IPartialGenerator EquatableEqualsPartialGenerator =
+        public static readonly IPartialGenerator EquatableEqualsPartialGenerator =
             PartialGenerator.Create(Features.EquatableEquals,
                 descriptor =>
                 {
@@ -277,7 +277,7 @@ namespace Amadevus.RecordGenerator.Generators
         private const string rightVariableName = "right";
         private const string leftVariableName = "left";
 
-        public static IPartialGenerator OperatorEqualityPartialGenerator =
+        public static readonly IPartialGenerator OperatorEqualityPartialGenerator =
             PartialGenerator.Create(Features.OperatorEquals,
                 descriptor =>
                     PartialGenerationResult.Empty
