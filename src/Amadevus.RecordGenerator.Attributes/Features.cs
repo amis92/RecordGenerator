@@ -42,16 +42,48 @@ namespace Amadevus.RecordGenerator
         /// <c>Deconstruct</c> method:
         /// <see href="https://docs.microsoft.com/pl-pl/dotnet/csharp/deconstruct#deconstructing-user-defined-types"/>
         /// </summary>
-        Deconstruct = 0b_10000,
+        Deconstruct = 0b_1_0000,
 
         /// <summary>
         /// Default feature set.
         /// </summary>
         Default = Constructor | Withers | ToString | Builder | Deconstruct,
 
-        //ObjectEquals = 0b_100000,
-        //EquatableEquals = 0b_1000000,
-        //OperatorEquals = 0b_10000000,
-        //Equality = ObjectEquals | EquatableEquals | OperatorEquals
+        /// <summary>
+        /// <see cref="object.Equals(object)"/> and <see cref="object.GetHashCode()"/> overrides
+        /// - currently this requires the record class to be sealed.
+        /// <see cref="object.Equals(object)"/> override compares all record properties with
+        /// the corresponding record properties of the other object using either
+        /// <see langword="=="/> for integral value types, or
+        /// <see cref="System.Collections.Generic.EqualityComparer{T}.Default"/> for the others.
+        /// <see cref="object.GetHashCode()"/> override calculates a hash code using all record properties.
+        /// </summary>
+        /// <remarks>
+        /// <see cref="object.Equals(object)"/> returns <see langword="true" /> if and only if:
+        /// other object is not <see langword="null" />, is of the same type, and all record
+        /// properties' values match.
+        /// If feature <see cref="EquatableEquals"/> is used as well, the implementation of
+        /// <see cref="object.Equals(object)"/> will forward into <see cref="IEquatable{T}.Equals(T)"/>.
+        /// </remarks>
+        ObjectEquals = 0b_10_0000,
+
+        /// <summary>
+        /// <see cref="IEquatable{T}.Equals(T)"/> implementation that provides a call to the 
+        /// <see cref="object.Equals(object)"/> method in a type safe way - currently this
+        /// requires the record class to be sealed.
+        /// </summary>
+        EquatableEquals = 0b_100_0000,
+
+        /// <summary>
+        /// Overrides the <see langword="==" /> and <see langword="!=" /> operator by using
+        /// the <see cref="object.Equals(object)"/> method.
+        /// </summary>
+        OperatorEquals = 0b_1000_0000,
+
+        /// <summary>
+        /// Equality feature set which inlcudes 
+        /// <see cref="ObjectEquals"/>, <see cref="EquatableEquals"/> and <see cref="OperatorEquals"/>.
+        /// </summary>
+        Equality = ObjectEquals | EquatableEquals | OperatorEquals
     }
 }

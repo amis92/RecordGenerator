@@ -148,6 +148,13 @@ namespace Amadevus.RecordGenerator.Generators
             return SyntaxFactory.GenericName(identifier, typeArgList);
         }
 
+        public static string GetQualifiedName(this ISymbol symbol)
+        {
+            var symbolDisplayFormat = new SymbolDisplayFormat(
+                typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces);
+            return symbol.ToDisplayString(symbolDisplayFormat);
+        }
+
         public static bool IsImmutableArrayType(this PropertyDeclarationSyntax property)
         {
             return property.Type is GenericNameSyntax genericName && genericName.Identifier.Text == "ImmutableArray";

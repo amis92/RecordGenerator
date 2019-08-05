@@ -26,5 +26,8 @@ namespace Amadevus.RecordGenerator.Analyzers
 
         public static DiagnosticDescriptor X1000_RecordMustBePartial { get; } =
             Rule(1000, "Record must be partial", Usage, Error, "Add partial modifier to type declaration");
+
+        public static DiagnosticDescriptor X1001_RecordMustBeSealedIfEqualityIsEnabled { get; } =
+            Rule(1001, "Record must be sealed if equality generation is enabled", Usage, Warning, "Add sealed modifier to type '{0}'");
     }
 }

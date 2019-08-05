@@ -23,6 +23,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * `Features` flags enum in Attributes package for requesting specific feature set generation
 * `DefaultRecordFeaturesAttribute`  in Attributes package for setting assembly-default feature set
 * `RecordAttribute(Features)` constructor for customizing feature set generation per class
+* Equality feature, currently optional behind `Features.Equality` flag.
+	* [`object.Equals(object)`][objectEquals], [`object.GetHashCode()`][objectGetHashCode] overrides
+	* [`IEquatable<TRecord>`][iEquatable], [`operator ==/!=`][equalityOperators] implementations
 
 
-[objtostr]: https://docs.microsoft.com/en-us/dotnet/api/system.object.tostring
+[objtostr]: https://docs.microsoft.com/dotnet/api/system.object.tostring
+[objectEquals]: https://docs.microsoft.com/dotnet/api/system.object.equals#System_Object_Equals_System_Object_
+[objectGetHashCode]: https://docs.microsoft.com/dotnet/api/system.object.gethashcode
+[iEquatable]: https://docs.microsoft.com/dotnet/api/system.iequatable-1
+[equalityOperators]: https://docs.microsoft.com/dotnet/csharp/language-reference/operators/equality-operators
