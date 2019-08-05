@@ -1,10 +1,10 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Amadevus.RecordGenerator.Generators
@@ -53,7 +53,7 @@ namespace Amadevus.RecordGenerator.Generators
             this.attributeGenerator = attributeGenerator;
         }
 
-        
+
         public ClassDeclarationSyntax AddGeneratedCodeAttributeOnMembers(
             ClassDeclarationSyntax typeDeclaration)
         {
@@ -97,25 +97,22 @@ namespace Amadevus.RecordGenerator.Generators
                     SingletonSeparatedList(
                         Attribute(GenerateQualifiedName())
                         .WithArgumentList(GenerateAttributeArgumentList())));
-        } 
+        }
 
         private AttributeArgumentListSyntax GenerateAttributeArgumentList()
         {
-            var toolName = Names.ToolName;
-            var toolVersion = ThisAssembly.AssemblyVersion;
-
             return AttributeArgumentList(
                 SeparatedList<AttributeArgumentSyntax>(
                     new SyntaxNodeOrToken[]{
                         AttributeArgument(
                             LiteralExpression(
                                 SyntaxKind.StringLiteralExpression,
-                                Literal(toolName))),
+                                Literal(Names.ToolName))),
                         Token(SyntaxKind.CommaToken),
                         AttributeArgument(
                             LiteralExpression(
                                 SyntaxKind.StringLiteralExpression,
-                                Literal(toolVersion)))}));
+                                Literal(ThisAssembly.AssemblyVersion)))}));
         }
 
         private NameSyntax GenerateQualifiedName()

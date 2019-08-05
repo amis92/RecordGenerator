@@ -50,7 +50,8 @@ namespace Amadevus.RecordGenerator
         Default = Constructor | Withers | ToString | Builder | Deconstruct,
 
         /// <summary>
-        /// <see cref="object.Equals(object)"/> and <see cref="object.GetHashCode()"/> overrides. 
+        /// <see cref="object.Equals(object)"/> and <see cref="object.GetHashCode()"/> overrides
+        /// - currently this requires the record class to be sealed.
         /// <see cref="object.Equals(object)"/> override compares all record properties with
         /// the corresponding record properties of the other object using either
         /// <see langword="=="/> for integral value types, or
@@ -61,18 +62,21 @@ namespace Amadevus.RecordGenerator
         /// <see cref="object.Equals(object)"/> returns <see langword="true" /> if and only if:
         /// other object is not <see langword="null" />, is of the same type, and all record
         /// properties' values match.
+        /// If feature <see cref="EquatableEquals"/> is used as well, the implementation of
+        /// <see cref="object.Equals(object)"/> will forward into <see cref="IEquatable{T}.Equals(T)"/>.
         /// </remarks>
         ObjectEquals = 0b_10_0000,
 
         /// <summary>
         /// <see cref="IEquatable{T}.Equals(T)"/> implementation that provides a call to the 
-        /// <see cref="object.Equals(object)"/> method in a type safe way.
+        /// <see cref="object.Equals(object)"/> method in a type safe way - currently this
+        /// requires the record class to be sealed.
         /// </summary>
         EquatableEquals = 0b_100_0000,
 
         /// <summary>
-        /// Overrides the <see langword="==" /> operator by using the <see cref="object.Equals(object)"/> method.
-        /// Depends on the feature <see cref="ObjectEquals"/>.
+        /// Overrides the <see langword="==" /> and <see langword="!=" /> operator by using
+        /// the <see cref="object.Equals(object)"/> method.
         /// </summary>
         OperatorEquals = 0b_1000_0000,
 
