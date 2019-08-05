@@ -56,7 +56,7 @@ namespace Amadevus.RecordGenerator.Generators
         public PartialGenerationResult AddMembers(params MemberDeclarationSyntax[] members) =>
             Update(Modifiers, BaseTypes, Members.AddRange(members));
 
-        private PartialGenerationResult
+        private static PartialGenerationResult
             Update(
                 SyntaxTokenList modifiers,
                 ImmutableArray<BaseTypeSyntax> baseTypes,
