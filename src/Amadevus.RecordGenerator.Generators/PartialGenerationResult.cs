@@ -16,7 +16,7 @@ namespace Amadevus.RecordGenerator.Generators
 
         public SyntaxTokenList Modifiers { get; }
         public ImmutableArray<BaseTypeSyntax> BaseTypes { get; }
-        public ImmutableArray<MemberDeclarationSyntax> Members;
+        public ImmutableArray<MemberDeclarationSyntax> Members { get; }
 
         PartialGenerationResult(
             SyntaxTokenList modifiers,
