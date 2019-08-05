@@ -24,13 +24,14 @@ namespace Amadevus.RecordGenerator.Generators
                 features,
                 typeDeclaration.GetTypeSyntax().WithoutTrivia(),
                 typeDeclaration.Identifier.WithoutTrivia(),
-                typeDeclaration.GetRecordProperties(features, semanticModel),
+                typeDeclaration.GetRecordProperties(semanticModel),
                 typeDeclaration.WithoutTrivia(),
                 typeDeclaration.GetLocation(),
+                semanticModel.GetDeclaredSymbol(typeDeclaration),
                 semanticModel);
         }
 
-        private static ImmutableArray<RecordDescriptor.Entry> GetRecordProperties(this TypeDeclarationSyntax typeDeclaration, Features features, SemanticModel semanticModel)
+        private static ImmutableArray<RecordDescriptor.Entry> GetRecordProperties(this TypeDeclarationSyntax typeDeclaration, SemanticModel semanticModel)
         {
             return typeDeclaration.Members.GetRecordProperties().AsRecordEntries(semanticModel);
         }

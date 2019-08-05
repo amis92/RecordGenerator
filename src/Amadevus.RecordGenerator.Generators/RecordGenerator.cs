@@ -1,12 +1,12 @@
-﻿using CodeGeneration.Roslyn;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using CodeGeneration.Roslyn;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Amadevus.RecordGenerator.Generators
 {
@@ -31,7 +31,7 @@ namespace Amadevus.RecordGenerator.Generators
                     .AddRange(
                         GenerateRecordPartials(descriptor)
                         .Where(x => x != null));
-                foreach (var diagnostic in GenerateDiagnostics(descriptor)) progress.Report(diagnostic); 
+                foreach (var diagnostic in GenerateDiagnostics(descriptor)) progress.Report(diagnostic);
             }
             return Task.FromResult(generatedMembers);
 
@@ -44,10 +44,12 @@ namespace Amadevus.RecordGenerator.Generators
                 yield return RecordPartialGenerator.Generate(descriptor, cancellationToken);
                 yield return BuilderPartialGenerator.Generate(descriptor, cancellationToken);
                 yield return DeconstructPartialGenerator.Generate(descriptor, cancellationToken);
-                yield return ObjectEqualsGenerator.Generate(descriptor, cancellationToken);
-                yield return EquatableEqualsPartialGenerator.Generate(descriptor, cancellationToken);
+                if (descriptor.Symbol.IsSealed)
+                {
+                    yield return ObjectEqualsGenerator.Generate(descriptor, cancellationToken);
+                    yield return EquatableEqualsPartialGenerator.Generate(descriptor, cancellationToken);
+                }
                 yield return OperatorEqualityPartialGenerator.Generate(descriptor, cancellationToken);
-                yield break;
             }
 
             IEnumerable<Diagnostic> GenerateDiagnostics(RecordDescriptor descriptor)
