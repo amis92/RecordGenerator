@@ -224,7 +224,7 @@ namespace Amadevus.RecordGenerator.Generators
             PartialGenerator.Create(Features.EquatableEquals,
                 descriptor =>
                 {
-                    if (descriptor.Symbol.IsSealed)
+                    if (!descriptor.Symbol.IsSealed)
                         return PartialGenerationResult.Empty;
 
                     // MyRecord : System.IEquatable<MyRecord>
