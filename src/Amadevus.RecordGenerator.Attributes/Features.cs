@@ -42,7 +42,7 @@ namespace Amadevus.RecordGenerator
         /// <c>Deconstruct</c> method:
         /// <see href="https://docs.microsoft.com/pl-pl/dotnet/csharp/deconstruct#deconstructing-user-defined-types"/>
         /// </summary>
-        Deconstruct = 0b_1000_0,
+        Deconstruct = 0b_1_0000,
 
         /// <summary>
         /// Default feature set.
@@ -61,13 +61,13 @@ namespace Amadevus.RecordGenerator
         /// <see cref="object.Equals(object)"/> returns <see langword="true" /> if all values match 
         /// and returns <see langword="false"/> if <see langword="null" /> is passed, another type is passed or at least one value doesn't mach.
         /// </remarks>
-        ObjectEquals = 0b_1000_00,
+        ObjectEquals = 0b_10_0000,
 
         /// <summary>
         /// <see cref="IEquatable{T}.Equals(T)"/> implementation that provides a call to the 
         /// <see cref="object.Equals(object)"/> method in a type safe way. 
         /// </summary>
-        EquatableEquals = 0b_1000_000,
+        EquatableEquals = 0b_100_0000,
 
         /// <summary>
         /// Overrides the <see langword="==" /> operator by using the <see cref="object.Equals(object)"/> method.
