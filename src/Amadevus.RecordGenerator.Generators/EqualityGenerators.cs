@@ -12,10 +12,19 @@ namespace Amadevus.RecordGenerator.Generators
         private const string EqualsMethodName = "Equals";
         private const string GetHashCodeMethodName = "GetHashCode";
 
-        private static ImmutableArray<string> OperatorEqualityTypes =>
-            new[] { typeof(bool), typeof(byte), typeof(sbyte), typeof(char), typeof(int), typeof(uint),
-                typeof(long), typeof(ulong), typeof(short), typeof(ushort), typeof(string) }
-            .Select(t => t.FullName).ToImmutableArray();
+        private static readonly ImmutableArray<string> OperatorEqualityTypes =
+            ImmutableArray.CreateRange(
+                from t in new[]
+                {
+                    typeof(bool),
+                    typeof(sbyte), typeof(byte),
+                    typeof(char),
+                    typeof(int), typeof(uint),
+                    typeof(long), typeof(ulong),
+                    typeof(short), typeof(ushort),
+                    typeof(string)
+                }
+                select t.FullName);
 
         private static MemberAccessExpressionSyntax GenerateEqualityComparerDefaultExpression(TypeSyntax comparedType)
         {
