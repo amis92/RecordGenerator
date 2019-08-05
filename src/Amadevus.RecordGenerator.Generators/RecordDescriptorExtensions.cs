@@ -64,5 +64,12 @@ namespace Amadevus.RecordGenerator.Generators
                 ? name
                 : $"{char.ToLowerInvariant(name[0])}{name.Substring(1)}";
         }
+
+        public static Diagnostic CreateDiagnostic(this RecordDescriptor recordDescriptor,
+                                                  DiagnosticDescriptor diagnosticDescriptor) =>
+            Diagnostic.Create(
+                diagnosticDescriptor,
+                recordDescriptor.TypeDeclarationLocation,
+                recordDescriptor.TypeIdentifier.Text);
     }
 }

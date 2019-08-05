@@ -1,7 +1,9 @@
 ﻿using System.Collections.Immutable;
 using System.Linq;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Amadevus.RecordGenerator.Analyzers;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxKind;
 
@@ -88,7 +90,9 @@ namespace Amadevus.RecordGenerator.Generators
                                             ? GenerateForwardToEquatableEquals(descriptor)
                                             : GenerateStandaloneObjectEquals(descriptor)),
                                   GenerateGetHashCode(descriptor))
-                    : PartialGenerationResult.Empty);
+                    : PartialGenerationResult.Empty
+                      .AddDiagnostic(
+                          descriptor.CreateDiagnostic(Descriptors.X1001_RecordMustBeSealedIfEqualityIsEnabled)));
 
         private static MethodDeclarationSyntax GenerateObjectEqualsSignature()
         {
@@ -225,7 +229,8 @@ namespace Amadevus.RecordGenerator.Generators
                 descriptor =>
                 {
                     if (!descriptor.Symbol.IsSealed)
-                        return PartialGenerationResult.Empty;
+                        return PartialGenerationResult.Empty
+                               .AddDiagnostic(descriptor.CreateDiagnostic(Descriptors.X1001_RecordMustBeSealedIfEqualityIsEnabled));
 
                     // MyRecord : System.IEquatable<MyRecord>
                     var equatable =

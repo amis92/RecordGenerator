@@ -53,34 +53,34 @@ namespace Amadevus.RecordGenerator.Generators
                     select g.Generate(descriptor, features)
                     into g
                     where !g.IsEmpty
-                    select
-                        ClassDeclaration(classDeclaration.Identifier.WithoutTrivia())
-                        .WithTypeParameterList(classDeclaration.TypeParameterList?.WithoutTrivia())
-                        .WithBaseList(g.BaseTypes.IsEmpty ? null : BaseList(SeparatedList(g.BaseTypes)))
-                        .WithModifiers(
-                            TokenList(
-                                g.Modifiers
-                                .Except(new[] {partialKeyword})
-                                .Append(partialKeyword)))
-                        .WithMembers(List(g.Members))
-                        .AddGeneratedCodeAttributeOnMembers();
+                    select new
+                    {
+                        Declaration =
+                            ClassDeclaration(classDeclaration.Identifier.WithoutTrivia())
+                            .WithTypeParameterList(classDeclaration.TypeParameterList?.WithoutTrivia())
+                            .WithBaseList(g.BaseTypes.IsEmpty ? null : BaseList(SeparatedList(g.BaseTypes)))
+                            .WithModifiers(
+                                TokenList(
+                                    g.Modifiers
+                                    .Except(new[] {partialKeyword})
+                                    .Append(partialKeyword)))
+                            .WithMembers(List(g.Members))
+                            .AddGeneratedCodeAttributeOnMembers(),
+                        g.Diagnostics
+                    };
 
                 foreach (var partial in partials)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    generatedMembers.Add(partial);
-                }
+                    generatedMembers.Add(partial.Declaration);
 
-                foreach (var diagnostic in GenerateDiagnostics(descriptor, features)) progress.Report(diagnostic);
+                    foreach (var diagnostic in partial.Diagnostics)
+                        progress.Report(diagnostic);
+                }
 
                 return generatedMembers.Count > 0
                      ? Task.FromResult(List(generatedMembers))
                      : EmptyResultTask;
-            }
-
-            IEnumerable<Diagnostic> GenerateDiagnostics(RecordDescriptor descriptor, Features features)
-            {
-                foreach (var diagnostic in EqualityUsageAnalyzer.GenerateDiagnostics(descriptor, features)) yield return diagnostic;
             }
         }
 
