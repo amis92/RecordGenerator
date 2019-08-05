@@ -7,7 +7,7 @@ namespace Amadevus.RecordGenerator.Generators
 {
     internal partial class RecordDescriptor
     {
-        public RecordDescriptor(Features features, TypeSyntax Type, SyntaxToken TypeIdentifier, ImmutableArray<Entry> Entries, TypeDeclarationSyntax TypeDeclaration, Location TypeDeclarationLocation, ISymbol symbol, SemanticModel SemanticModel)
+        public RecordDescriptor(Features features, TypeSyntax Type, SyntaxToken TypeIdentifier, ImmutableArray<Entry> Entries, TypeDeclarationSyntax TypeDeclaration, Location TypeDeclarationLocation, ISymbol Symbol, SemanticModel SemanticModel)
         {
             this.Type = Type;
             this.TypeIdentifier = TypeIdentifier;
