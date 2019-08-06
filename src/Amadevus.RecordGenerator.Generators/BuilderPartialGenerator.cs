@@ -51,13 +51,13 @@ namespace Amadevus.RecordGenerator.Generators
         {
             return
                 MethodDeclaration(
-                    descriptor.Type,
+                    descriptor.TypeSyntax,
                     Names.ToImmutable)
                 .AddModifiers(SyntaxKind.PublicKeyword)
                 .WithBody(
                     Block(
                         ReturnStatement(
-                            ObjectCreationExpression(descriptor.Type)
+                            ObjectCreationExpression(descriptor.TypeSyntax)
                             .WithArgumentList(
                                 CreateArgumentList()))));
             ArgumentListSyntax CreateArgumentList()

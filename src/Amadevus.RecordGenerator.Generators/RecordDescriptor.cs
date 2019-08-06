@@ -7,30 +7,24 @@ namespace Amadevus.RecordGenerator.Generators
 {
     internal partial class RecordDescriptor
     {
-        public RecordDescriptor(TypeSyntax Type, SyntaxToken TypeIdentifier, ImmutableArray<Entry> Entries, TypeDeclarationSyntax TypeDeclaration, Location TypeDeclarationLocation, ISymbol Symbol, SemanticModel SemanticModel)
+        public RecordDescriptor(TypeSyntax TypeSyntax, SyntaxToken TypeIdentifier, ImmutableArray<Entry> Entries, Location TypeDeclarationLocation, bool IsTypeSealed)
         {
-            this.Type = Type;
+            this.TypeSyntax = TypeSyntax;
             this.TypeIdentifier = TypeIdentifier;
             this.Entries = Entries;
-            this.TypeDeclaration = TypeDeclaration;
             this.TypeDeclarationLocation = TypeDeclarationLocation;
-            this.Symbol = Symbol;
-            this.SemanticModel = SemanticModel;
+            this.IsTypeSealed = IsTypeSealed;
         }
 
-        public TypeSyntax Type { get; }
+        public TypeSyntax TypeSyntax { get; }
 
         public SyntaxToken TypeIdentifier { get; }
 
         public ImmutableArray<Entry> Entries { get; }
 
-        public TypeDeclarationSyntax TypeDeclaration { get; }
-
         public Location TypeDeclarationLocation { get; }
 
-        public ISymbol Symbol { get; }
-
-        public SemanticModel SemanticModel { get; }
+        public bool IsTypeSealed { get; }
 
         internal abstract class Entry
         {

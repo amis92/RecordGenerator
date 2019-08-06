@@ -76,14 +76,14 @@ namespace Amadevus.RecordGenerator.Generators
                     IdentifierName(x.IdentifierInCamelCase));
             });
             return
-                MethodDeclaration(descriptor.Type, Names.Update)
+                MethodDeclaration(descriptor.TypeSyntax, Names.Update)
                 .AddModifiers(SyntaxKind.PublicKeyword)
                 .WithParameters(
                     descriptor.Entries.Select(CreateParameter))
                 .WithBodyStatements(
                     ReturnStatement(
                         ObjectCreationExpression(
-                            descriptor.Type)
+                            descriptor.TypeSyntax)
                         .WithArgumentList(
                             ArgumentList(
                                 SeparatedList(arguments)))));
@@ -104,7 +104,7 @@ namespace Amadevus.RecordGenerator.Generators
 
                 var mutator =
                     MethodDeclaration(
-                        descriptor.Type,
+                        descriptor.TypeSyntax,
                         GetMutatorIdentifier())
                     .AddModifiers(SyntaxKind.PublicKeyword)
                     .WithParameters(

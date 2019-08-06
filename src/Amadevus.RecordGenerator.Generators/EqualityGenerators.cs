@@ -83,7 +83,7 @@ namespace Amadevus.RecordGenerator.Generators
         public static readonly IPartialGenerator ObjectEqualsGenerator =
             PartialGenerator.Create(Features.ObjectEquals,
                 (descriptor, features) =>
-                    descriptor.Symbol.IsSealed
+                    descriptor.IsTypeSealed
                     ? PartialGenerationResult.Empty
                       .AddMembers(GenerateObjectEqualsSignature()
                                   .WithBody(features.HasFlag(Features.EquatableEquals)
@@ -125,7 +125,7 @@ namespace Amadevus.RecordGenerator.Generators
                             (ExpressionSyntax)IsPatternExpression(
                                 IdentifierName(objVariableName),
                                 DeclarationPattern(
-                                    descriptor.Type,
+                                    descriptor.TypeSyntax,
                                     SingleVariableDesignation(
                                         Identifier(otherVariableName)))),
                             (prev, next) => BinaryExpression(LogicalAndExpression, prev, next))));
@@ -147,7 +147,7 @@ namespace Amadevus.RecordGenerator.Generators
                                 BinaryExpression(
                                     AsExpression,
                                     IdentifierName(objVariableName),
-                                    descriptor.Type)))));
+                                    descriptor.TypeSyntax)))));
         }
 
         private static MemberDeclarationSyntax GenerateGetHashCode(RecordDescriptor descriptor)
@@ -228,7 +228,7 @@ namespace Amadevus.RecordGenerator.Generators
             PartialGenerator.Create(Features.EquatableEquals,
                 descriptor =>
                 {
-                    if (!descriptor.Symbol.IsSealed)
+                    if (!descriptor.IsTypeSealed)
                         return PartialGenerationResult.Empty
                                .AddDiagnostic(descriptor.CreateDiagnostic(Descriptors.X1001_RecordMustBeSealedIfEqualityIsEnabled));
 
@@ -237,7 +237,7 @@ namespace Amadevus.RecordGenerator.Generators
                         QualifiedName(
                             IdentifierName(Names.SystemNamespace),
                             GenericName(Names.IEquatableName)
-                            .AddTypeArgumentListArguments(descriptor.Type));
+                            .AddTypeArgumentListArguments(descriptor.TypeSyntax));
 
                     return PartialGenerationResult.Empty
                            .WithBaseList(
@@ -262,7 +262,7 @@ namespace Amadevus.RecordGenerator.Generators
                 .AddParameterListParameters(
                     Parameter(
                         Identifier(otherVariableName))
-                    .WithType(descriptor.Type))
+                    .WithType(descriptor.TypeSyntax))
                 .AddBodyStatements(
                     ReturnStatement(
                         GenerateEqualsExpressions(descriptor, otherVariableName)
@@ -302,10 +302,10 @@ namespace Amadevus.RecordGenerator.Generators
                 .AddParameterListParameters(
                     Parameter(
                         Identifier(leftVariableName))
-                    .WithType(descriptor.Type),
+                    .WithType(descriptor.TypeSyntax),
                     Parameter(
                         Identifier(rightVariableName))
-                    .WithType(descriptor.Type));
+                    .WithType(descriptor.TypeSyntax));
         }
 
         private static BlockSyntax GenerateExclamationEqualsBody()
@@ -332,7 +332,7 @@ namespace Amadevus.RecordGenerator.Generators
                         InvocationExpression(
                             MemberAccessExpression(
                                 SimpleMemberAccessExpression,
-                                GenerateEqualityComparerDefaultExpression(descriptor.Type),
+                                GenerateEqualityComparerDefaultExpression(descriptor.TypeSyntax),
                                 IdentifierName(EqualsMethodName)))
                         .AddArgumentListArguments(
                             Argument(
