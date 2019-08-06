@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using CodeGeneration.Roslyn;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Amadevus.RecordGenerator.Generators
 {
@@ -14,47 +16,75 @@ namespace Amadevus.RecordGenerator.Generators
     {
         private readonly AttributeData attributeData;
 
+        private static readonly ImmutableArray<IPartialGenerator> PartialGenerators =
+            ImmutableArray.Create(RecordPartialGenerator.Instance,
+                                  BuilderPartialGenerator.Instance,
+                                  DeconstructPartialGenerator.Instance,
+                                  EqualityPartialGenerator.ObjectEqualsGenerator,
+                                  EqualityPartialGenerator.EquatableEqualsPartialGenerator,
+                                  EqualityPartialGenerator.OperatorEqualityPartialGenerator);
+
         public RecordGenerator(AttributeData attributeData)
         {
             this.attributeData = attributeData;
         }
 
+        static readonly Task<SyntaxList<MemberDeclarationSyntax>> EmptyResultTask =
+            Task.FromResult(List<MemberDeclarationSyntax>());
+
         public Task<SyntaxList<MemberDeclarationSyntax>> GenerateAsync(TransformationContext context, IProgress<Diagnostic> progress, CancellationToken cancellationToken)
         {
-            var generatedMembers = SyntaxFactory.List<MemberDeclarationSyntax>();
-            var features = GetFeatures();
+            return context.ProcessingNode is ClassDeclarationSyntax cds
+                 ? GenerateAsync(cds)
+                 : EmptyResultTask;
 
-            if (context.ProcessingNode is ClassDeclarationSyntax classDeclaration)
+            Task<SyntaxList<MemberDeclarationSyntax>> GenerateAsync(ClassDeclarationSyntax classDeclaration)
             {
-                var descriptor = classDeclaration.ToRecordDescriptor(features, context.SemanticModel);
-                generatedMembers = generatedMembers
-                    .AddRange(
-                        GenerateRecordPartials(descriptor)
-                        .Where(x => x != null));
-                foreach (var diagnostic in GenerateDiagnostics(descriptor)) progress.Report(diagnostic);
-            }
-            return Task.FromResult(generatedMembers);
-
-            IEnumerable<MemberDeclarationSyntax> GenerateRecordPartials(RecordDescriptor descriptor)
-            {
+                var descriptor = classDeclaration.ToRecordDescriptor(context.SemanticModel);
                 if (descriptor.Entries.IsEmpty)
-                {
-                    yield break;
-                }
-                yield return RecordPartialGenerator.Generate(descriptor, cancellationToken);
-                yield return BuilderPartialGenerator.Generate(descriptor, cancellationToken);
-                yield return DeconstructPartialGenerator.Generate(descriptor, cancellationToken);
-                if (descriptor.Symbol.IsSealed)
-                {
-                    yield return ObjectEqualsGenerator.Generate(descriptor, cancellationToken);
-                    yield return EquatableEqualsPartialGenerator.Generate(descriptor, cancellationToken);
-                }
-                yield return OperatorEqualityPartialGenerator.Generate(descriptor, cancellationToken);
-            }
+                    return EmptyResultTask;
 
-            IEnumerable<Diagnostic> GenerateDiagnostics(RecordDescriptor descriptor)
-            {
-                foreach (var diagnostic in EqualityUsageAnalyzer.GenerateDiagnostics(descriptor)) yield return diagnostic;
+                var generatedMembers = new List<MemberDeclarationSyntax>();
+                var features = GetFeatures();
+                var partialKeyword = Token(SyntaxKind.PartialKeyword);
+
+                var partials =
+                    from g in PartialGenerators
+                    select g.Generate(descriptor, features)
+                    into g
+                    where !g.IsEmpty
+                    select new
+                    {
+                        Declaration =
+                            g.ContainsDiagnosticsOnly
+                            ? null
+                            : ClassDeclaration(classDeclaration.Identifier.WithoutTrivia())
+                              .WithTypeParameterList(classDeclaration.TypeParameterList?.WithoutTrivia())
+                              .WithBaseList(g.BaseTypes.IsEmpty ? null : BaseList(SeparatedList(g.BaseTypes)))
+                              .WithModifiers(
+                                  TokenList(
+                                      g.Modifiers
+                                      .Except(new[] {partialKeyword})
+                                      .Append(partialKeyword)))
+                              .WithMembers(List(g.Members))
+                              .AddGeneratedCodeAttributeOnMembers(),
+                        g.Diagnostics
+                    };
+
+                foreach (var partial in partials)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    if (partial.Declaration != null)
+                        generatedMembers.Add(partial.Declaration);
+
+                    foreach (var diagnostic in partial.Diagnostics)
+                        progress.Report(diagnostic);
+                }
+
+                return generatedMembers.Count > 0
+                     ? Task.FromResult(List(generatedMembers))
+                     : EmptyResultTask;
             }
         }
 

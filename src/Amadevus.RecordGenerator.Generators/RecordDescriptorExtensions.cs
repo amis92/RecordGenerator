@@ -1,8 +1,8 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Amadevus.RecordGenerator.Generators
@@ -11,24 +11,24 @@ namespace Amadevus.RecordGenerator.Generators
     {
         public static RecordDescriptor.Entry ToRecordEntry(this PropertyDeclarationSyntax property, ISymbol symbol)
         {
-            return new RecordDescriptor.SimpleEntry(
+            var id = (string)property.Identifier.Value;
+            var camelCased = char.ToLowerInvariant(id[0]) + id.Substring(1);
+            var identifierInCamelCase = Identifier(CSharpKeyword.Is(camelCased) ? "@" + camelCased : camelCased);
+            return new RecordDescriptor.Entry(
                 property.Identifier.WithoutTrivia(),
+                identifierInCamelCase,
                 property.Type.WithoutTrivia(),
-                property.WithoutTrivia(),
-                symbol);
+                symbol.GetQualifiedName());
         }
 
-        public static RecordDescriptor ToRecordDescriptor(this ClassDeclarationSyntax typeDeclaration, Features features, SemanticModel semanticModel)
+        public static RecordDescriptor ToRecordDescriptor(this ClassDeclarationSyntax typeDeclaration, SemanticModel semanticModel)
         {
             return new RecordDescriptor(
-                features,
                 typeDeclaration.GetTypeSyntax().WithoutTrivia(),
                 typeDeclaration.Identifier.WithoutTrivia(),
                 typeDeclaration.GetRecordProperties(semanticModel),
-                typeDeclaration.WithoutTrivia(),
                 typeDeclaration.GetLocation(),
-                semanticModel.GetDeclaredSymbol(typeDeclaration),
-                semanticModel);
+                semanticModel.GetDeclaredSymbol(typeDeclaration).IsSealed);
         }
 
         private static ImmutableArray<RecordDescriptor.Entry> GetRecordProperties(this TypeDeclarationSyntax typeDeclaration, SemanticModel semanticModel)
@@ -65,5 +65,12 @@ namespace Amadevus.RecordGenerator.Generators
                 ? name
                 : $"{char.ToLowerInvariant(name[0])}{name.Substring(1)}";
         }
+
+        public static Diagnostic CreateDiagnostic(this RecordDescriptor recordDescriptor,
+                                                  DiagnosticDescriptor diagnosticDescriptor) =>
+            Diagnostic.Create(
+                diagnosticDescriptor,
+                recordDescriptor.TypeDeclarationLocation,
+                recordDescriptor.TypeIdentifier.Text);
     }
 }

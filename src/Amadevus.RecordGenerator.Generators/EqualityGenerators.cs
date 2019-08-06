@@ -1,28 +1,34 @@
 ﻿using System.Collections.Immutable;
 using System.Linq;
-using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Amadevus.RecordGenerator.Analyzers;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxKind;
 
 namespace Amadevus.RecordGenerator.Generators
 {
-    internal abstract class EqualityPartialGeneratorBase : PartialGeneratorBase
+    internal static class EqualityPartialGenerator
     {
-        protected const string EqualsMethodName = "Equals";
-        protected const string GetHashCodeMethodName = "GetHashCode";
+        private const string EqualsMethodName = "Equals";
+        private const string GetHashCodeMethodName = "GetHashCode";
 
-        protected ImmutableArray<string> OperatorEqualityTypes =>
-            new[] { typeof(bool), typeof(byte), typeof(sbyte), typeof(char), typeof(int), typeof(uint),
-                typeof(long), typeof(ulong), typeof(short), typeof(ushort), typeof(string) }
-            .Select(t => t.FullName).ToImmutableArray();
+        private static readonly ImmutableArray<string> OperatorEqualityTypes =
+            ImmutableArray.CreateRange(
+                from t in new[]
+                {
+                    typeof(bool),
+                    typeof(sbyte), typeof(byte),
+                    typeof(char),
+                    typeof(int), typeof(uint),
+                    typeof(long), typeof(ulong),
+                    typeof(short), typeof(ushort),
+                    typeof(string)
+                }
+                select t.FullName);
 
-        protected EqualityPartialGeneratorBase(RecordDescriptor descriptor, CancellationToken cancellationToken)
-            : base(descriptor, cancellationToken) { }
-
-        protected MemberAccessExpressionSyntax GenerateEqualityComparerDefaultExpression(TypeSyntax comparedType)
+        private static MemberAccessExpressionSyntax GenerateEqualityComparerDefaultExpression(TypeSyntax comparedType)
         {
             // System.Collections.Generic.EqualityComparer<[comparedType]>.Default
             const string defaultMemberName = "Default";
@@ -38,17 +44,17 @@ namespace Amadevus.RecordGenerator.Generators
                 IdentifierName(defaultMemberName));
         }
 
-        protected ExpressionSyntax[] GenerateEqualsExpressions(string otherVariableName)
+        private static ExpressionSyntax[] GenerateEqualsExpressions(RecordDescriptor descriptor, string otherVariableName)
         {
             // either
             // Prop == other.Prop
             // or
             // EqualityComparer<TProp>.Default.Equals(Prop, other.Prop)
-            return Descriptor.Entries.Select(GenerateEqualityCheck).ToArray();
+            return descriptor.Entries.Select(GenerateEqualityCheck).ToArray();
 
             ExpressionSyntax GenerateEqualityCheck(RecordDescriptor.Entry property)
             {
-                var typeQualifiedName = property.TypeSymbol.GetQualifiedName().TrimEnd('?');
+                var typeQualifiedName = property.QualifiedTypeName.TrimEnd('?');
                 var thisMemberValueAccess = IdentifierName(property.Identifier.Text);
                 var otherMemberValueAccess =
                     MemberAccessExpression(
@@ -64,43 +70,31 @@ namespace Amadevus.RecordGenerator.Generators
                     InvocationExpression(
                         MemberAccessExpression(
                             SimpleMemberAccessExpression,
-                            GenerateEqualityComparerDefaultExpression(property.Type),
+                            GenerateEqualityComparerDefaultExpression(property.TypeSyntax),
                             IdentifierName(EqualsMethodName)))
                     .AddArgumentListArguments(
                         Argument(thisMemberValueAccess),
                         Argument(otherMemberValueAccess));
             }
         }
-    }
 
-    internal sealed class ObjectEqualsGenerator : EqualityPartialGeneratorBase
-    {
         private const string objVariableName = "obj";
 
-        public ObjectEqualsGenerator(RecordDescriptor descriptor, CancellationToken token)
-            : base(descriptor, token) { }
+        public static readonly IPartialGenerator ObjectEqualsGenerator =
+            PartialGenerator.Create(Features.ObjectEquals,
+                (descriptor, features) =>
+                    descriptor.IsTypeSealed
+                    ? PartialGenerationResult.Empty
+                      .AddMembers(GenerateObjectEqualsSignature()
+                                  .WithBody(features.HasFlag(Features.EquatableEquals)
+                                            ? GenerateForwardToEquatableEquals(descriptor)
+                                            : GenerateStandaloneObjectEquals(descriptor)),
+                                  GenerateGetHashCode(descriptor))
+                    : PartialGenerationResult.Empty
+                      .AddDiagnostic(
+                          descriptor.CreateDiagnostic(Descriptors.X1001_RecordMustBeSealedIfEqualityIsEnabled)));
 
-        protected override Features TriggeringFeatures => Features.ObjectEquals;
-
-        public static TypeDeclarationSyntax Generate(RecordDescriptor descriptor, CancellationToken cancellationToken)
-        {
-            return new ObjectEqualsGenerator(descriptor, cancellationToken).GenerateTypeDeclaration();
-        }
-
-        protected override SyntaxList<MemberDeclarationSyntax> GenerateMembers()
-        {
-            return List(new[]
-            {
-                GenerateObjectEqualsSignature()
-                .WithBody(
-                    Descriptor.Features.HasFlag(Features.EquatableEquals)
-                        ? GenerateForwardToEquatableEquals()
-                        : GenerateStandaloneObjectEquals()),
-                GenerateGetHashCode()
-            });
-        }
-
-        public MethodDeclarationSyntax GenerateObjectEqualsSignature()
+        private static MethodDeclarationSyntax GenerateObjectEqualsSignature()
         {
             // public override bool Equals(object obj)
             return
@@ -119,25 +113,25 @@ namespace Amadevus.RecordGenerator.Generators
                             Token(ObjectKeyword))));
         }
 
-        public BlockSyntax GenerateStandaloneObjectEquals()
+        private static BlockSyntax GenerateStandaloneObjectEquals(RecordDescriptor descriptor)
         {
             // return obj is MyRecord other && PropA == other.PropB && ...;
             const string otherVariableName = "other";
             return
                 Block(
                     ReturnStatement(
-                        GenerateEqualsExpressions(otherVariableName)
+                        GenerateEqualsExpressions(descriptor, otherVariableName)
                         .Aggregate(
                             (ExpressionSyntax)IsPatternExpression(
                                 IdentifierName(objVariableName),
                                 DeclarationPattern(
-                                    Descriptor.Type,
+                                    descriptor.TypeSyntax,
                                     SingleVariableDesignation(
                                         Identifier(otherVariableName)))),
                             (prev, next) => BinaryExpression(LogicalAndExpression, prev, next))));
         }
 
-        public BlockSyntax GenerateForwardToEquatableEquals()
+        private static BlockSyntax GenerateForwardToEquatableEquals(RecordDescriptor descriptor)
         {
             // return this.Equals(obj as MyRecord);
             return
@@ -153,10 +147,10 @@ namespace Amadevus.RecordGenerator.Generators
                                 BinaryExpression(
                                     AsExpression,
                                     IdentifierName(objVariableName),
-                                    Descriptor.Type)))));
+                                    descriptor.TypeSyntax)))));
         }
 
-        public MemberDeclarationSyntax GenerateGetHashCode()
+        private static MemberDeclarationSyntax GenerateGetHashCode(RecordDescriptor descriptor)
         {
             const string varKeyWord = "var";
             const string hashCodeVariableName = "hashCode";
@@ -191,7 +185,7 @@ namespace Amadevus.RecordGenerator.Generators
                                             NumericLiteralExpression,
                                             Literal(hashCodeInitialValue)))))))
                     .AddBlockStatements(
-                        Descriptor.Entries.Select(EntryHashCodeRecalculation)
+                        descriptor.Entries.Select(EntryHashCodeRecalculation)
                         .ToArray())
                     .AddBlockStatements(
                         ReturnStatement(
@@ -199,7 +193,7 @@ namespace Amadevus.RecordGenerator.Generators
 
             StatementSyntax EntryHashCodeRecalculation(RecordDescriptor.Entry property)
             {
-                var defaultEqualityComparer = GenerateEqualityComparerDefaultExpression(property.Type);
+                var defaultEqualityComparer = GenerateEqualityComparerDefaultExpression(property.TypeSyntax);
 
                 var getHashCodeInvocation =
                     InvocationExpression(
@@ -229,39 +223,30 @@ namespace Amadevus.RecordGenerator.Generators
                                 getHashCodeInvocation)));
             }
         }
-    }
 
-    internal sealed class EquatableEqualsPartialGenerator : EqualityPartialGeneratorBase
-    {
-        public EquatableEqualsPartialGenerator(RecordDescriptor descriptor, CancellationToken cancellationToken) : base(descriptor, cancellationToken) { }
+        public static readonly IPartialGenerator EquatableEqualsPartialGenerator =
+            PartialGenerator.Create(Features.EquatableEquals,
+                descriptor =>
+                {
+                    if (!descriptor.IsTypeSealed)
+                        return PartialGenerationResult.Empty
+                               .AddDiagnostic(descriptor.CreateDiagnostic(Descriptors.X1001_RecordMustBeSealedIfEqualityIsEnabled));
 
-        protected override Features TriggeringFeatures => Features.EquatableEquals;
+                    // MyRecord : System.IEquatable<MyRecord>
+                    var equatable =
+                        QualifiedName(
+                            IdentifierName(Names.SystemNamespace),
+                            GenericName(Names.IEquatableName)
+                            .AddTypeArgumentListArguments(descriptor.TypeSyntax));
 
-        public static TypeDeclarationSyntax Generate(RecordDescriptor descriptor, CancellationToken cancellationToken)
-        {
-            return new EquatableEqualsPartialGenerator(descriptor, cancellationToken).GenerateTypeDeclaration();
-        }
+                    return PartialGenerationResult.Empty
+                           .WithBaseList(
+                               ImmutableArray.Create<BaseTypeSyntax>(SimpleBaseType(equatable)))
+                           .AddMember(
+                               GenerateEquatableEquals(descriptor));
+                });
 
-        protected override BaseListSyntax GenerateBaseList()
-        {
-            // MyRecord : System.IEquatable<MyRecord>
-            var equatable =
-                QualifiedName(
-                    IdentifierName(Names.SystemNamespace),
-                    GenericName(Names.IEquatableName)
-                    .AddTypeArgumentListArguments(Descriptor.Type));
-            return
-                BaseList(
-                    SingletonSeparatedList<BaseTypeSyntax>(
-                        SimpleBaseType(equatable)));
-        }
-
-        protected override SyntaxList<MemberDeclarationSyntax> GenerateMembers()
-        {
-            return SingletonList(GenerateEquatableEquals());
-        }
-
-        public MemberDeclarationSyntax GenerateEquatableEquals()
+        private static MemberDeclarationSyntax GenerateEquatableEquals(RecordDescriptor descriptor)
         {
             // public bool Equals(MyRecord other) {
             //   return other != null && PropA == other.PropA && ...;
@@ -277,10 +262,10 @@ namespace Amadevus.RecordGenerator.Generators
                 .AddParameterListParameters(
                     Parameter(
                         Identifier(otherVariableName))
-                    .WithType(Descriptor.Type))
+                    .WithType(descriptor.TypeSyntax))
                 .AddBodyStatements(
                     ReturnStatement(
-                        GenerateEqualsExpressions(otherVariableName)
+                        GenerateEqualsExpressions(descriptor, otherVariableName)
                         .Aggregate(
                             BinaryExpression(
                                 NotEqualsExpression,
@@ -288,37 +273,22 @@ namespace Amadevus.RecordGenerator.Generators
                                 LiteralExpression(NullLiteralExpression)),
                             (prev, next) => BinaryExpression(LogicalAndExpression, prev, next))));
         }
-    }
 
-    internal sealed class OperatorEqualityPartialGenerator : EqualityPartialGeneratorBase
-    {
         private const string rightVariableName = "right";
         private const string leftVariableName = "left";
 
-        public OperatorEqualityPartialGenerator(RecordDescriptor descriptor, CancellationToken cancellationToken)
-            : base(descriptor, cancellationToken) { }
+        public static readonly IPartialGenerator OperatorEqualityPartialGenerator =
+            PartialGenerator.Create(Features.OperatorEquals,
+                descriptor =>
+                    PartialGenerationResult.Empty
+                    .AddMembers(GenerateOperatorDeclarationBase(descriptor, EqualsEqualsToken)
+                                .WithBody(
+                                    GenerateEqualsEqualsBody(descriptor)),
+                                GenerateOperatorDeclarationBase(descriptor, ExclamationEqualsToken)
+                                .WithBody(
+                                    GenerateExclamationEqualsBody())));
 
-        protected override Features TriggeringFeatures => Features.OperatorEquals;
-
-        public static TypeDeclarationSyntax Generate(RecordDescriptor descriptor, CancellationToken cancellationToken)
-        {
-            return new OperatorEqualityPartialGenerator(descriptor, cancellationToken).GenerateTypeDeclaration();
-        }
-
-        protected override SyntaxList<MemberDeclarationSyntax> GenerateMembers()
-        {
-            return List(new MemberDeclarationSyntax[]
-            {
-                GenerateOperatorDeclarationBase(EqualsEqualsToken)
-                .WithBody(
-                    GenerateEqualsEqualsBody()),
-                GenerateOperatorDeclarationBase(ExclamationEqualsToken)
-                .WithBody(
-                    GenerateExclamationEqualsBody()),
-            });
-        }
-
-        private OperatorDeclarationSyntax GenerateOperatorDeclarationBase(SyntaxKind token)
+        private static OperatorDeclarationSyntax GenerateOperatorDeclarationBase(RecordDescriptor descriptor, SyntaxKind token)
         {
             // public static bool operator [token](MyRecord left, MyRecord right)
             return
@@ -332,13 +302,13 @@ namespace Amadevus.RecordGenerator.Generators
                 .AddParameterListParameters(
                     Parameter(
                         Identifier(leftVariableName))
-                    .WithType(Descriptor.Type),
+                    .WithType(descriptor.TypeSyntax),
                     Parameter(
                         Identifier(rightVariableName))
-                    .WithType(Descriptor.Type));
+                    .WithType(descriptor.TypeSyntax));
         }
 
-        private BlockSyntax GenerateExclamationEqualsBody()
+        private static BlockSyntax GenerateExclamationEqualsBody()
         {
             // return !(left == right);
             return
@@ -353,7 +323,7 @@ namespace Amadevus.RecordGenerator.Generators
                                     IdentifierName(rightVariableName))))));
         }
 
-        private BlockSyntax GenerateEqualsEqualsBody()
+        private static BlockSyntax GenerateEqualsEqualsBody(RecordDescriptor descriptor)
         {
             // return System.Collections.Generic.EqualityComparer<MyRecord>.Default.Equals(left, right);
             return
@@ -362,7 +332,7 @@ namespace Amadevus.RecordGenerator.Generators
                         InvocationExpression(
                             MemberAccessExpression(
                                 SimpleMemberAccessExpression,
-                                GenerateEqualityComparerDefaultExpression(Descriptor.Type),
+                                GenerateEqualityComparerDefaultExpression(descriptor.TypeSyntax),
                                 IdentifierName(EqualsMethodName)))
                         .AddArgumentListArguments(
                             Argument(

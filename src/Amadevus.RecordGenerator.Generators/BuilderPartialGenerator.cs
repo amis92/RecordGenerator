@@ -1,36 +1,21 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Amadevus.RecordGenerator.Generators
 {
-    internal class BuilderPartialGenerator : PartialGeneratorBase
+    internal static class BuilderPartialGenerator
     {
-        protected BuilderPartialGenerator(RecordDescriptor descriptor, CancellationToken cancellationToken) : base(descriptor, cancellationToken)
-        {
-        }
+        public static IPartialGenerator Instance =>
+            PartialGenerator.Create(Features.Builder, (descriptor, _) =>
+                PartialGenerationResult.Empty
+                    .AddMembers(GenerateToBuilderMethod(descriptor),
+                                GenerateBuilder(descriptor)));
 
-        public static TypeDeclarationSyntax Generate(RecordDescriptor descriptor, CancellationToken cancellationToken)
-        {
-            var generator = new BuilderPartialGenerator(descriptor, cancellationToken);
-            return generator.GenerateTypeDeclaration();
-        }
-
-        protected override Features TriggeringFeatures => Features.Builder;
-
-        protected override SyntaxList<MemberDeclarationSyntax> GenerateMembers()
-        {
-            return
-                SingletonList<MemberDeclarationSyntax>(
-                    GenerateToBuilderMethod())
-                .Add(GenerateBuilder());
-        }
-
-        private ClassDeclarationSyntax GenerateBuilder()
+        private static ClassDeclarationSyntax GenerateBuilder(RecordDescriptor descriptor)
         {
             return
                 ClassDeclaration(Names.Builder)
@@ -40,12 +25,12 @@ namespace Amadevus.RecordGenerator.Generators
             SyntaxList<MemberDeclarationSyntax> GenerateBuilderMembers()
             {
                 return List<MemberDeclarationSyntax>()
-                    .AddRange(Descriptor.Entries.SelectMany(GetPropertyMembers))
-                    .Add(GetBuilderToImmutableMethod());
+                    .AddRange(descriptor.Entries.SelectMany(GetPropertyMembers))
+                    .Add(GetBuilderToImmutableMethod(descriptor));
             }
         }
 
-        private IEnumerable<MemberDeclarationSyntax> GetPropertyMembers(RecordDescriptor.Entry entry)
+        private static IEnumerable<MemberDeclarationSyntax> GetPropertyMembers(RecordDescriptor.Entry entry)
         {
             return CreateSimpleProperty();
 
@@ -53,7 +38,7 @@ namespace Amadevus.RecordGenerator.Generators
             {
                 yield return
                     PropertyDeclaration(
-                        entry.Type,
+                        entry.TypeSyntax,
                         entry.Identifier)
                     .AddModifiers(SyntaxKind.PublicKeyword)
                     .WithAccessors(
@@ -62,29 +47,29 @@ namespace Amadevus.RecordGenerator.Generators
             }
         }
 
-        private MethodDeclarationSyntax GetBuilderToImmutableMethod()
+        private static MethodDeclarationSyntax GetBuilderToImmutableMethod(RecordDescriptor descriptor)
         {
             return
                 MethodDeclaration(
-                    Descriptor.Type,
+                    descriptor.TypeSyntax,
                     Names.ToImmutable)
                 .AddModifiers(SyntaxKind.PublicKeyword)
                 .WithBody(
                     Block(
                         ReturnStatement(
-                            ObjectCreationExpression(Descriptor.Type)
+                            ObjectCreationExpression(descriptor.TypeSyntax)
                             .WithArgumentList(
                                 CreateArgumentList()))));
             ArgumentListSyntax CreateArgumentList()
             {
                 return ArgumentList(
                         SeparatedList(
-                            Descriptor.Entries.Select(
+                            descriptor.Entries.Select(
                                 entry => Argument(IdentifierName(entry.Identifier)))));
             }
         }
 
-        private MethodDeclarationSyntax GenerateToBuilderMethod()
+        private static MethodDeclarationSyntax GenerateToBuilderMethod(RecordDescriptor descriptor)
         {
             return MethodDeclaration(
                     IdentifierName(Names.Builder),
@@ -103,7 +88,7 @@ namespace Amadevus.RecordGenerator.Generators
                             InitializerExpression(
                                 SyntaxKind.ObjectInitializerExpression,
                                 SeparatedList(
-                                    Descriptor.Entries.Select(CreateInitializerForEntry)))));
+                                    descriptor.Entries.Select(CreateInitializerForEntry)))));
             }
             ExpressionSyntax CreateInitializerForEntry(RecordDescriptor.Entry entry)
             {
