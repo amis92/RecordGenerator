@@ -24,7 +24,7 @@ namespace Amadevus.RecordGenerator.Generators
             {
                 return
                     Parameter(entry.IdentifierInCamelCase)
-                    .WithType(entry.Type)
+                    .WithType(entry.TypeSyntax)
                     .AddModifiers(Token(SyntaxKind.OutKeyword));
             }
             StatementSyntax CreateAssignment(RecordDescriptor.Entry entry)

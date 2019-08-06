@@ -1,11 +1,10 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
+﻿using System.Collections.Immutable;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Collections.Immutable;
 
 namespace Amadevus.RecordGenerator.Generators
 {
-    internal partial class RecordDescriptor
+    internal class RecordDescriptor
     {
         public RecordDescriptor(TypeSyntax TypeSyntax, SyntaxToken TypeIdentifier, ImmutableArray<Entry> Entries, Location TypeDeclarationLocation, bool IsTypeSealed)
         {
@@ -26,35 +25,23 @@ namespace Amadevus.RecordGenerator.Generators
 
         public bool IsTypeSealed { get; }
 
-        internal abstract class Entry
+        internal class Entry
         {
-            public Entry(SyntaxToken Identifier, TypeSyntax Type, PropertyDeclarationSyntax PropertySyntax, ISymbol TypeSymbol)
+            public Entry(SyntaxToken Identifier, SyntaxToken IdentifierInCamelCase, TypeSyntax TypeSyntax, string QualifiedTypeName)
             {
                 this.Identifier = Identifier;
-                this.Type = Type;
-                this.PropertySyntax = PropertySyntax;
-                var id = (string)Identifier.Value;
-                var camelized = char.ToLowerInvariant(id[0]) + id.Substring(1);
-                IdentifierInCamelCase = SyntaxFactory.Identifier(CSharpKeyword.Is(camelized) ? "@" + camelized : camelized);
-                this.TypeSymbol = TypeSymbol;
+                this.TypeSyntax = TypeSyntax;
+                this.IdentifierInCamelCase = IdentifierInCamelCase;
+                this.QualifiedTypeName = QualifiedTypeName;
             }
 
             public SyntaxToken Identifier { get; }
 
             public SyntaxToken IdentifierInCamelCase { get; }
 
-            public TypeSyntax Type { get; }
+            public TypeSyntax TypeSyntax { get; }
 
-            public PropertyDeclarationSyntax PropertySyntax { get; }
-
-            public ISymbol TypeSymbol { get; }
-        }
-
-        internal class SimpleEntry : Entry
-        {
-            public SimpleEntry(SyntaxToken Identifier, TypeSyntax Type, PropertyDeclarationSyntax PropertySyntax, ISymbol TypeSymbol) : base(Identifier, Type, PropertySyntax, TypeSymbol)
-            {
-            }
+            public string QualifiedTypeName { get; }
         }
     }
 }

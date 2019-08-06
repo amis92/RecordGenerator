@@ -1,8 +1,8 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Amadevus.RecordGenerator.Generators
@@ -11,11 +11,14 @@ namespace Amadevus.RecordGenerator.Generators
     {
         public static RecordDescriptor.Entry ToRecordEntry(this PropertyDeclarationSyntax property, ISymbol symbol)
         {
-            return new RecordDescriptor.SimpleEntry(
+            var id = (string)property.Identifier.Value;
+            var camelCased = char.ToLowerInvariant(id[0]) + id.Substring(1);
+            var identifierInCamelCase = Identifier(CSharpKeyword.Is(camelCased) ? "@" + camelCased : camelCased);
+            return new RecordDescriptor.Entry(
                 property.Identifier.WithoutTrivia(),
+                identifierInCamelCase,
                 property.Type.WithoutTrivia(),
-                property.WithoutTrivia(),
-                symbol);
+                symbol.GetQualifiedName());
         }
 
         public static RecordDescriptor ToRecordDescriptor(this ClassDeclarationSyntax typeDeclaration, SemanticModel semanticModel)

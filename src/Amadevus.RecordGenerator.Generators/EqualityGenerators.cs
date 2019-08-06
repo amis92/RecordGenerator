@@ -54,7 +54,7 @@ namespace Amadevus.RecordGenerator.Generators
 
             ExpressionSyntax GenerateEqualityCheck(RecordDescriptor.Entry property)
             {
-                var typeQualifiedName = property.TypeSymbol.GetQualifiedName().TrimEnd('?');
+                var typeQualifiedName = property.QualifiedTypeName.TrimEnd('?');
                 var thisMemberValueAccess = IdentifierName(property.Identifier.Text);
                 var otherMemberValueAccess =
                     MemberAccessExpression(
@@ -70,7 +70,7 @@ namespace Amadevus.RecordGenerator.Generators
                     InvocationExpression(
                         MemberAccessExpression(
                             SimpleMemberAccessExpression,
-                            GenerateEqualityComparerDefaultExpression(property.Type),
+                            GenerateEqualityComparerDefaultExpression(property.TypeSyntax),
                             IdentifierName(EqualsMethodName)))
                     .AddArgumentListArguments(
                         Argument(thisMemberValueAccess),
@@ -193,7 +193,7 @@ namespace Amadevus.RecordGenerator.Generators
 
             StatementSyntax EntryHashCodeRecalculation(RecordDescriptor.Entry property)
             {
-                var defaultEqualityComparer = GenerateEqualityComparerDefaultExpression(property.Type);
+                var defaultEqualityComparer = GenerateEqualityComparerDefaultExpression(property.TypeSyntax);
 
                 var getHashCodeInvocation =
                     InvocationExpression(

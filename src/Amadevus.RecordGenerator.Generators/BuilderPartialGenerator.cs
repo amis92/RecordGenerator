@@ -38,7 +38,7 @@ namespace Amadevus.RecordGenerator.Generators
             {
                 yield return
                     PropertyDeclaration(
-                        entry.Type,
+                        entry.TypeSyntax,
                         entry.Identifier)
                     .AddModifiers(SyntaxKind.PublicKeyword)
                     .WithAccessors(

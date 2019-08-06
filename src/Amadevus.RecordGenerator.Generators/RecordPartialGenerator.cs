@@ -110,7 +110,7 @@ namespace Amadevus.RecordGenerator.Generators
                     .WithParameters(
                         Parameter(
                             valueIdentifier)
-                        .WithType(entry.Type))
+                        .WithType(entry.TypeSyntax))
                     .WithBodyStatements(
                         ReturnStatement(
                             InvocationExpression(
@@ -158,7 +158,7 @@ namespace Amadevus.RecordGenerator.Generators
             {
                 return
                     Parameter(entry.IdentifierInCamelCase)
-                    .WithType(entry.Type)
+                    .WithType(entry.TypeSyntax)
                     .AddModifiers(Token(SyntaxKind.RefKeyword));
             }
         }
@@ -167,7 +167,7 @@ namespace Amadevus.RecordGenerator.Generators
         {
             return Parameter(
                     property.IdentifierInCamelCase)
-                .WithType(property.Type);
+                .WithType(property.TypeSyntax);
         }
     }
 }

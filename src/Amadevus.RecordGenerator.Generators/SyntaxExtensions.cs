@@ -29,11 +29,6 @@ namespace Amadevus.RecordGenerator.Generators
             return syntax.AddModifiers(modifier.Select(Token).ToArray());
         }
 
-        public static PropertyDeclarationSyntax WithSemicolonToken(this PropertyDeclarationSyntax syntax)
-        {
-            return syntax.WithSemicolonToken(Token(SyntaxKind.SemicolonToken));
-        }
-
         public static AccessorDeclarationSyntax WithSemicolonToken(this AccessorDeclarationSyntax syntax)
         {
             return syntax.WithSemicolonToken(Token(SyntaxKind.SemicolonToken));
@@ -99,16 +94,10 @@ namespace Amadevus.RecordGenerator.Generators
             return property.HasOnlyGetterWithNoBody() && property.IsPublic() && !property.IsStatic();
         }
 
-        public static bool IsNamed(this AttributeSyntax attribute, string name)
-        {
-            return attribute.Name is IdentifierNameSyntax id && (id.Identifier.Text == name || id.Identifier.Text == name + "Attribute");
-        }
-
         public static bool HasOnlyGetterWithNoBody(this PropertyDeclarationSyntax pdSyntax)
         {
             return pdSyntax.AccessorList is AccessorListSyntax accList
-                ? accList.Accessors.Count == 1 && accList.Accessors.Single().IsGetterWithNoBody()
-                : false;
+                && accList.Accessors.Count == 1 && accList.Accessors.Single().IsGetterWithNoBody();
         }
 
         public static bool IsGetterWithNoBody(this AccessorDeclarationSyntax accessor)
@@ -128,24 +117,20 @@ namespace Amadevus.RecordGenerator.Generators
             return pdSyntax.Modifiers.Any(x => x.Kind() == SyntaxKind.StaticKeyword);
         }
 
-        public static SyntaxToken WithoutTrivia(this SyntaxToken syntax) => syntax.WithLeadingTrivia(SyntaxFactory.TriviaList()).WithTrailingTrivia(SyntaxFactory.TriviaList());
+        public static SyntaxToken WithoutTrivia(this SyntaxToken syntax)
+            => syntax.WithLeadingTrivia(TriviaList()).WithTrailingTrivia(TriviaList());
 
         public static NameSyntax GetTypeSyntax(this TypeDeclarationSyntax typeDeclaration)
         {
             var identifier = typeDeclaration.Identifier.WithoutTrivia();
-            var typeParamList = typeDeclaration.TypeParameterList;
-            if (typeParamList == null)
-            {
-                return SyntaxFactory.IdentifierName(identifier);
-            }
-
-            var arguments = typeParamList.Parameters.Select(param => SyntaxFactory.IdentifierName(param.Identifier));
-            var typeArgList =
-                SyntaxFactory.TypeArgumentList(
-                    SyntaxFactory.SeparatedList<TypeSyntax>(
-                        arguments));
-
-            return SyntaxFactory.GenericName(identifier, typeArgList);
+            return
+                typeDeclaration.TypeParameterList == null
+                ? IdentifierName(identifier)
+                : (NameSyntax)GenericName(identifier)
+                .AddTypeArgumentListArguments(
+                    typeDeclaration.TypeParameterList.Parameters
+                    .Select(param => IdentifierName(param.Identifier))
+                    .ToArray());
         }
 
         public static string GetQualifiedName(this ISymbol symbol)
@@ -153,19 +138,6 @@ namespace Amadevus.RecordGenerator.Generators
             var symbolDisplayFormat = new SymbolDisplayFormat(
                 typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces);
             return symbol.ToDisplayString(symbolDisplayFormat);
-        }
-
-        public static bool IsImmutableArrayType(this PropertyDeclarationSyntax property)
-        {
-            return property.Type is GenericNameSyntax genericName && genericName.Identifier.Text == "ImmutableArray";
-        }
-
-        public static TypeSyntax WithNamespace(this SimpleNameSyntax name, string @namespace)
-        {
-            return
-                SyntaxFactory.QualifiedName(
-                    SyntaxFactory.ParseName(@namespace),
-                    name);
         }
     }
 }
