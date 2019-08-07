@@ -6,13 +6,13 @@ namespace Amadevus.RecordGenerator.Generators
 {
     internal class RecordDescriptor
     {
-        public RecordDescriptor(TypeSyntax TypeSyntax, SyntaxToken TypeIdentifier, ImmutableArray<Entry> Entries, Location TypeDeclarationLocation, bool IsTypeSealed)
+        public RecordDescriptor(TypeSyntax typeSyntax, SyntaxToken typeIdentifier, ImmutableArray<Entry> entries, Location typeDeclarationLocation, bool isTypeSealed)
         {
-            this.TypeSyntax = TypeSyntax;
-            this.TypeIdentifier = TypeIdentifier;
-            this.Entries = Entries;
-            this.TypeDeclarationLocation = TypeDeclarationLocation;
-            this.IsTypeSealed = IsTypeSealed;
+            TypeSyntax = typeSyntax;
+            TypeIdentifier = typeIdentifier;
+            Entries = entries;
+            TypeDeclarationLocation = typeDeclarationLocation;
+            IsTypeSealed = isTypeSealed;
         }
 
         public TypeSyntax TypeSyntax { get; }
@@ -27,12 +27,12 @@ namespace Amadevus.RecordGenerator.Generators
 
         internal class Entry
         {
-            public Entry(SyntaxToken Identifier, SyntaxToken IdentifierInCamelCase, TypeSyntax TypeSyntax, string QualifiedTypeName)
+            public Entry(SyntaxToken identifier, SyntaxToken identifierInCamelCase, TypeSyntax typeSyntax, string qualifiedTypeName)
             {
-                this.Identifier = Identifier;
-                this.TypeSyntax = TypeSyntax;
-                this.IdentifierInCamelCase = IdentifierInCamelCase;
-                this.QualifiedTypeName = QualifiedTypeName;
+                Identifier = identifier;
+                TypeSyntax = typeSyntax;
+                IdentifierInCamelCase = identifierInCamelCase;
+                QualifiedTypeName = qualifiedTypeName;
             }
 
             public SyntaxToken Identifier { get; }
