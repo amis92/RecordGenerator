@@ -14,9 +14,9 @@ namespace Amadevus.RecordGenerator.TestsBase
         /// </summary>
         public string Switch { get; }
 
-        static partial void Validate(ref string Name, ref string Switch)
+        static partial void Validate(ref string name, ref string @switch)
         {
-            if (Name is null) throw new ArgumentNullException(nameof(Name));
+            if (name is null) throw new ArgumentNullException(nameof(name));
         }
     }
 }
