@@ -28,11 +28,11 @@ namespace Amadevus.RecordGenerator.Generators
                 PartialGenerator.Member(Features.ToString, GenerateToString));
 
         private static readonly MethodDeclarationSyntax PartialValidateMethodDeclaration =
-                MethodDeclaration(
-                    PredefinedType(Token(SyntaxKind.VoidKeyword)),
-                    Names.Validate)
-                .AddModifiers(SyntaxKind.PartialKeyword)
-                .WithSemicolonToken();
+            MethodDeclaration(
+                PredefinedType(Token(SyntaxKind.VoidKeyword)),
+                Names.Validate)
+            .AddModifiers(SyntaxKind.PartialKeyword)
+            .WithSemicolonToken();
 
         private static readonly StatementSyntax ValidateInvocationStatement =
             ExpressionStatement(InvocationExpression(IdentifierName(PartialValidateMethodDeclaration.Identifier)));
