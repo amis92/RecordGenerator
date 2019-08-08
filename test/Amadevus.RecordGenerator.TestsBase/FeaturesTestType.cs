@@ -11,9 +11,9 @@
             // and we won't see it in reflection anyway.
             // But since we have to implement it, it's already testing
             // that the generated partial declaration exists during compilation.
-            static partial void Validate(ref string name)
+            partial void Validate()
             {
-                if (name is null) throw new System.ArgumentNullException(nameof(name));
+                if (Name is null) throw new System.ArgumentNullException("name");
             }
         }
 

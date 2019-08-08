@@ -17,7 +17,7 @@ namespace Amadevus.RecordGenerator.Generators
                         PartialGenerationResult.Empty
                         .AddMembers(
                             GenerateConstructor(descriptor),
-                            GenerateValidatePartialMethod(descriptor))),
+                            PartialValidateMethodDeclaration)),
                 // withers
                 PartialGenerator.Create(Features.Withers,
                     descriptor =>
@@ -26,6 +26,16 @@ namespace Amadevus.RecordGenerator.Generators
                         .AddMembers(GenerateMutators(descriptor))),
                 // string formatting
                 PartialGenerator.Member(Features.ToString, GenerateToString));
+
+        private static readonly MethodDeclarationSyntax PartialValidateMethodDeclaration =
+                MethodDeclaration(
+                    PredefinedType(Token(SyntaxKind.VoidKeyword)),
+                    Names.Validate)
+                .AddModifiers(SyntaxKind.PartialKeyword)
+                .WithSemicolonToken();
+
+        private static readonly StatementSyntax ValidateInvocationStatement =
+            ExpressionStatement(InvocationExpression(IdentifierName(PartialValidateMethodDeclaration.Identifier)));
 
         private static ConstructorDeclarationSyntax GenerateConstructor(RecordDescriptor descriptor)
         {
@@ -37,7 +47,7 @@ namespace Amadevus.RecordGenerator.Generators
                 .WithBodyStatements(
                     descriptor.Entries
                     .Select(CreateCtorAssignment)
-                    .Prepend(CreateValidateInvocation()));
+                    .Append(ValidateInvocationStatement));
             StatementSyntax CreateCtorAssignment(RecordDescriptor.Entry entry)
             {
                 return
@@ -49,22 +59,6 @@ namespace Amadevus.RecordGenerator.Generators
                                 ThisExpression(),
                                 IdentifierName(entry.Identifier)),
                             IdentifierName(entry.IdentifierInCamelCase)));
-            }
-            StatementSyntax CreateValidateInvocation()
-            {
-                return
-                    ExpressionStatement(
-                        InvocationExpression(
-                            IdentifierName(Names.Validate))
-                        .AddArgumentListArguments(
-                            descriptor.Entries.Select(CreateValidateArgument).ToArray()));
-            }
-            ArgumentSyntax CreateValidateArgument(RecordDescriptor.Entry entry)
-            {
-                return
-                    Argument(
-                        IdentifierName(entry.IdentifierInCamelCase))
-                    .WithRefKindKeyword(Token(SyntaxKind.RefKeyword));
             }
         }
 
@@ -142,25 +136,6 @@ namespace Amadevus.RecordGenerator.Generators
                             AnonymousObjectCreationExpression()
                                 .AddInitializers(properties.ToArray()),
                             IdentifierName(Names.ToString))));
-        }
-
-        private static MemberDeclarationSyntax GenerateValidatePartialMethod(RecordDescriptor descriptor)
-        {
-            return
-                MethodDeclaration(
-                    PredefinedType(Token(SyntaxKind.VoidKeyword)),
-                    Names.Validate)
-                .AddParameterListParameters(
-                    descriptor.Entries.Select(CreateValidateParameter).ToArray())
-                .AddModifiers(SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
-                .WithSemicolonToken();
-            ParameterSyntax CreateValidateParameter(RecordDescriptor.Entry entry)
-            {
-                return
-                    Parameter(entry.IdentifierInCamelCase)
-                    .WithType(entry.TypeSyntax)
-                    .AddModifiers(Token(SyntaxKind.RefKeyword));
-            }
         }
 
         private static ParameterSyntax CreateParameter(RecordDescriptor.Entry property)
