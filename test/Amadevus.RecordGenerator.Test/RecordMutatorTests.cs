@@ -29,7 +29,7 @@ namespace Amadevus.RecordGenerator.Test
         }
 
         [Fact]
-        public void Ctor_InvokesValidate_Throwing()
+        public void With_InvokesValidate_Throwing()
         {
             var item = CreateItem();
             //
