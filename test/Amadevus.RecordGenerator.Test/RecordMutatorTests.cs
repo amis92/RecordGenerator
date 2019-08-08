@@ -29,7 +29,7 @@ namespace Amadevus.RecordGenerator.Test
         }
 
         [Fact]
-        public void Ctor_InvokesValidate_Passing()
+        public void Ctor_InvokesValidate_Throwing()
         {
             var item = CreateItem();
             Assert.Throws<ArgumentNullException>("value", () => item.WithName(null));
