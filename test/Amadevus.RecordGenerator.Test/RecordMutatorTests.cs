@@ -1,4 +1,5 @@
-﻿using Amadevus.RecordGenerator.TestsBase;
+﻿using System;
+using Amadevus.RecordGenerator.TestsBase;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Text;
@@ -25,6 +26,13 @@ namespace Amadevus.RecordGenerator.Test
             var item = CreateItem();
             var modifiedItem = item.WithName(newName);
             Assert.Equal(newName, modifiedItem.Name);
+        }
+
+        [Fact]
+        public void Ctor_InvokesValidate_Passing()
+        {
+            var item = CreateItem();
+            Assert.Throws<ArgumentNullException>("value", () => item.WithName(null));
         }
 
         [Fact]
