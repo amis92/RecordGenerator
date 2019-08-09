@@ -13,13 +13,13 @@ namespace Amadevus.RecordGenerator.Test
         }
 
         [Fact]
-        public void Ctor_InvokesValidate_Throwing()
+        public void Ctor_InvokesOnConstructed_Throwing()
         {
-            Assert.Throws<ArgumentNullException>("name", () => new ValidatingRecord(null, "a"));
+            Assert.Throws<ArgumentNullException>(nameof(Item.Name), () => new ValidatingRecord(null, "a"));
         }
 
         [Fact]
-        public void Ctor_InvokesValidate_Passing()
+        public void Ctor_InvokesOnConstructed_Passing()
         {
             Assert.NotNull(new ValidatingRecord(ItemName, "test"));
         }

@@ -1,4 +1,6 @@
-﻿namespace Amadevus.RecordGenerator.TestsBase
+﻿using System;
+
+namespace Amadevus.RecordGenerator.TestsBase
 {
     [Record]
     public partial class Item
@@ -19,6 +21,11 @@
         public string CalculatedAccessorBlockBody
         {
             get { return Id + Name; }
+        }
+
+        partial void OnConstructed()
+        {
+            if (Name is null) throw new ArgumentNullException(nameof(Name));
         }
     }
 }

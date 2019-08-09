@@ -13,7 +13,7 @@
 
         public const string ToBuilder = "ToBuilder";
         public const string ToImmutable = "ToImmutable";
-        public const string Validate = "Validate";
+        public const string OnConstructed = nameof(OnConstructed);
         public new const string ToString = nameof(object.ToString);
 
         public const string Value = "value";
