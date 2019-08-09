@@ -13,7 +13,7 @@
             // that the generated partial declaration exists during compilation.
             partial void OnConstructed()
             {
-                if (Name is null) throw new System.ArgumentNullException("name");
+                if (Name is null) throw new System.ArgumentNullException(nameof(Name));
             }
         }
 

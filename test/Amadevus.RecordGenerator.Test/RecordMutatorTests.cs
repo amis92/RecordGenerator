@@ -29,17 +29,10 @@ namespace Amadevus.RecordGenerator.Test
         }
 
         [Fact]
-        public void With_InvokesValidate_Throwing()
+        public void With_InvokesOnConstructed_Throwing()
         {
             var item = CreateItem();
-            //
-            // NOTE! We test that validation is indeed invoked but don't
-            // test the parameter name since it comes from the validation
-            // method that assumes the name of the corresponding parameter on
-            // the constructor ("name") as opposed to WithName (the parameter
-            // of all with-methods is always named "value").
-            //
-            Assert.Throws<ArgumentNullException>(() => item.WithName(null));
+            Assert.Throws<ArgumentNullException>(nameof(Item.Name), () => item.WithName(null));
         }
 
         [Fact]

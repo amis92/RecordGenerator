@@ -16,7 +16,7 @@ namespace Amadevus.RecordGenerator.TestsBase
 
         partial void OnConstructed()
         {
-            if (Name == null) throw new ArgumentNullException("name");
+            if (Name is null) throw new ArgumentNullException(nameof(Name));
         }
     }
 }
