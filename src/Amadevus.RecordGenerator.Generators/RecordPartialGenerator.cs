@@ -17,7 +17,7 @@ namespace Amadevus.RecordGenerator.Generators
                         PartialGenerationResult.Empty
                         .AddMembers(
                             GenerateConstructor(descriptor),
-                            PartialValidateMethodDeclaration)),
+                            PartialOnConstructedMethodDeclaration)),
                 // withers
                 PartialGenerator.Create(Features.Withers,
                     descriptor =>
@@ -27,15 +27,15 @@ namespace Amadevus.RecordGenerator.Generators
                 // string formatting
                 PartialGenerator.Member(Features.ToString, GenerateToString));
 
-        private static readonly MethodDeclarationSyntax PartialValidateMethodDeclaration =
+        private static readonly MethodDeclarationSyntax PartialOnConstructedMethodDeclaration =
             MethodDeclaration(
                 PredefinedType(Token(SyntaxKind.VoidKeyword)),
-                Names.Validate)
+                Names.OnConstructed)
             .AddModifiers(SyntaxKind.PartialKeyword)
             .WithSemicolonToken();
 
-        private static readonly StatementSyntax ValidateInvocationStatement =
-            ExpressionStatement(InvocationExpression(IdentifierName(PartialValidateMethodDeclaration.Identifier)));
+        private static readonly StatementSyntax OnConstructedInvocationStatement =
+            ExpressionStatement(InvocationExpression(IdentifierName(PartialOnConstructedMethodDeclaration.Identifier)));
 
         private static ConstructorDeclarationSyntax GenerateConstructor(RecordDescriptor descriptor)
         {
@@ -47,7 +47,7 @@ namespace Amadevus.RecordGenerator.Generators
                 .WithBodyStatements(
                     descriptor.Entries
                     .Select(CreateCtorAssignment)
-                    .Append(ValidateInvocationStatement));
+                    .Append(OnConstructedInvocationStatement));
             StatementSyntax CreateCtorAssignment(RecordDescriptor.Entry entry)
             {
                 return

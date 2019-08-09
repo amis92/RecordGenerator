@@ -23,7 +23,7 @@ namespace Amadevus.RecordGenerator.TestsBase
             get { return Id + Name; }
         }
 
-        partial void Validate()
+        partial void OnConstructed()
         {
             if (Name is null) throw new ArgumentNullException("name");
         }

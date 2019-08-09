@@ -11,7 +11,7 @@
             // and we won't see it in reflection anyway.
             // But since we have to implement it, it's already testing
             // that the generated partial declaration exists during compilation.
-            partial void Validate()
+            partial void OnConstructed()
             {
                 if (Name is null) throw new System.ArgumentNullException("name");
             }
