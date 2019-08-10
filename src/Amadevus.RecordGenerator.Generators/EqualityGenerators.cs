@@ -133,21 +133,26 @@ namespace Amadevus.RecordGenerator.Generators
 
         private static BlockSyntax GenerateForwardToEquatableEquals(RecordDescriptor descriptor)
         {
-            // return this.Equals(obj as MyRecord);
+            // return obj is MyRecord castObj && this.Equals(castObj);
+            const string otherVariableName = "other";
             return
                 Block(
                     ReturnStatement(
+                        BinaryExpression(
+                            LogicalAndExpression,
+                            IsPatternExpression(
+                                IdentifierName(objVariableName),
+                                DeclarationPattern(
+                                    descriptor.TypeSyntax,
+                                    SingleVariableDesignation(Identifier(otherVariableName)))),
                         InvocationExpression(
                             MemberAccessExpression(
                                 SimpleMemberAccessExpression,
                                 ThisExpression(),
-                                IdentifierName(EqualsMethodName)))
-                        .AddArgumentListArguments(
-                            Argument(
-                                BinaryExpression(
-                                    AsExpression,
-                                    IdentifierName(objVariableName),
-                                    descriptor.TypeSyntax)))));
+                                IdentifierName(EqualsMethodName))
+                        ).WithArgumentList(ArgumentList(
+                            SingletonSeparatedList(
+                                Argument(IdentifierName(otherVariableName))))))));
         }
 
         private static MemberDeclarationSyntax GenerateGetHashCode(RecordDescriptor descriptor)

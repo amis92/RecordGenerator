@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* `struct` definitions now supported
 * [`Object.ToString`][objtostr] override for records that follows the same
   implementation as C# generates for anonymous types
 * `GeneratedCodeAttribute` is added to generated non-type members (methods, properties)
