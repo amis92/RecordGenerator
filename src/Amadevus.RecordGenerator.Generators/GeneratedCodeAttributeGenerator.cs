@@ -41,6 +41,10 @@ namespace Amadevus.RecordGenerator.Generators
                 (context) => ((ConstructorDeclarationSyntax)context.Member).AddAttributeLists(context.AttributeGenerator.GenerateAttributeListSyntax())
             },
             {
+                typeof(OperatorDeclarationSyntax),
+                (context) => ((OperatorDeclarationSyntax)context.Member).AddAttributeLists(context.AttributeGenerator.GenerateAttributeListSyntax())
+            },
+            {
                 typeof(ClassDeclarationSyntax),
                 (context) => context.AttributeApplier.AddGeneratedCodeAttributeOnMembers((ClassDeclarationSyntax)context.Member)
             }
