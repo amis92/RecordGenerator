@@ -133,7 +133,7 @@ namespace Amadevus.RecordGenerator.Generators
 
         private static BlockSyntax GenerateForwardToEquatableEquals(RecordDescriptor descriptor)
         {
-            // return obj is MyRecord castObj && this.Equals(castObj);
+            // return obj is MyRecord other && this.Equals(other);
             const string otherVariableName = "other";
             return
                 Block(
@@ -174,7 +174,7 @@ namespace Amadevus.RecordGenerator.Generators
                     PublicKeyword,
                     OverrideKeyword)
                 .AddBodyStatements(statement);
-            
+
             StatementSyntax SinglePropertyGetHashCode()
             {
                 // public override int GetHashCode() {
