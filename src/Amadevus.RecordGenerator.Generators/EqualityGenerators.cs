@@ -154,14 +154,14 @@ namespace Amadevus.RecordGenerator.Generators
         {
             const string varKeyWord = "var";
             const string hashCodeVariableName = "hashCode";
+
             const int hashCodeInitialValue = 2085527896;
             const int hashCodeMultiplicationValue = 1521134295;
-            // public override int GetHashCode() {
-            //   var hashCode = 2085527896;
-            //   hashCode = hashCode * -1521134295 + EqualityComparer<TProp>.Default.GetHashCode(Prop);
-            //   ...
-            //   return hashCode;
-            // }
+
+            var statement = descriptor.Entries.Length == 1
+                ? SinglePropertyGetHashCode(descriptor)
+                : MultiplePropertiesGetHashCode(descriptor);
+
             return
                 MethodDeclaration(
                     PredefinedType(
@@ -170,40 +170,50 @@ namespace Amadevus.RecordGenerator.Generators
                 .AddModifiers(
                     PublicKeyword,
                     OverrideKeyword)
-                .AddBodyStatements(
-                    CheckedStatement(UncheckedStatement)
-                    .AddBlockStatements(
-                        LocalDeclarationStatement(
-                            VariableDeclaration(
-                                IdentifierName(varKeyWord))
-                            .AddVariables(
-                                VariableDeclarator(
-                                    Identifier(hashCodeVariableName))
-                                .WithInitializer(
-                                    EqualsValueClause(
-                                        LiteralExpression(
-                                            NumericLiteralExpression,
-                                            Literal(hashCodeInitialValue)))))))
-                    .AddBlockStatements(
-                        descriptor.Entries.Select(EntryHashCodeRecalculation)
-                        .ToArray())
-                    .AddBlockStatements(
-                        ReturnStatement(
-                            IdentifierName(hashCodeVariableName))));
+                .AddBodyStatements(statement);
+            
+            StatementSyntax SinglePropertyGetHashCode(RecordDescriptor rd)
+            {
+                // public override int GetHashCode() {
+                //   return EqualityComparer<TProp>.Default.GetHashCode(Prop);
+                // }
+
+                return ReturnStatement(
+                        HashCodeInvocation(rd.Entries[0]));
+            }
+
+            StatementSyntax MultiplePropertiesGetHashCode(RecordDescriptor rd)
+            {
+                // public override int GetHashCode() {
+                //   var hashCode = 2085527896;
+                //   hashCode = hashCode * -1521134295 + EqualityComparer<TProp>.Default.GetHashCode(Prop);
+                //   ...
+                //   return hashCode;
+                // }
+
+                return CheckedStatement(UncheckedStatement)
+                        .AddBlockStatements(
+                            LocalDeclarationStatement(
+                                VariableDeclaration(
+                                    IdentifierName(varKeyWord))
+                                .AddVariables(
+                                    VariableDeclarator(
+                                        Identifier(hashCodeVariableName))
+                                    .WithInitializer(
+                                        EqualsValueClause(
+                                            LiteralExpression(
+                                                NumericLiteralExpression,
+                                                Literal(hashCodeInitialValue)))))))
+                        .AddBlockStatements(
+                            rd.Entries.Select(EntryHashCodeRecalculation)
+                            .ToArray())
+                        .AddBlockStatements(
+                            ReturnStatement(
+                                IdentifierName(hashCodeVariableName)));
+            }
 
             StatementSyntax EntryHashCodeRecalculation(RecordDescriptor.Entry property)
             {
-                var defaultEqualityComparer = GenerateEqualityComparerDefaultExpression(property.TypeSyntax);
-
-                var getHashCodeInvocation =
-                    InvocationExpression(
-                        MemberAccessExpression(
-                            SimpleMemberAccessExpression,
-                            defaultEqualityComparer,
-                            IdentifierName(GetHashCodeMethodName)))
-                    .AddArgumentListArguments(
-                        Argument(
-                            IdentifierName(property.Identifier.Text)));
                 // hashCode = hashCode * -1521134295 + EqualityComparer<TProp>.Default.GetHashCode(prop);
                 return
                     ExpressionStatement(
@@ -220,7 +230,24 @@ namespace Amadevus.RecordGenerator.Generators
                                         LiteralExpression(
                                             NumericLiteralExpression,
                                             Literal(hashCodeMultiplicationValue)))),
-                                getHashCodeInvocation)));
+                                HashCodeInvocation(property))));
+            }
+
+            InvocationExpressionSyntax HashCodeInvocation(RecordDescriptor.Entry property)
+            {
+                // EqualityComparer<TProp>.Default.GetHashCode(prop);
+
+                var defaultEqualityComparer = GenerateEqualityComparerDefaultExpression(property.TypeSyntax);
+
+                return
+                    InvocationExpression(
+                        MemberAccessExpression(
+                            SimpleMemberAccessExpression,
+                            defaultEqualityComparer,
+                            IdentifierName(GetHashCodeMethodName)))
+                    .AddArgumentListArguments(
+                        Argument(
+                            IdentifierName(property.Identifier.Text)));
             }
         }
 
