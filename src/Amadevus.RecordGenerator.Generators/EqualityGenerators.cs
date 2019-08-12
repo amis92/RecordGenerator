@@ -154,14 +154,11 @@ namespace Amadevus.RecordGenerator.Generators
         {
             const string varKeyWord = "var";
             const string hashCodeVariableName = "hashCode";
-
             const int hashCodeInitialValue = 2085527896;
             const int hashCodeMultiplicationValue = 1521134295;
-
             var statement = descriptor.Entries.Length == 1
                 ? SinglePropertyGetHashCode(descriptor)
                 : MultiplePropertiesGetHashCode(descriptor);
-
             return
                 MethodDeclaration(
                     PredefinedType(
@@ -172,17 +169,17 @@ namespace Amadevus.RecordGenerator.Generators
                     OverrideKeyword)
                 .AddBodyStatements(statement);
             
-            StatementSyntax SinglePropertyGetHashCode(RecordDescriptor rd)
+            StatementSyntax SinglePropertyGetHashCode()
             {
                 // public override int GetHashCode() {
                 //   return EqualityComparer<TProp>.Default.GetHashCode(Prop);
                 // }
-
-                return ReturnStatement(
-                        HashCodeInvocation(rd.Entries[0]));
+                return
+                    ReturnStatement(
+                        HashCodeInvocation(descriptor.Entries[0]));
             }
 
-            StatementSyntax MultiplePropertiesGetHashCode(RecordDescriptor rd)
+            StatementSyntax MultiplePropertiesGetHashCode()
             {
                 // public override int GetHashCode() {
                 //   var hashCode = 2085527896;
@@ -190,26 +187,26 @@ namespace Amadevus.RecordGenerator.Generators
                 //   ...
                 //   return hashCode;
                 // }
-
-                return CheckedStatement(UncheckedStatement)
-                        .AddBlockStatements(
-                            LocalDeclarationStatement(
-                                VariableDeclaration(
-                                    IdentifierName(varKeyWord))
-                                .AddVariables(
-                                    VariableDeclarator(
-                                        Identifier(hashCodeVariableName))
-                                    .WithInitializer(
-                                        EqualsValueClause(
-                                            LiteralExpression(
-                                                NumericLiteralExpression,
-                                                Literal(hashCodeInitialValue)))))))
-                        .AddBlockStatements(
-                            rd.Entries.Select(EntryHashCodeRecalculation)
-                            .ToArray())
-                        .AddBlockStatements(
-                            ReturnStatement(
-                                IdentifierName(hashCodeVariableName)));
+                return
+                    CheckedStatement(UncheckedStatement)
+                    .AddBlockStatements(
+                        LocalDeclarationStatement(
+                            VariableDeclaration(
+                                IdentifierName(varKeyWord))
+                            .AddVariables(
+                                VariableDeclarator(
+                                    Identifier(hashCodeVariableName))
+                                .WithInitializer(
+                                    EqualsValueClause(
+                                        LiteralExpression(
+                                            NumericLiteralExpression,
+                                            Literal(hashCodeInitialValue)))))))
+                    .AddBlockStatements(
+                        descriptor.Entries.Select(EntryHashCodeRecalculation)
+                        .ToArray())
+                    .AddBlockStatements(
+                        ReturnStatement(
+                            IdentifierName(hashCodeVariableName)));
             }
 
             StatementSyntax EntryHashCodeRecalculation(RecordDescriptor.Entry property)

@@ -125,44 +125,43 @@ namespace Amadevus.RecordGenerator.Generators
             var expression = descriptor.Entries.Length == 1
                 ? SinglePropertyToString(descriptor)
                 : MultiplePropertiesToString(descriptor);
+            return
+                MethodDeclaration(
+                    PredefinedType(Token(SyntaxKind.StringKeyword)),
+                    Names.ToString)
+                .AddModifiers(SyntaxKind.PublicKeyword, SyntaxKind.OverrideKeyword)
+                .WithExpressionBody(expression);
 
-            return MethodDeclaration(
-                        PredefinedType(Token(SyntaxKind.StringKeyword)),
-                        Names.ToString)
-                    .AddModifiers(SyntaxKind.PublicKeyword, SyntaxKind.OverrideKeyword)
-                    .WithExpressionBody(expression);
-
-
-            ExpressionSyntax SinglePropertyToString(RecordDescriptor rd)
+            ExpressionSyntax SinglePropertyToString()
             {
-                var name = rd.Entries[0].Identifier;
-
-                return BinaryExpression(
-                    SyntaxKind.AddExpression,
+                var name = descriptor.Entries[0].Identifier;
+                return
                     BinaryExpression(
                         SyntaxKind.AddExpression,
+                        BinaryExpression(
+                            SyntaxKind.AddExpression,
+                            LiteralExpression(
+                                SyntaxKind.StringLiteralExpression,
+                                Literal("{ " + name + " = ")),
+                            IdentifierName(name)),
                         LiteralExpression(
                             SyntaxKind.StringLiteralExpression,
-                            Literal("{ " + name + " = ")),
-                        IdentifierName(name)),
-                    LiteralExpression(
-                        SyntaxKind.StringLiteralExpression,
-                        Literal(" }")));
+                            Literal(" }")));
             }
 
-            ExpressionSyntax MultiplePropertiesToString(RecordDescriptor rd)
+            ExpressionSyntax MultiplePropertiesToString()
             {
-                var properties = from e in rd.Entries
-                                 select AnonymousObjectMemberDeclarator(IdentifierName(e.Identifier));
-
-                return InvocationExpression(
-                    MemberAccessExpression(
-                        SyntaxKind.SimpleMemberAccessExpression, 
-                        AnonymousObjectCreationExpression()
+                var properties =
+                    from e in descriptor.Entries
+                    select AnonymousObjectMemberDeclarator(IdentifierName(e.Identifier));
+                return
+                    InvocationExpression(
+                        MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression, 
+                            AnonymousObjectCreationExpression()
                             .AddInitializers(properties.ToArray()),
-                        IdentifierName(Names.ToString)));
+                            IdentifierName(Names.ToString)));
             }
-
         }
 
         private static ParameterSyntax CreateParameter(RecordDescriptor.Entry property)
