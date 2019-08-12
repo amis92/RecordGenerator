@@ -21,7 +21,7 @@ namespace Amadevus.RecordGenerator.Generators
                 symbol.GetQualifiedName());
         }
 
-        public static RecordDescriptor ToRecordDescriptor(this ClassDeclarationSyntax typeDeclaration, SemanticModel semanticModel)
+        public static RecordDescriptor ToRecordDescriptor(this TypeDeclarationSyntax typeDeclaration, SemanticModel semanticModel)
         {
             return new RecordDescriptor(
                 typeDeclaration.GetTypeSyntax().WithoutTrivia(),

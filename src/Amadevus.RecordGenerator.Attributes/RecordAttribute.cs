@@ -7,7 +7,7 @@ namespace Amadevus.RecordGenerator
     /// <summary>
     /// This attribute triggers record code generation. <see href="https://amis92.github.io/RecordGenerator/"/>
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, Inherited = false, AllowMultiple = false)]
     [CodeGenerationAttribute("Amadevus.RecordGenerator.Generators.RecordGenerator, Amadevus.RecordGenerator.Generators")]
     [Conditional("CodeGeneration")]
     public sealed class RecordAttribute : Attribute

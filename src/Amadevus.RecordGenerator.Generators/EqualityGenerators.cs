@@ -133,21 +133,27 @@ namespace Amadevus.RecordGenerator.Generators
 
         private static BlockSyntax GenerateForwardToEquatableEquals(RecordDescriptor descriptor)
         {
-            // return this.Equals(obj as MyRecord);
+            // return obj is MyRecord other && this.Equals(other);
+            const string otherVariableName = "other";
             return
                 Block(
                     ReturnStatement(
-                        InvocationExpression(
-                            MemberAccessExpression(
-                                SimpleMemberAccessExpression,
-                                ThisExpression(),
-                                IdentifierName(EqualsMethodName)))
-                        .AddArgumentListArguments(
-                            Argument(
-                                BinaryExpression(
-                                    AsExpression,
-                                    IdentifierName(objVariableName),
-                                    descriptor.TypeSyntax)))));
+                        BinaryExpression(
+                            LogicalAndExpression,
+                            IsPatternExpression(
+                                IdentifierName(objVariableName),
+                                DeclarationPattern(
+                                    descriptor.TypeSyntax,
+                                    SingleVariableDesignation(
+                                        Identifier(otherVariableName)))),
+                            InvocationExpression(
+                                MemberAccessExpression(
+                                    SimpleMemberAccessExpression,
+                                    ThisExpression(),
+                                    IdentifierName(EqualsMethodName)))
+                            .AddArgumentListArguments(
+                                Argument(
+                                    IdentifierName(otherVariableName))))));
         }
 
         private static MemberDeclarationSyntax GenerateGetHashCode(RecordDescriptor descriptor)
@@ -168,7 +174,7 @@ namespace Amadevus.RecordGenerator.Generators
                     PublicKeyword,
                     OverrideKeyword)
                 .AddBodyStatements(statement);
-            
+
             StatementSyntax SinglePropertyGetHashCode()
             {
                 // public override int GetHashCode() {

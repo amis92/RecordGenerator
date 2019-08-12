@@ -34,19 +34,27 @@ namespace Amadevus.RecordGenerator.Generators
 
         public Task<SyntaxList<MemberDeclarationSyntax>> GenerateAsync(TransformationContext context, IProgress<Diagnostic> progress, CancellationToken cancellationToken)
         {
-            return context.ProcessingNode is ClassDeclarationSyntax cds
-                 ? GenerateAsync(cds)
-                 : EmptyResultTask;
+            return
+                context.ProcessingNode is TypeDeclarationSyntax tds
+                && (tds.IsKind(SyntaxKind.ClassDeclaration) || tds.IsKind(SyntaxKind.StructDeclaration))
+                    ? GenerateAsync(tds)
+                    : EmptyResultTask;
 
-            Task<SyntaxList<MemberDeclarationSyntax>> GenerateAsync(ClassDeclarationSyntax classDeclaration)
+            Task<SyntaxList<MemberDeclarationSyntax>> GenerateAsync(TypeDeclarationSyntax typeDeclaration)
             {
-                var descriptor = classDeclaration.ToRecordDescriptor(context.SemanticModel);
+                var descriptor = typeDeclaration.ToRecordDescriptor(context.SemanticModel);
                 if (descriptor.Entries.IsEmpty)
                     return EmptyResultTask;
 
                 var generatedMembers = new List<MemberDeclarationSyntax>();
                 var features = GetFeatures();
                 var partialKeyword = Token(SyntaxKind.PartialKeyword);
+
+                var declaration = typeDeclaration.Kind() == SyntaxKind.ClassDeclaration
+                        ? (TypeDeclarationSyntax)ClassDeclaration(descriptor.TypeIdentifier)
+                        : (TypeDeclarationSyntax)StructDeclaration(descriptor.TypeIdentifier);
+
+                var declarationWithTypeList = declaration.WithTypeParameterList(typeDeclaration.TypeParameterList?.WithoutTrivia());
 
                 var partials =
                     from g in PartialGenerators
@@ -58,13 +66,12 @@ namespace Amadevus.RecordGenerator.Generators
                         Declaration =
                             g.ContainsDiagnosticsOnly
                             ? null
-                            : ClassDeclaration(classDeclaration.Identifier.WithoutTrivia())
-                              .WithTypeParameterList(classDeclaration.TypeParameterList?.WithoutTrivia())
+                            : declarationWithTypeList
                               .WithBaseList(g.BaseTypes.IsEmpty ? null : BaseList(SeparatedList(g.BaseTypes)))
                               .WithModifiers(
                                   TokenList(
                                       g.Modifiers
-                                      .Except(new[] {partialKeyword})
+                                      .Except(new[] { partialKeyword })
                                       .Append(partialKeyword)))
                               .WithMembers(List(g.Members))
                               .AddGeneratedCodeAttributeOnMembers(),
