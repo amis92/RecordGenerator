@@ -67,19 +67,16 @@ namespace Amadevus.RecordGenerator.Test
             Assert.True(result);
         }
 
-
         [Fact]
-        public void ReflectedClassOperators_DoesNotHaveGeneratedCodeAttribute()
+        public void ReflectedClassOperators_DoesHaveGeneratedCodeAttribute()
         {
             var recordType = typeof(Item);
-
             var method = recordType.GetMethod("op_Equality", BindingFlags.Public | BindingFlags.Static);
 
             var result = HasCorrectCodeGeneratedAttribute(method.GetCustomAttributesData());
 
             Assert.True(result);
         }
-
 
         private bool HasCorrectCodeGeneratedAttribute(IList<CustomAttributeData> attributeData)
         {
