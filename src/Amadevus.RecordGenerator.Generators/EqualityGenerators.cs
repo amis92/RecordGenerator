@@ -144,15 +144,16 @@ namespace Amadevus.RecordGenerator.Generators
                                 IdentifierName(objVariableName),
                                 DeclarationPattern(
                                     descriptor.TypeSyntax,
-                                    SingleVariableDesignation(Identifier(otherVariableName)))),
-                        InvocationExpression(
-                            MemberAccessExpression(
-                                SimpleMemberAccessExpression,
-                                ThisExpression(),
-                                IdentifierName(EqualsMethodName))
-                        ).WithArgumentList(ArgumentList(
-                            SingletonSeparatedList(
-                                Argument(IdentifierName(otherVariableName))))))));
+                                    SingleVariableDesignation(
+                                        Identifier(otherVariableName)))),
+                            InvocationExpression(
+                                MemberAccessExpression(
+                                    SimpleMemberAccessExpression,
+                                    ThisExpression(),
+                                    IdentifierName(EqualsMethodName)))
+                            .AddArgumentListArguments(
+                                Argument(
+                                    IdentifierName(otherVariableName))))));
         }
 
         private static MemberDeclarationSyntax GenerateGetHashCode(RecordDescriptor descriptor)

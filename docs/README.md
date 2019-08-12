@@ -35,16 +35,16 @@ As it is a NuGet, it's really simple:
 * Package Manager `Install-Package Amadevus.RecordGenerator`
 * Or from `Manage NuGet packages` search for `Amadevus.RecordGenerator`
 
-You also need to add a `DotNetCliToolReference` of `dotnet-codegen` into `PropertyGroup` in your project file
+You also need to add a `DotNetCliToolReference` of `dotnet-codegen` into `ItemGroup` in your project file
  (or `Directory.Build.props` if used). The version of the tool should correspond with the version of
  `CodeGeneration.Roslyn.BuildTime` this project depends on.
 
  ```xml
  <Project>
     ...
-    <PropertyGroup>
+    <ItemGroup>
         <DotNetCliToolReference Include="dotnet-codegen" Version="0.4.88" />
-    </PropertyGroup>
+    </ItemGroup>
     ...
 </Project>
  ```
