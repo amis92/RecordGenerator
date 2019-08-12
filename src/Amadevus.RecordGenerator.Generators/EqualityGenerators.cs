@@ -157,8 +157,8 @@ namespace Amadevus.RecordGenerator.Generators
             const int hashCodeInitialValue = 2085527896;
             const int hashCodeMultiplicationValue = 1521134295;
             var statement = descriptor.Entries.Length == 1
-                ? SinglePropertyGetHashCode(descriptor)
-                : MultiplePropertiesGetHashCode(descriptor);
+                ? SinglePropertyGetHashCode()
+                : MultiplePropertiesGetHashCode();
             return
                 MethodDeclaration(
                     PredefinedType(

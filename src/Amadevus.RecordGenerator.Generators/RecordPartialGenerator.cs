@@ -123,8 +123,8 @@ namespace Amadevus.RecordGenerator.Generators
         public static MemberDeclarationSyntax GenerateToString(RecordDescriptor descriptor)
         {
             var expression = descriptor.Entries.Length == 1
-                ? SinglePropertyToString(descriptor)
-                : MultiplePropertiesToString(descriptor);
+                ? SinglePropertyToString()
+                : MultiplePropertiesToString();
             return
                 MethodDeclaration(
                     PredefinedType(Token(SyntaxKind.StringKeyword)),
