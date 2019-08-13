@@ -1,0 +1,21 @@
+name: .NET Core CI
+on: push
+jobs:
+  ci:
+    runs-on: windows-2019
+    steps:
+    - uses: actions/checkout@master
+    
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        version: 2.1.500
+        
+    - name: Restore packages
+      run: dotnet restore -v m
+      
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+      
+    - name: Run tests
+      run: dotnet test --configuration Release --no-build
