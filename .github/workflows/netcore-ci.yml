@@ -2,8 +2,6 @@ name: .NET Core CI
 on: push
 jobs:
   ci:
-    env:
-      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
     runs-on: ubuntu-16.04
     steps:
     - uses: actions/checkout@master
