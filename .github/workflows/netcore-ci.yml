@@ -2,7 +2,7 @@ name: .NET Core CI
 on: push
 jobs:
   ci:
-    runs-on: ubuntu-16.04
+    runs-on: windows-2019
     steps:
     - uses: actions/checkout@master
     
