@@ -1,4 +1,6 @@
-﻿namespace Amadevus.RecordGenerator.TestsBase
+﻿using System;
+
+namespace Amadevus.RecordGenerator.TestsBase
 {
     public partial class FeatureContainer
     {
@@ -45,6 +47,30 @@
         public partial class FeatureDeconstruct
         {
             public string Name { get; }
+        }
+
+        [Record(Features.EquatableEquals)]
+        public sealed partial class FeatureEquatableEquals
+        {
+            public string Name { get; }
+        }
+
+        [Record(Features.ObjectEquals)]
+        public sealed partial class FeatureObjectEquals
+        {
+            public string Name { get; }
+        }
+
+        [Record(Features.OperatorEquals)]
+        public sealed partial class FeatureOperatorEquals
+        {
+            public string Name { get; }
+
+            // Prevent warning CS0661
+            public override bool Equals(object obj) => true;
+
+            // Prevent warning CS0661
+            public override int GetHashCode() => 0;
         }
     }
 }

@@ -47,7 +47,7 @@ namespace Amadevus.RecordGenerator
         /// <summary>
         /// Default feature set.
         /// </summary>
-        Default = Constructor | Withers | ToString | Builder | Deconstruct,
+        Default = Constructor | Withers | ToString | Builder | Deconstruct | Equality,
 
         /// <summary>
         /// <see cref="object.Equals(object)"/> and <see cref="object.GetHashCode()"/> overrides
