@@ -21,6 +21,7 @@ C# Record Generator makes creating **immutable** record types a breeze! Just ado
 * [Description]
 * [Installation]
 * [Usage]
+* [Features]
 * [Examples]
 * [Diagnostics]
 * [Requirements]
@@ -57,12 +58,12 @@ You also need to add a `DotNetCliToolReference` of `dotnet-codegen` into an `Ite
 ```cs
 using Amadevus.RecordGenerator;
 
-namespace TestApp
+namespace Example
 {
     [Record]
-    partial class RecordTest
+    partial class Foo
     {
-        public string Name { get; }
+        public string Bar { get; }
     }
 }
 ```
@@ -81,7 +82,13 @@ the rescue!
 The generator creates new partial for your type with additional members. The generator first
 acquires a list of **record entries** - public properties that are read-only and auto-implemented
 (which basically means they're `public SomeType SomeName { get; }`). Then it generates additional
-members which make using your record actually possible, depending on features selected in `[Record(Features)]` attribute. The `[Flags] enum Features` has the following values:
+members, depending on features selected in `[Record(Features)]` attribute. (If nothing is selected, `Default` value is used)
+
+
+## Features
+[Features]: #features
+
+The `[Flags] enum Features` has the following values:
 
 Feature | Generated Members | Description
 -|-|-
