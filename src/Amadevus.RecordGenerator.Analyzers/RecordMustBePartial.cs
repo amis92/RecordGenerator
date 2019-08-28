@@ -30,15 +30,16 @@ namespace Amadevus.RecordGenerator.Analyzers
                 // if partial, nothing to do
                 return;
             }
-            if (!HasAnyRecordAttributes(typeDeclaration))
+            if (HasAnyRecordAttributes(typeDeclaration))
             {
-                // if the type is not a record, check inner types
-                if (typeDeclaration.DescendantNodes().OfType<TypeDeclarationSyntax>().Any(HasAnyRecordAttributes))
-                {
-                    context.ReportDiagnostic(CreateDiagnostic(typeDeclaration));
-                }
+                context.ReportDiagnostic(CreateDiagnostic(typeDeclaration));
+                return;
             }
-            context.ReportDiagnostic(CreateDiagnostic(typeDeclaration));
+            // if the type is not a record, check inner types
+            if (typeDeclaration.DescendantNodes().OfType<TypeDeclarationSyntax>().Any(HasAnyRecordAttributes))
+            {
+                context.ReportDiagnostic(CreateDiagnostic(typeDeclaration));
+            }
         }
 
         private static Diagnostic CreateDiagnostic(TypeDeclarationSyntax typeSyntax)

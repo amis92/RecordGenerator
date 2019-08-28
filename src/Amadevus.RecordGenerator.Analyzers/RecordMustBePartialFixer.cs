@@ -22,10 +22,10 @@ namespace Amadevus.RecordGenerator.Analyzers
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            var classDeclaration = root.FindNode(context.Span).FirstAncestorOrSelf<ClassDeclarationSyntax>();
+            var typeDeclaration = root.FindNode(context.Span).FirstAncestorOrSelf<TypeDeclarationSyntax>();
             var document = context.Document;
             context.RegisterCodeFix(
-                Actions.MakePartial(document, root, classDeclaration),
+                Actions.MakePartial(document, root, typeDeclaration),
                 context.Diagnostics);
         }
     }

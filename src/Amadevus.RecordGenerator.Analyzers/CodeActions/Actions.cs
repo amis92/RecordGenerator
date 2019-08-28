@@ -12,11 +12,11 @@ namespace Amadevus.RecordGenerator.Analyzers.CodeActions
     {
         private class MakePartialCodeAction : CodeAction
         {
-            public MakePartialCodeAction(Document document, SyntaxNode root, ClassDeclarationSyntax classDeclaration)
+            public MakePartialCodeAction(Document document, SyntaxNode root, TypeDeclarationSyntax typeDeclaration)
             {
                 Document = document;
                 Root = root;
-                ClassDeclaration = classDeclaration;
+                TypeDeclaration = typeDeclaration;
             }
 
             public override string Title => "Make Partial";
@@ -24,18 +24,18 @@ namespace Amadevus.RecordGenerator.Analyzers.CodeActions
 
             public Document Document { get; }
             public SyntaxNode Root { get; }
-            public ClassDeclarationSyntax ClassDeclaration { get; }
+            public TypeDeclarationSyntax TypeDeclaration { get; }
 
             protected override Task<Document> GetChangedDocumentAsync(CancellationToken cancellationToken)
             {
-                var modifiedNode = ClassDeclaration.AddModifiers(Token(SyntaxKind.PartialKeyword));
-                return Task.FromResult(Document.WithSyntaxRoot(Root.ReplaceNode(ClassDeclaration, modifiedNode)));
+                var modifiedNode = TypeDeclaration.AddModifiers(Token(SyntaxKind.PartialKeyword));
+                return Task.FromResult(Document.WithSyntaxRoot(Root.ReplaceNode(TypeDeclaration, modifiedNode)));
             }
         }
 
-        public static CodeAction MakePartial(Document document, SyntaxNode root, ClassDeclarationSyntax classDeclaration)
+        public static CodeAction MakePartial(Document document, SyntaxNode root, TypeDeclarationSyntax typeDeclaration)
         {
-            return new MakePartialCodeAction(document, root, classDeclaration);
+            return new MakePartialCodeAction(document, root, typeDeclaration);
         }
     }
 }

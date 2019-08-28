@@ -46,7 +46,7 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                         namespace TestApplication
                         {
                             [Record]
-                            partial class RecordClass
+                            partial class RecordType
                             {
                                 public string Name { get; }
                             }
@@ -59,7 +59,7 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                         namespace TestApplication
                         {
                             [Record]
-                            class RecordClass
+                            class RecordType
                             {
                                 public string Name { get; }
                             }
@@ -68,7 +68,7 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                         namespace TestApplication
                         {
                             [Record]
-                            partial class RecordClass
+                            partial class RecordType
                             {
                                 public string Name { get; }
                             }
@@ -87,7 +87,7 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                             class OuterClass
                             {
                                 [Record]
-                                class RecordClass
+                                class RecordType
                                 {
                                     public string Name { get; }
                                 }
@@ -99,7 +99,7 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                             partial class OuterClass
                             {
                                 [Record]
-                                partial class RecordClass
+                                partial class RecordType
                                 {
                                     public string Name { get; }
                                 }
@@ -126,7 +126,7 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                             class OuterClass
                             {
                                 [Record]
-                                partial class RecordClass
+                                partial class RecordType
                                 {
                                     public string Name { get; }
                                 }
@@ -138,7 +138,7 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                             partial class OuterClass
                             {
                                 [Record]
-                                partial class RecordClass
+                                partial class RecordType
                                 {
                                     public string Name { get; }
                                 }
@@ -159,7 +159,7 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                         namespace TestApplication
                         {
                             [Record]
-                            partial interface RecordClass
+                            partial interface RecordType
                             {
                                 public string Name { get; }
                             }
@@ -172,7 +172,7 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                         namespace TestApplication
                         {
                             [Record]
-                            interface RecordClass
+                            interface RecordType
                             {
                                 public string Name { get; }
                             }
@@ -185,7 +185,7 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                         namespace TestApplication
                         {
                             [Record]
-                            partial struct RecordClass
+                            partial struct RecordType
                             {
                                 public string Name { get; }
                             }
@@ -198,11 +198,24 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                         namespace TestApplication
                         {
                             [Record]
-                            struct RecordClass
+                            struct RecordType
                             {
                                 public string Name { get; }
                             }
                         }".CropRawIndent(),
+                    NewSource = @"
+                        namespace TestApplication
+                        {
+                            [Record]
+                            partial struct RecordType
+                            {
+                                public string Name { get; }
+                            }
+                        }".CropRawIndent(),
+                    ExpectedDiagnostics = new DiagnosticResult(Descriptors.X1000_RecordMustBePartial)
+                    {
+                        Locations = new DiagnosticResultLocation(filename, 4, 12).ToSingletonArray()
+                    }.ToSingletonArray()
                 };
             }
         }
