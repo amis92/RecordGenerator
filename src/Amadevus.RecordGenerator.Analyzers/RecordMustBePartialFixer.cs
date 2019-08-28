@@ -1,10 +1,10 @@
 ﻿using System.Collections.Immutable;
 using System.Composition;
 using System.Threading.Tasks;
+using Amadevus.RecordGenerator.Analyzers.CodeActions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Amadevus.RecordGenerator.Analyzers.CodeActions;
 
 namespace Amadevus.RecordGenerator.Analyzers
 {

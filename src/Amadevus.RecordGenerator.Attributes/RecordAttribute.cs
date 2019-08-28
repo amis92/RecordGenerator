@@ -1,6 +1,6 @@
-﻿using CodeGeneration.Roslyn;
-using System;
+﻿using System;
 using System.Diagnostics;
+using CodeGeneration.Roslyn;
 
 namespace Amadevus.RecordGenerator
 {
