@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Amadevus.RecordGenerator.TestsBase
+﻿namespace Amadevus.RecordGenerator.TestsBase
 {
     public partial class FeatureContainer
     {

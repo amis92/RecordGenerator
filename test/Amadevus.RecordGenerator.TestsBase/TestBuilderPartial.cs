@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Amadevus.RecordGenerator.TestsBase
+﻿namespace Amadevus.RecordGenerator.TestsBase
 {
     // test to check builder is partial, won't compile otherwise
     [Record]
-    partial class TestBuilderPartial
+    sealed partial class TestBuilderPartial
     {
         public string Name { get; }
 
