@@ -6,6 +6,147 @@ using Xunit;
 
 namespace Amadevus.RecordGenerator.Analyzers.Test
 {
+    public class RecordEntriesMustDifferCaseInsensitiveTests : DiagnosticVerifier
+    {
+        [Theory]
+        [ClassData(typeof(TestCases))]
+        public void Given_Source_Then_Verify_Diagnostics(
+#pragma warning disable xUnit1026
+            string description,
+#pragma warning restore xUnit1026
+            string oldSource, DiagnosticResult[] diagnosticResults)
+        {
+            VerifyCSharpDiagnostic(oldSource, diagnosticResults ?? new DiagnosticResult[0]);
+        }
+
+        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer() =>
+            new RecordEntriesMustDifferCaseInsensitive();
+
+        private class TestCases : TheoryDataProvider
+        {
+            public override IEnumerable<ITheoryDatum> GetDataSets()
+            {
+                string filename = $"{DefaultFilePathPrefix}.{CSharpDefaultFileExt}";
+                yield return new GeneratorTheoryData
+                {
+                    Description = "empty source",
+                    OldSource = ""
+                };
+                yield return new GeneratorTheoryData
+                {
+                    Description = "non-[Record] class",
+                    OldSource = @"
+                        namespace TestApplication
+                        {
+                            public class RecordType
+                            {
+                                public string Name { get; }
+                            }
+                        }".CropRawIndent()
+                };
+                yield return new GeneratorTheoryData
+                {
+                    Description = "[Record] class",
+                    OldSource = @"
+                        namespace TestApplication
+                        {
+                            using Amadevus.RecordGenerator;
+
+                            [Record]
+                            partial class RecordType
+                            {
+                                public string Name { get; }
+                            }
+                        }".CropRawIndent()
+                };
+                yield return new GeneratorTheoryData
+                {
+                    Description = "Name/name [Record] class",
+                    OldSource = @"
+                        namespace TestApplication
+                        {
+                            using Amadevus.RecordGenerator;
+
+                            [Record]
+                            class RecordType
+                            {
+                                public string Name { get; }
+
+                                public string name { get; }
+                            }
+                        }".CropRawIndent(),
+                    ExpectedDiagnostics = new[]
+                    {
+                        new DiagnosticResult(
+                            Descriptors.X1002_RecordEntriesMustDifferCaseInsensitive,
+                            "Name", "name")
+                        {
+                            Locations = new DiagnosticResultLocation(filename, 8, 23).ToSingletonArray()
+                        },
+                        new DiagnosticResult(
+                            Descriptors.X1002_RecordEntriesMustDifferCaseInsensitive,
+                            "name", "Name")
+                        {
+                            Locations = new DiagnosticResultLocation(filename, 10, 23).ToSingletonArray()
+                        }
+                    }
+                };
+                yield return new GeneratorTheoryData
+                {
+                    Description = "Name/name [Record] struct",
+                    OldSource = @"
+                        namespace TestApplication
+                        {
+                            using Amadevus.RecordGenerator;
+
+                            [Record]
+                            struct RecordType
+                            {
+                                public string Name { get; }
+
+                                public string name { get; }
+                            }
+                        }".CropRawIndent(),
+                    ExpectedDiagnostics = new[]
+                    {
+                        new DiagnosticResult(
+                            Descriptors.X1002_RecordEntriesMustDifferCaseInsensitive,
+                            "Name", "name")
+                        {
+                            Locations = new DiagnosticResultLocation(filename, 8, 23).ToSingletonArray()
+                        },
+                        new DiagnosticResult(
+                            Descriptors.X1002_RecordEntriesMustDifferCaseInsensitive,
+                            "name", "Name")
+                        {
+                            Locations = new DiagnosticResultLocation(filename, 10, 23).ToSingletonArray()
+                        }
+                    }
+                };
+            }
+        }
+
+        public class GeneratorTheoryData : ITheoryDatum
+        {
+            public string Description { get; set; }
+
+            public string OldSource { get; set; }
+
+            public DiagnosticResult[] ExpectedDiagnostics { get; set; }
+
+            public object[] ToParameterArray()
+            {
+                return
+                    new object[]
+                    {
+                        Description,
+                        OldSource,
+                        ExpectedDiagnostics
+                    };
+            }
+        }
+    }
+
     public class RecordMustBePartialTests : CodeFixVerifier
     {
         //Diagnostic and CodeFix both triggered and checked for

@@ -29,5 +29,8 @@ namespace Amadevus.RecordGenerator.Analyzers
 
         public static DiagnosticDescriptor X1001_RecordMustBeSealedIfEqualityIsEnabled { get; } =
             Rule(1001, "Record must be sealed if equality generation is enabled", Usage, Warning, "Add sealed modifier to type '{0}'");
+
+        public static DiagnosticDescriptor X1002_RecordEntriesMustDifferCaseInsensitive { get; } =
+            Rule(1002, "Record properties cannot differ only by case.", Usage, Error, "Property name '{0}' differs from '{1}' only by case. Change property names to be case-insensitive different.");
     }
 }

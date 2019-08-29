@@ -30,6 +30,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 	* [`IEquatable<TRecord>`][iEquatable], [`operator ==/!=`][equalityOperators] implementations
 * Analyzer warning on Equality-enabled Record classes that are not sealed,
   providing CodeFix that adds `sealed` modifier.
+* Analyzer erroring on Record entry names that differ only by case
+  (this could cause collisions when changing name casings, e.g. for constructor
+  parameter names)
 
 
 [objtostr]: https://docs.microsoft.com/dotnet/api/system.object.tostring
