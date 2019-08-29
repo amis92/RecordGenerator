@@ -22,6 +22,11 @@ namespace Amadevus.RecordGenerator.Test
         [InlineData(Features.Builder, "ToBuilder")]
         [InlineData(Features.ToString, "ToString")]
         [InlineData(Features.Deconstruct, "Deconstruct")]
+        [InlineData(Features.ObjectEquals, "Equals")]
+        [InlineData(Features.ObjectEquals, "GetHashCode")]
+        [InlineData(Features.EquatableEquals, "Equals")]
+        [InlineData(Features.OperatorEquals, "op_Equality")]
+        [InlineData(Features.OperatorEquals, "op_Inequality")]
         public void Given_Feature_then_member_is_generated(Features feature, string memberName)
         {
             var containerType = typeof(FeatureContainer);
@@ -29,7 +34,6 @@ namespace Amadevus.RecordGenerator.Test
 
             var members = featureType.GetMember(memberName);
 
-            members.Should().HaveCount(1);
             members.Should().ContainSingle(x => x.DeclaringType == featureType, "inherited members don't count");
         }
     }

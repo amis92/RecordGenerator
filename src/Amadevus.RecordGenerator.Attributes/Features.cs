@@ -45,11 +45,6 @@ namespace Amadevus.RecordGenerator
         Deconstruct = 0b_1_0000,
 
         /// <summary>
-        /// Default feature set.
-        /// </summary>
-        Default = Constructor | Withers | ToString | Builder | Deconstruct,
-
-        /// <summary>
         /// <see cref="object.Equals(object)"/> and <see cref="object.GetHashCode()"/> overrides
         /// - currently this requires the record class to be sealed.
         /// <see cref="object.Equals(object)"/> override compares all record properties with
@@ -84,6 +79,11 @@ namespace Amadevus.RecordGenerator
         /// Equality feature set which inlcudes 
         /// <see cref="ObjectEquals"/>, <see cref="EquatableEquals"/> and <see cref="OperatorEquals"/>.
         /// </summary>
-        Equality = ObjectEquals | EquatableEquals | OperatorEquals
+        Equality = ObjectEquals | EquatableEquals | OperatorEquals,
+
+        /// <summary>
+        /// Default feature set.
+        /// </summary>
+        Default = Constructor | Withers | ToString | Builder | Deconstruct | Equality
     }
 }

@@ -9,10 +9,10 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 namespace Amadevus.RecordGenerator.Analyzers
 {
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
-    public sealed class RecordMustBePartialFixer : CodeFixProvider
+    public sealed class RecordMustBeSealedIfEqualityIsEnabledFixer : CodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds { get; }
-            = ImmutableArray.Create(Descriptors.X1000_RecordMustBePartial.Id);
+            = ImmutableArray.Create(Descriptors.X1001_RecordMustBeSealedIfEqualityIsEnabled.Id);
 
         public override FixAllProvider GetFixAllProvider()
         {
@@ -25,7 +25,7 @@ namespace Amadevus.RecordGenerator.Analyzers
             var typeDeclaration = root.FindNode(context.Span).FirstAncestorOrSelf<TypeDeclarationSyntax>();
             var document = context.Document;
             context.RegisterCodeFix(
-                Actions.MakePartial(document, root, typeDeclaration),
+                Actions.MakeSealed(document, root, typeDeclaration),
                 context.Diagnostics);
         }
     }

@@ -1,12 +1,12 @@
-﻿using Microsoft.CodeAnalysis.CodeFixes;
+﻿using System.Collections.Generic;
+using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using System.Collections.Generic;
 using TestHelper;
 using Xunit;
 
 namespace Amadevus.RecordGenerator.Analyzers.Test
 {
-    public class RecordMustBePartialTests : CodeFixVerifier
+    public class RecordMustBeSealedIfEqualityIsEnabledTests : CodeFixVerifier
     {
         //Diagnostic and CodeFix both triggered and checked for
         [Theory]
@@ -25,9 +25,9 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
             VerifyCSharpFix(oldSource, newSource);
         }
 
-        protected override CodeFixProvider GetCSharpCodeFixProvider() => new RecordMustBePartialFixer();
+        protected override CodeFixProvider GetCSharpCodeFixProvider() => new RecordMustBeSealedIfEqualityIsEnabledFixer();
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer() => new RecordMustBePartial();
+        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer() => new RecordMustBeSealedIfEqualityIsEnabled();
 
         private class TestCases : TheoryDataProvider
         {
@@ -41,7 +41,22 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                 };
                 yield return new GeneratorTheoryData
                 {
-                    Description = "non-partial non-[Record] class",
+                    Description = "sealed [Record] class",
+                    OldSource = @"
+                        namespace TestApplication
+                        {
+                            using Amadevus.RecordGenerator;
+
+                            [Record]
+                            sealed class RecordType
+                            {
+                                public string Name { get; }
+                            }
+                        }".CropRawIndent()
+                };
+                yield return new GeneratorTheoryData
+                {
+                    Description = "non-sealed non-[Record] class",
                     OldSource = @"
                         namespace TestApplication
                         {
@@ -53,22 +68,37 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                 };
                 yield return new GeneratorTheoryData
                 {
-                    Description = "partial [Record] class",
+                    Description = "non-sealed [Record] struct",
                     OldSource = @"
                         namespace TestApplication
                         {
                             using Amadevus.RecordGenerator;
 
                             [Record]
-                            partial class RecordType
+                            struct RecordType
                             {
                                 public string Name { get; }
                             }
-                        }".CropRawIndent()
+                        }".CropRawIndent(),
                 };
                 yield return new GeneratorTheoryData
                 {
-                    Description = "non-partial [Record] class",
+                    Description = "non-sealed [Record] interface",
+                    OldSource = @"
+                        namespace TestApplication
+                        {
+                            using Amadevus.RecordGenerator;
+
+                            [Record]
+                            interface RecordType
+                            {
+                                public string Name { get; }
+                            }
+                        }".CropRawIndent(),
+                };
+                yield return new GeneratorTheoryData
+                {
+                    Description = "non-sealed [Record] class",
                     OldSource = @"
                         namespace TestApplication
                         {
@@ -86,31 +116,56 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                             using Amadevus.RecordGenerator;
 
                             [Record]
-                            partial class RecordType
+                            sealed class RecordType
                             {
                                 public string Name { get; }
                             }
                         }".CropRawIndent(),
-                    ExpectedDiagnostics = new DiagnosticResult(Descriptors.X1000_RecordMustBePartial)
+                    ExpectedDiagnostics = new[]
+                    {
+                        new DiagnosticResult(Descriptors.X1001_RecordMustBeSealedIfEqualityIsEnabled, "RecordType")
                         {
-                            Locations =  new DiagnosticResultLocation(filename, 6, 11).ToSingletonArray()
-                        }.ToSingletonArray()
+                            Locations = new DiagnosticResultLocation(filename, 6, 11).ToSingletonArray()
+                        }
+                    }
                 };
                 yield return new GeneratorTheoryData
                 {
-                    Description = "non-partial public [Record] class",
+                    Description = "non-sealed [Record(Features.Equality)] class",
                     OldSource = @"
                         namespace TestApplication
                         {
                             using Amadevus.RecordGenerator;
 
-                            [Record]
-                            public class RecordType
+                            [Record(Features.Equality)]
+                            class RecordType
                             {
                                 public string Name { get; }
                             }
                         }".CropRawIndent(),
                     NewSource = @"
+                        namespace TestApplication
+                        {
+                            using Amadevus.RecordGenerator;
+
+                            [Record(Features.Equality)]
+                            sealed class RecordType
+                            {
+                                public string Name { get; }
+                            }
+                        }".CropRawIndent(),
+                    ExpectedDiagnostics = new[]
+                    {
+                        new DiagnosticResult(Descriptors.X1001_RecordMustBeSealedIfEqualityIsEnabled, "RecordType")
+                        {
+                            Locations = new DiagnosticResultLocation(filename, 6, 11).ToSingletonArray()
+                        }
+                    }
+                };
+                yield return new GeneratorTheoryData
+                {
+                    Description = "non-sealed public partial [Record] class",
+                    OldSource = @"
                         namespace TestApplication
                         {
                             using Amadevus.RecordGenerator;
@@ -121,14 +176,28 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                                 public string Name { get; }
                             }
                         }".CropRawIndent(),
-                    ExpectedDiagnostics = new DiagnosticResult(Descriptors.X1000_RecordMustBePartial)
+                    NewSource = @"
+                        namespace TestApplication
+                        {
+                            using Amadevus.RecordGenerator;
+
+                            [Record]
+                            public sealed partial class RecordType
+                            {
+                                public string Name { get; }
+                            }
+                        }".CropRawIndent(),
+                    ExpectedDiagnostics = new[]
                     {
-                        Locations = new DiagnosticResultLocation(filename, 6, 18).ToSingletonArray()
-                    }.ToSingletonArray()
+                        new DiagnosticResult(Descriptors.X1001_RecordMustBeSealedIfEqualityIsEnabled, "RecordType")
+                        {
+                            Locations = new DiagnosticResultLocation(filename, 6, 26).ToSingletonArray()
+                        }
+                    }
                 };
                 yield return new GeneratorTheoryData
                 {
-                    Description = "non-partial nested [Record] class",
+                    Description = "non-sealed nested [Record] class",
                     OldSource = @"
                         namespace TestApplication
                         {
@@ -148,10 +217,10 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                         {
                             using Amadevus.RecordGenerator;
 
-                            partial class OuterClass
+                            class OuterClass
                             {
                                 [Record]
-                                partial class RecordType
+                                sealed class RecordType
                                 {
                                     public string Name { get; }
                                 }
@@ -159,129 +228,11 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                         }".CropRawIndent(),
                     ExpectedDiagnostics = new[]
                     {
-                        new DiagnosticResult(Descriptors.X1000_RecordMustBePartial)
-                        {
-                            Locations = new DiagnosticResultLocation(filename, 5, 11).ToSingletonArray()
-                        },
-                        new DiagnosticResult(Descriptors.X1000_RecordMustBePartial)
+                        new DiagnosticResult(Descriptors.X1001_RecordMustBeSealedIfEqualityIsEnabled, "RecordType")
                         {
                             Locations = new DiagnosticResultLocation(filename, 8, 15).ToSingletonArray()
                         }
                     }
-                };
-                yield return new GeneratorTheoryData
-                {
-                    Description = "non-partial parent of partial [Record] class",
-                    OldSource = @"
-                        namespace TestApplication
-                        {
-                            using Amadevus.RecordGenerator;
-
-                            class OuterClass
-                            {
-                                [Record]
-                                partial class RecordType
-                                {
-                                    public string Name { get; }
-                                }
-                            }
-                        }".CropRawIndent(),
-                    NewSource = @"
-                        namespace TestApplication
-                        {
-                            using Amadevus.RecordGenerator;
-
-                            partial class OuterClass
-                            {
-                                [Record]
-                                partial class RecordType
-                                {
-                                    public string Name { get; }
-                                }
-                            }
-                        }".CropRawIndent(),
-                    ExpectedDiagnostics = new[]
-                    {
-                        new DiagnosticResult(Descriptors.X1000_RecordMustBePartial)
-                        {
-                            Locations = new DiagnosticResultLocation(filename, 5, 11).ToSingletonArray()
-                        }
-                    }
-                };
-                yield return new GeneratorTheoryData
-                {
-                    Description = "partial [Record] interface",
-                    OldSource = @"
-                        namespace TestApplication
-                        {
-                            using Amadevus.RecordGenerator;
-
-                            [Record]
-                            partial interface RecordType
-                            {
-                                public string Name { get; }
-                            }
-                        }".CropRawIndent()
-                };
-                yield return new GeneratorTheoryData
-                {
-                    Description = "non-partial [Record] interface",
-                    OldSource = @"
-                        namespace TestApplication
-                        {
-                            using Amadevus.RecordGenerator;
-
-                            [Record]
-                            interface RecordType
-                            {
-                                public string Name { get; }
-                            }
-                        }".CropRawIndent(),
-                };
-                yield return new GeneratorTheoryData
-                {
-                    Description = "partial [Record] struct",
-                    OldSource = @"
-                        namespace TestApplication
-                        {
-                            using Amadevus.RecordGenerator;
-
-                            [Record]
-                            partial struct RecordType
-                            {
-                                public string Name { get; }
-                            }
-                        }".CropRawIndent()
-                };
-                yield return new GeneratorTheoryData
-                {
-                    Description = "non-partial [Record] struct",
-                    OldSource = @"
-                        namespace TestApplication
-                        {
-                            using Amadevus.RecordGenerator;
-
-                            [Record]
-                            struct RecordType
-                            {
-                                public string Name { get; }
-                            }
-                        }".CropRawIndent(),
-                    NewSource = @"
-                        namespace TestApplication
-                        {
-                            using Amadevus.RecordGenerator;
-
-                            [Record]
-                            partial struct RecordType
-                            {
-                                public string Name { get; }
-                            }
-                        }".CropRawIndent(),
-                    ExpectedDiagnostics = new DiagnosticResult(Descriptors.X1000_RecordMustBePartial)
-                    {
-                        Locations = new DiagnosticResultLocation(filename, 6, 12).ToSingletonArray()
-                    }.ToSingletonArray()
                 };
             }
         }

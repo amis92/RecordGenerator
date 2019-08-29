@@ -1,3 +1,4 @@
+using Amadevus.RecordGenerator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -5,6 +6,7 @@ using Microsoft.CodeAnalysis.Text;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.IO;
 using System.Linq;
 
 namespace TestHelper
@@ -15,10 +17,38 @@ namespace TestHelper
     /// </summary>
     public abstract partial class DiagnosticVerifier
     {
-        private static readonly MetadataReference CorlibReference = MetadataReference.CreateFromFile(typeof(object).Assembly.Location);
-        private static readonly MetadataReference SystemCoreReference = MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location);
-        private static readonly MetadataReference CSharpSymbolsReference = MetadataReference.CreateFromFile(typeof(CSharpCompilation).Assembly.Location);
-        private static readonly MetadataReference CodeAnalysisReference = MetadataReference.CreateFromFile(typeof(Compilation).Assembly.Location);
+        static DiagnosticVerifier()
+        {
+            // this "core assemblies hack" is from https://stackoverflow.com/a/47196516/4418060
+            var coreAssemblyPath = Path.GetDirectoryName(typeof(object).Assembly.Location);
+            var coreAssemblyNames = new[]
+            {
+                "mscorlib.dll",
+                "netstandard.dll",
+                "System.dll",
+                "System.Core.dll",
+#if NETCOREAPP
+                "System.Private.CoreLib.dll",
+#endif
+                "System.Runtime.dll",
+            };
+            var coreMetaReferences =
+                coreAssemblyNames.Select(
+                    x => MetadataReference.CreateFromFile(Path.Combine(coreAssemblyPath, x)));
+            var otherAssemblies = new[]
+            {
+                typeof(CSharpCompilation).Assembly,
+                typeof(Compilation).Assembly,
+                typeof(RecordAttribute).Assembly,
+            };
+            MetadataReferences = coreMetaReferences
+                .Concat<MetadataReference>(
+                    otherAssemblies.Select(
+                        x => MetadataReference.CreateFromFile(x.Location)))
+                .ToImmutableArray();
+        }
+
+        private static readonly ImmutableArray<MetadataReference> MetadataReferences;
 
         internal static string DefaultFilePathPrefix = "Test";
         internal static string CSharpDefaultFileExt = "cs";
@@ -149,10 +179,7 @@ namespace TestHelper
             var solution = new AdhocWorkspace()
                 .CurrentSolution
                 .AddProject(projectId, TestProjectName, TestProjectName, language)
-                .AddMetadataReference(projectId, CorlibReference)
-                .AddMetadataReference(projectId, SystemCoreReference)
-                .AddMetadataReference(projectId, CSharpSymbolsReference)
-                .AddMetadataReference(projectId, CodeAnalysisReference);
+                .AddMetadataReferences(projectId, MetadataReferences);
 
             int count = 0;
             foreach (var source in sources)
