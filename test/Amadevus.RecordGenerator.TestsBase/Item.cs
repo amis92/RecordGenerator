@@ -2,8 +2,8 @@
 
 namespace Amadevus.RecordGenerator.TestsBase
 {
-    [Record(Features.Default | Features.OperatorEquals)]
-    public partial class Item
+    [Record]
+    public sealed partial class Item
     {
         public string Id { get; }
 

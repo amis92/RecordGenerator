@@ -16,38 +16,30 @@ namespace Amadevus.RecordGenerator.Analyzers
         public override void Initialize(AnalysisContext context)
         {
             // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/Analyzer%20Actions%20Semantics.md for more information
-            context.RegisterSyntaxNodeAction(AnalyzeClass, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeAction(AnalyzeOuterType, SyntaxKind.StructDeclaration, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeAction(
+                AnalyzeType,
+                SyntaxKind.StructDeclaration,
+                SyntaxKind.ClassDeclaration);
         }
 
-        private static void AnalyzeClass(SyntaxNodeAnalysisContext context)
-        {
-            var classDeclaration = (ClassDeclarationSyntax)context.Node;
-            if (classDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword))
-            {
-                return;
-            }
-            // if no record attributes, stop diagnostic
-            if (!HasAnyRecordAttributes(classDeclaration))
-            {
-                return;
-            }
-            context.ReportDiagnostic(CreateDiagnostic(classDeclaration));
-        }
-
-        private static void AnalyzeOuterType(SyntaxNodeAnalysisContext context)
+        private static void AnalyzeType(SyntaxNodeAnalysisContext context)
         {
             var typeDeclaration = (TypeDeclarationSyntax)context.Node;
             if (typeDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword))
             {
+                // if partial, nothing to do
                 return;
             }
-            // if no record types, stop diagnostic
-            if (!typeDeclaration.DescendantNodes().OfType<ClassDeclarationSyntax>().Any(HasAnyRecordAttributes))
+            if (HasAnyRecordAttributes(typeDeclaration))
             {
+                context.ReportDiagnostic(CreateDiagnostic(typeDeclaration));
                 return;
             }
-            context.ReportDiagnostic(CreateDiagnostic(typeDeclaration));
+            // if the type is not a record, check inner types
+            if (typeDeclaration.DescendantNodes().OfType<TypeDeclarationSyntax>().Any(HasAnyRecordAttributes))
+            {
+                context.ReportDiagnostic(CreateDiagnostic(typeDeclaration));
+            }
         }
 
         private static Diagnostic CreateDiagnostic(TypeDeclarationSyntax typeSyntax)

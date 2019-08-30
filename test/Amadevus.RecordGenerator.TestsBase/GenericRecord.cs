@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Amadevus.RecordGenerator.TestsBase
 {
     [Record]
-    public partial class GenericRecord<T>
+    public sealed partial class GenericRecord<T>
     {
         public T Thing { get; }
 

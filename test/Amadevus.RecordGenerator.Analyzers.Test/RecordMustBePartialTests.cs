@@ -6,6 +6,147 @@ using Xunit;
 
 namespace Amadevus.RecordGenerator.Analyzers.Test
 {
+    public class RecordEntriesMustDifferCaseInsensitiveTests : DiagnosticVerifier
+    {
+        [Theory]
+        [ClassData(typeof(TestCases))]
+        public void Given_Source_Then_Verify_Diagnostics(
+#pragma warning disable xUnit1026
+            string description,
+#pragma warning restore xUnit1026
+            string oldSource, DiagnosticResult[] diagnosticResults)
+        {
+            VerifyCSharpDiagnostic(oldSource, diagnosticResults ?? new DiagnosticResult[0]);
+        }
+
+        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer() =>
+            new RecordEntriesMustDifferCaseInsensitive();
+
+        private class TestCases : TheoryDataProvider
+        {
+            public override IEnumerable<ITheoryDatum> GetDataSets()
+            {
+                string filename = $"{DefaultFilePathPrefix}.{CSharpDefaultFileExt}";
+                yield return new GeneratorTheoryData
+                {
+                    Description = "empty source",
+                    OldSource = ""
+                };
+                yield return new GeneratorTheoryData
+                {
+                    Description = "non-[Record] class",
+                    OldSource = @"
+                        namespace TestApplication
+                        {
+                            public class RecordType
+                            {
+                                public string Name { get; }
+                            }
+                        }".CropRawIndent()
+                };
+                yield return new GeneratorTheoryData
+                {
+                    Description = "[Record] class",
+                    OldSource = @"
+                        namespace TestApplication
+                        {
+                            using Amadevus.RecordGenerator;
+
+                            [Record]
+                            partial class RecordType
+                            {
+                                public string Name { get; }
+                            }
+                        }".CropRawIndent()
+                };
+                yield return new GeneratorTheoryData
+                {
+                    Description = "Name/name [Record] class",
+                    OldSource = @"
+                        namespace TestApplication
+                        {
+                            using Amadevus.RecordGenerator;
+
+                            [Record]
+                            class RecordType
+                            {
+                                public string Name { get; }
+
+                                public string name { get; }
+                            }
+                        }".CropRawIndent(),
+                    ExpectedDiagnostics = new[]
+                    {
+                        new DiagnosticResult(
+                            Descriptors.X1002_RecordEntriesMustDifferCaseInsensitive,
+                            "Name", "name")
+                        {
+                            Locations = new DiagnosticResultLocation(filename, 8, 23).ToSingletonArray()
+                        },
+                        new DiagnosticResult(
+                            Descriptors.X1002_RecordEntriesMustDifferCaseInsensitive,
+                            "name", "Name")
+                        {
+                            Locations = new DiagnosticResultLocation(filename, 10, 23).ToSingletonArray()
+                        }
+                    }
+                };
+                yield return new GeneratorTheoryData
+                {
+                    Description = "Name/name [Record] struct",
+                    OldSource = @"
+                        namespace TestApplication
+                        {
+                            using Amadevus.RecordGenerator;
+
+                            [Record]
+                            struct RecordType
+                            {
+                                public string Name { get; }
+
+                                public string name { get; }
+                            }
+                        }".CropRawIndent(),
+                    ExpectedDiagnostics = new[]
+                    {
+                        new DiagnosticResult(
+                            Descriptors.X1002_RecordEntriesMustDifferCaseInsensitive,
+                            "Name", "name")
+                        {
+                            Locations = new DiagnosticResultLocation(filename, 8, 23).ToSingletonArray()
+                        },
+                        new DiagnosticResult(
+                            Descriptors.X1002_RecordEntriesMustDifferCaseInsensitive,
+                            "name", "Name")
+                        {
+                            Locations = new DiagnosticResultLocation(filename, 10, 23).ToSingletonArray()
+                        }
+                    }
+                };
+            }
+        }
+
+        public class GeneratorTheoryData : ITheoryDatum
+        {
+            public string Description { get; set; }
+
+            public string OldSource { get; set; }
+
+            public DiagnosticResult[] ExpectedDiagnostics { get; set; }
+
+            public object[] ToParameterArray()
+            {
+                return
+                    new object[]
+                    {
+                        Description,
+                        OldSource,
+                        ExpectedDiagnostics
+                    };
+            }
+        }
+    }
+
     public class RecordMustBePartialTests : CodeFixVerifier
     {
         //Diagnostic and CodeFix both triggered and checked for
@@ -41,12 +182,26 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                 };
                 yield return new GeneratorTheoryData
                 {
+                    Description = "non-partial non-[Record] class",
+                    OldSource = @"
+                        namespace TestApplication
+                        {
+                            public class RecordType
+                            {
+                                public string Name { get; }
+                            }
+                        }".CropRawIndent()
+                };
+                yield return new GeneratorTheoryData
+                {
                     Description = "partial [Record] class",
                     OldSource = @"
                         namespace TestApplication
                         {
+                            using Amadevus.RecordGenerator;
+
                             [Record]
-                            partial class RecordClass
+                            partial class RecordType
                             {
                                 public string Name { get; }
                             }
@@ -58,8 +213,10 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                     OldSource = @"
                         namespace TestApplication
                         {
+                            using Amadevus.RecordGenerator;
+
                             [Record]
-                            class RecordClass
+                            class RecordType
                             {
                                 public string Name { get; }
                             }
@@ -67,16 +224,48 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                     NewSource = @"
                         namespace TestApplication
                         {
+                            using Amadevus.RecordGenerator;
+
                             [Record]
-                            partial class RecordClass
+                            partial class RecordType
                             {
                                 public string Name { get; }
                             }
                         }".CropRawIndent(),
                     ExpectedDiagnostics = new DiagnosticResult(Descriptors.X1000_RecordMustBePartial)
                         {
-                            Locations =  new DiagnosticResultLocation(filename, 4, 11).ToSingletonArray()
+                            Locations =  new DiagnosticResultLocation(filename, 6, 11).ToSingletonArray()
                         }.ToSingletonArray()
+                };
+                yield return new GeneratorTheoryData
+                {
+                    Description = "non-partial public [Record] class",
+                    OldSource = @"
+                        namespace TestApplication
+                        {
+                            using Amadevus.RecordGenerator;
+
+                            [Record]
+                            public class RecordType
+                            {
+                                public string Name { get; }
+                            }
+                        }".CropRawIndent(),
+                    NewSource = @"
+                        namespace TestApplication
+                        {
+                            using Amadevus.RecordGenerator;
+
+                            [Record]
+                            public partial class RecordType
+                            {
+                                public string Name { get; }
+                            }
+                        }".CropRawIndent(),
+                    ExpectedDiagnostics = new DiagnosticResult(Descriptors.X1000_RecordMustBePartial)
+                    {
+                        Locations = new DiagnosticResultLocation(filename, 6, 18).ToSingletonArray()
+                    }.ToSingletonArray()
                 };
                 yield return new GeneratorTheoryData
                 {
@@ -84,10 +273,12 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                     OldSource = @"
                         namespace TestApplication
                         {
+                            using Amadevus.RecordGenerator;
+
                             class OuterClass
                             {
                                 [Record]
-                                class RecordClass
+                                class RecordType
                                 {
                                     public string Name { get; }
                                 }
@@ -96,10 +287,12 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                     NewSource = @"
                         namespace TestApplication
                         {
+                            using Amadevus.RecordGenerator;
+
                             partial class OuterClass
                             {
                                 [Record]
-                                partial class RecordClass
+                                partial class RecordType
                                 {
                                     public string Name { get; }
                                 }
@@ -109,11 +302,11 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                     {
                         new DiagnosticResult(Descriptors.X1000_RecordMustBePartial)
                         {
-                            Locations = new DiagnosticResultLocation(filename, 3, 11).ToSingletonArray()
+                            Locations = new DiagnosticResultLocation(filename, 5, 11).ToSingletonArray()
                         },
                         new DiagnosticResult(Descriptors.X1000_RecordMustBePartial)
                         {
-                            Locations = new DiagnosticResultLocation(filename, 6, 15).ToSingletonArray()
+                            Locations = new DiagnosticResultLocation(filename, 8, 15).ToSingletonArray()
                         }
                     }
                 };
@@ -123,10 +316,12 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                     OldSource = @"
                         namespace TestApplication
                         {
+                            using Amadevus.RecordGenerator;
+
                             class OuterClass
                             {
                                 [Record]
-                                partial class RecordClass
+                                partial class RecordType
                                 {
                                     public string Name { get; }
                                 }
@@ -135,10 +330,12 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                     NewSource = @"
                         namespace TestApplication
                         {
+                            using Amadevus.RecordGenerator;
+
                             partial class OuterClass
                             {
                                 [Record]
-                                partial class RecordClass
+                                partial class RecordType
                                 {
                                     public string Name { get; }
                                 }
@@ -148,7 +345,7 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                     {
                         new DiagnosticResult(Descriptors.X1000_RecordMustBePartial)
                         {
-                            Locations = new DiagnosticResultLocation(filename, 3, 11).ToSingletonArray()
+                            Locations = new DiagnosticResultLocation(filename, 5, 11).ToSingletonArray()
                         }
                     }
                 };
@@ -158,8 +355,10 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                     OldSource = @"
                         namespace TestApplication
                         {
+                            using Amadevus.RecordGenerator;
+
                             [Record]
-                            partial interface RecordClass
+                            partial interface RecordType
                             {
                                 public string Name { get; }
                             }
@@ -171,8 +370,10 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                     OldSource = @"
                         namespace TestApplication
                         {
+                            using Amadevus.RecordGenerator;
+
                             [Record]
-                            interface RecordClass
+                            interface RecordType
                             {
                                 public string Name { get; }
                             }
@@ -184,8 +385,10 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                     OldSource = @"
                         namespace TestApplication
                         {
+                            using Amadevus.RecordGenerator;
+
                             [Record]
-                            partial struct RecordClass
+                            partial struct RecordType
                             {
                                 public string Name { get; }
                             }
@@ -197,12 +400,29 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                     OldSource = @"
                         namespace TestApplication
                         {
+                            using Amadevus.RecordGenerator;
+
                             [Record]
-                            struct RecordClass
+                            struct RecordType
                             {
                                 public string Name { get; }
                             }
                         }".CropRawIndent(),
+                    NewSource = @"
+                        namespace TestApplication
+                        {
+                            using Amadevus.RecordGenerator;
+
+                            [Record]
+                            partial struct RecordType
+                            {
+                                public string Name { get; }
+                            }
+                        }".CropRawIndent(),
+                    ExpectedDiagnostics = new DiagnosticResult(Descriptors.X1000_RecordMustBePartial)
+                    {
+                        Locations = new DiagnosticResultLocation(filename, 6, 12).ToSingletonArray()
+                    }.ToSingletonArray()
                 };
             }
         }
