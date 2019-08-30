@@ -6,13 +6,9 @@
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <DevelopmentDependency>True</DevelopmentDependency>
     <IncludeSymbols>false</IncludeSymbols>
-  </PropertyGroup>
-  
-  <PropertyGroup>
-    <Description>Analyzers and CodeFixes for [Record]-marked types. See project site for more details.</Description>
-    <PackageReleaseNotes>No changes.</PackageReleaseNotes>
-    <PackageTags>record; immutable; attribute; generator; amadevus; codegen; analyzer; codefix</PackageTags>
     <NoPackageAnalysis>true</NoPackageAnalysis>
+    <PackageTags>$(PackageTags) analyzer codefix</PackageTags>
+    <Description>Analyzers and CodeFixes for [Record]-marked types. See project site for more details.</Description>
   </PropertyGroup>
    
   <ItemGroup>
