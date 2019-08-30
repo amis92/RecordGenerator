@@ -4,12 +4,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard1.0</TargetFrameworks>
     <RootNamespace>Amadevus.RecordGenerator</RootNamespace>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <Description>Defines [Record] (RecordAttribute) in global:: namespace; used to generate "immutable records" support code (constructors, With- mutators, tuple deconstructor etc.). See project site for more details.</Description>
-    <PackageReleaseNotes>Add much more target frameworks: netstandard2.0, net40, portable profiles: 92, 259. Updated reference of CodeGeneration.Roslyn to v0.4.88.</PackageReleaseNotes>
-    <PackageTags>record; immutable; attribute; generator; amadevus; codegen</PackageTags>
+    <Description>Defines `[Record]` attribute and `Features` flags enum. See project site for more details.</Description>
   </PropertyGroup>
 
   <ItemGroup>

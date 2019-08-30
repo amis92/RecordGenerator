@@ -10,6 +10,7 @@
     <PackageIconUrl>https://raw.githubusercontent.com/amis92/RecordGenerator/master/docs/logo.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/amis92/RecordGenerator</RepositoryUrl>
     <ReleaseNotes>https://github.com/amis92/RecordGenerator/blob/master/CHANGELOG.md</ReleaseNotes>
+    <PackageTags>record immutable attribute generator generators generation amadevus recordgenerator code codegen codegenerator codegeneration</PackageTags>
   </PropertyGroup>
 
   <PropertyGroup>

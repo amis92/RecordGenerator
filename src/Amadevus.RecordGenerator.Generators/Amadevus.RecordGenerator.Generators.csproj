@@ -6,13 +6,8 @@
     <IsTool>true</IsTool>
     <DevelopmentDependency>True</DevelopmentDependency>
     <IncludeSymbols>false</IncludeSymbols>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <Description>Contains code generators for [Record]-marked types. Creates backing code (constructor, With- mutators, deconstructor to tuple, Builder nested type etc.) for immutable record classes. See project site for installation instructions and more details.</Description>
-    <PackageReleaseNotes>Fixed handling of get-only expression body properties (e.g. `int Count { get =&gt; 0; }`).</PackageReleaseNotes>
-    <PackageTags>record immutable attribute generator generators generation amadevus recordgenerator code codegen codegenerator codegeneration</PackageTags>
     <NoPackageAnalysis>true</NoPackageAnalysis>
+    <Description>Code generators for [Record]-marked types; generate boilerplate code for immutable record types. See project site for installation instructions and more details.</Description>
   </PropertyGroup>
 
   <ItemGroup>
