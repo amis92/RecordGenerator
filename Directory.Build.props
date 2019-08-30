@@ -24,7 +24,6 @@
     <PackageOutputPath>$(MSBuildThisFileDirectory)bin/Packages/$(Configuration)/</PackageOutputPath>
     <IsTestingOnlyProject>$(MSBuildProjectName.Contains('Test'))</IsTestingOnlyProject>
     <NoWarn>$(NoWarn);CS1591;NU5105</NoWarn>
-    <MinClientVersion>4.3.0</MinClientVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition=" !$(IsTestingOnlyProject) ">
