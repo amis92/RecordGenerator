@@ -40,3 +40,73 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [objectGetHashCode]: https://docs.microsoft.com/dotnet/api/system.object.gethashcode
 [iEquatable]: https://docs.microsoft.com/dotnet/api/system.iequatable-1
 [equalityOperators]: https://docs.microsoft.com/dotnet/csharp/language-reference/operators/equality-operators
+
+## [0.4.1] - 2019-03-22
+### Changed
+* Fixed handling of get-only expression body properties (e.g. `int Count { get => 0; }`) [#52].
+
+[#52]: https://github.com/amis92/RecordGenerator/issues/52
+
+## [0.4.0] - 2018-12-05
+### Changed
+* `Amadeuvs.RecordGenerator` package: Remove DevelopmentDependency flag, drop target framework. Essentially an aggregate of dependency packages for simple installation.
+* Updated reference of CodeGeneration.Roslyn to v0.4.88.
+* Skipping generation for 0-entries records [#27].
+* Fixed: Deconstructor not compiling when parameter name would be a keyword [#32].
+* `Validate` called before field assignments and pass values by ref [#50].
+
+[#27]: https://github.com/amis92/RecordGenerator/issues/27
+[#39]: https://github.com/amis92/RecordGenerator/issues/39
+[#50]: https://github.com/amis92/RecordGenerator/issues/50
+
+## [0.3.4] - 2018-05-19
+###Changed
+* Fixed a bug with generic property types [#32].
+
+[#32]: https://github.com/amis92/RecordGenerator/issues/32
+
+## [0.3.3] - 2018-05-18
+### Changed
+* Updated reference of CodeGeneration.Roslyn to v0.4.49.
+
+## [0.3.2] - 2018-05-14
+### Changed
+* Fixed the meta-package to actually depend on correct CodeGeneration.Roslyn version (0.4.42).
+
+## [0.3.1] - 2018-05-14
+### Changed
+* Updated reference of CodeGeneration.Roslyn to v0.4.42.
+* Targeting `netstandard1.6` (was 1.5).
+
+## [0.3.0] - 2018-01-18
+### Changed
+* Moved generation to build-time using AArnott's CodeGeneration.Roslyn package, requires more installation steps but creates backing code automatically during build which is definitely an improvement. Also decomposed project into Generators, Analyzers and Attributes subpackages.
+
+## [0.2.1] - 2017-10-22
+### Changed
+* Bugfix. Doesn't raise false RG0003 'requires regeneration' errors for Records nested in Records. Also now diff is attached to that error message.
+
+## [0.2.0] - 2017-09-19
+### Changed
+* Bugfixes. Now ignores static properties and doesn't include interfaces/base classes in partial declaration.
+
+## [0.1.1] - 2017-04-14
+### Changed
+* Fixed layout to match analyzer requirements.
+
+## [0.1.0] - 2017-04-12
+### Added
+* Initial release with support for constructor and With-mutators.
+
+[Unreleased]: https://github.com/amis92/RecordGenerator/compare/v0.4.1...HEAD
+[0.4.1]: https://github.com/amis92/RecordGenerator/compare/v0.4.0...v0.4.1
+[0.4.0]: https://github.com/amis92/RecordGenerator/compare/v0.3.4...v0.4.0
+[0.3.4]: https://github.com/amis92/RecordGenerator/compare/v0.3.3...v0.3.4
+[0.3.3]: https://github.com/amis92/RecordGenerator/compare/v0.3.2...v0.3.3
+[0.3.2]: https://github.com/amis92/RecordGenerator/compare/v0.3.1...v0.3.2
+[0.3.1]: https://github.com/amis92/RecordGenerator/compare/v0.3.0...v0.3.1
+[0.3.0]: https://github.com/amis92/RecordGenerator/compare/v0.2.1...v0.3.0
+[0.2.1]: https://github.com/amis92/RecordGenerator/compare/v0.2.0...v0.2.1
+[0.2.0]: https://github.com/amis92/RecordGenerator/compare/v0.1.1...v0.2.0
+[0.1.1]: https://github.com/amis92/RecordGenerator/compare/v0.1.0...v0.1.1
+[0.1.0]: https://github.com/amis92/RecordGenerator/releases/tag/v0.1.0

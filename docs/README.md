@@ -5,7 +5,7 @@
 ## Description
 [Description]: #description
 
-C# Record Generator makes creating record classes a breeze! Just adorn your data class with `[Record]` attribute and keep your code clean and simple. The backing code is generated on build-time, including IntelliSense support (just save the file, Visual Studio will make a build in background).
+C# Record Generator makes creating **immutable** record types a breeze! Just adorn your data type with `[Record]` attribute and keep your code clean and simple. The backing code is generated on build-time, including IntelliSense support (just save the file, Visual Studio will make a build in background).
 
 [![NuGet package](https://img.shields.io/nuget/v/Amadevus.RecordGenerator.svg)](https://www.nuget.org/packages/Amadevus.RecordGenerator/)
 [![Build status](https://img.shields.io/appveyor/ci/amis92/recordgenerator/master.svg?label=build%20(master))](https://ci.appveyor.com/project/amis92/recordgenerator/branch/master)
@@ -21,6 +21,7 @@ C# Record Generator makes creating record classes a breeze! Just adorn your data
 * [Description]
 * [Installation]
 * [Usage]
+* [Features]
 * [Examples]
 * [Diagnostics]
 * [Requirements]
@@ -32,10 +33,12 @@ C# Record Generator makes creating record classes a breeze! Just adorn your data
 
 As it is a NuGet, it's really simple:
 
+* From terminal `dotnet add package Amadevus.RecordGenerator`
 * Package Manager `Install-Package Amadevus.RecordGenerator`
 * Or from `Manage NuGet packages` search for `Amadevus.RecordGenerator`
 
-You also need to add a `DotNetCliToolReference` of `dotnet-codegen` into `ItemGroup` in your project file
+##### Important Note
+You also need to add a `DotNetCliToolReference` of `dotnet-codegen` into an `ItemGroup` in your project file
  (or `Directory.Build.props` if used). The version of the tool should correspond with the version of
  `CodeGeneration.Roslyn.BuildTime` this project depends on.
 
@@ -53,17 +56,19 @@ You also need to add a `DotNetCliToolReference` of `dotnet-codegen` into `ItemGr
 [Usage]: #usage
 
 ```cs
-namespace TestApp
+using Amadevus.RecordGenerator;
+
+namespace Example
 {
     [Record]
-    partial class RecordTest
+    partial class Foo
     {
-        public string Name { get; }
+        public string Bar { get; }
     }
 }
 ```
 
-As you can see, it's very nice and easy. You just have to **decorate your class
+As you can see, it's very nice and easy. You just have to **decorate your type
 with `[Record]` attribute** and voilà, you have made yoursef a record type!
 
 ##### What does it mean, a record type?
@@ -75,23 +80,31 @@ the rescue!
 ##### What do I get?
 
 The generator creates new partial for your type with additional members. The generator first
-acquires a list of record entries - properties that are read-only and auto-implemented
+acquires a list of **record entries** - public properties that are read-only and auto-implemented
 (which basically means they're `public SomeType SomeName { get; }`). Then it generates additional
-members which make using your record actually possible. These are currently:
+members, depending on features selected in `[Record(Features)]` attribute. (If nothing is selected, `Default` value is used)
 
-1. Constructor that has a parameter for every record entry, and assigns those parameters
-   to corresponding auto-properties.
-2. `With` mutators which take single record entry parameter and return new record instance
-   with all values of record entries taken from current instance, except the parameter one which 
-   is changed.
-3. `Update` method which essentially wraps constructor.
-4. `Builder` nested class which has read-write properties same as record type and a `ToImmutable`
-    method which returns a new record instance with builder's properties copied.
-5. `ToBuilder` method which creates a builder with record's properties copied.
-6. `Deconstruct` method which enables deconstruction of record into a list of variables like
-    tuples do since C# 7.0 (ValueTuple).
-7. `Validate` partial method called from constructor after all properties are assigned. You may
-    (but don't have to) implement it - this would be the place to check for null arguments or similar.
+
+## Features
+[Features]: #features
+
+The `[Flags] enum Features` has the following values:
+
+Feature | Generated Members | Description
+-|-|-
+`Constructor` | `.ctor`, `Validate` | Has a parameter for every record entry, and assigns those parameters to corresponding auto-properties. At the end, the partial method `Validate` is invoked.
+`Withers` | `WithBar`, `Update` | `With`-methods which take single record entry parameter and return new record instance with all values of record entries taken from current instance, except the parameter one which is changed to the parameter value. `Update` is a constructor forward.
+`ToString` | `ToString` | Generates an override that replicates an anonymous class's `ToString` behavior.
+`Builder` | `Builder`, `ToBuilder` | Nested class which has the same record entries as the record, but read-write, and a `ToImmutable` method that creates a record instance with builder's values. `ToBuilder` method returns a new builder instance with record's values copied.
+`Deconstruct` | `Deconstruct` | Method which enables deconstruction of record into a list of variables like tuples do since C# 7.0 (ValueTuple). See Microsoft docs: [Deconstruct].
+`ObjectEquals` | `object.Equals(object)`, `object.GetHashCode()` | Overrides that use record entries for comparisons and hash calculations.
+`EquatableEquals` | `IEquatable<Foo>.Equals(Foo)` | Implements the interface.
+`OperatorEquals` | `==`, `!=` | Implements the operators.
+`Equality` | - | Bundle of `ObjectEquals`, `EquatableEquals`, `OperatorEquals` features.
+`Default` | - | Bundle of all above features.
+
+[Deconstruct]: https://docs.microsoft.com/dotnet/csharp/deconstruct#deconstructing-user-defined-types
+
 
 ## Examples
 [Examples]: #examples
@@ -112,9 +125,9 @@ diagnostics/codefixes that help you use Records correctly. See [Analyzers].
 
 ![Visual Studio logo](https://upload.wikimedia.org/wikipedia/commons/6/61/Visual_Studio_2017_logo_and_wordmark.svg)
 
-It is a `netstandard1.6` package, and the generation also works with CLI builds, both using `dotnet` and `msbuild`.
+It is a development-only package, and the generation also works with CLI builds, both using `dotnet` and `msbuild`. The `Attributes` target `netstandard1.0` (the only compile-time dependecy).
 
-It depends on `DotNetCliTool` (`dotnet-codegen`). These kind of tools are only supported in SDK-format `csproj` projects, which in turn is only supported in VS2017+/MSBuild 15.0+ (outside of `dotnet` CLI tools).
+It depends on `DotNetCliTool` `dotnet-codegen`. These kind of tools are only supported in SDK-format `csproj` projects, which in turn is only supported in VS2017+/MSBuild 15.0+ (outside of `dotnet` CLI tools).
 
 Roslyn Analyzer with CodeFix, to be supported in IDE, requires **Visual Studio 2017+** or **VS Code v1.19+**.
 
@@ -131,8 +144,6 @@ If you want to use packages separately, there is more work to do.
 [Development]: #development
 
 To build the solution, .NET Core SDK v2.1.500 is required, as specified in `global.json`.
-
-It must be built on Windows with MSBuild toolset (min. v15.0), since it targets Windows frameworks in Attributes package.
 
 ## Credits
 [Credits]: #credits
