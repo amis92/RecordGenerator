@@ -23,7 +23,8 @@ namespace Amadevus.RecordGenerator.Generators
                     descriptor =>
                         PartialGenerationResult.Empty
                         .AddMember(GenerateUpdateMethod(descriptor))
-                        .AddMembers(GenerateMutators(descriptor))),
+                        .AddMembers(GenerateMutators(descriptor))
+                        .AddMembers(GenerateMutatorWithOptionalParams(descriptor))),
                 // string formatting
                 PartialGenerator.Member(Features.ToString, GenerateToString));
 
@@ -117,6 +118,38 @@ namespace Amadevus.RecordGenerator.Generators
                 {
                     return Identifier($"{Names.WithPrefix}{entry.Identifier.ValueText}");
                 }
+            }
+        }
+
+        private static IEnumerable<MemberDeclarationSyntax> GenerateMutatorWithOptionalParams(RecordDescriptor descriptor) 
+        {
+            if (descriptor.Entries.Length == 0) yield break;
+
+            //public Person With(Optional<string> name, Optional<int> age) {
+            //    return new Person(name.GetValueOrDefault(this.Name), age.GetValueOrDefault(this.Age));
+            //}
+
+            yield return
+            MethodDeclaration(descriptor.TypeSyntax, Identifier(Names.WithPrefix))
+            .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
+            .WithParameterList(descriptor.Entries.ToOptionalParameterSyntax())
+            .WithBody(Block(SingletonList(ReturnStatement(
+                            ObjectCreationExpression(descriptor.TypeSyntax)
+                            .WithArgumentList(ArgumentList(SeparatedList(descriptor.Entries.Select(GetValue))))))));
+
+            ArgumentSyntax GetValue(RecordDescriptor.Entry entry) {
+                return
+                Argument(
+                    InvocationExpression(
+                        MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            IdentifierName(entry.IdentifierInCamelCase.Text),
+                            IdentifierName(nameof(Optional<int>.GetValueOr))))
+                    .WithArgumentList(ArgumentList(SingletonSeparatedList(Argument(
+                        MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            ThisExpression(),
+                            IdentifierName(entry.Identifier.Text)))))));
             }
         }
 
