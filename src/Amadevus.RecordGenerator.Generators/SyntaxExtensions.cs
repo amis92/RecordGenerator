@@ -15,7 +15,8 @@ namespace Amadevus.RecordGenerator.Generators
     {
         public static ParameterListSyntax ToOptionalParameterSyntax(this IEnumerable<RecordDescriptor.Entry> entries) 
         {
-            return 
+            // (Optional<string> name = default, Optional<int> age = default)
+            return
             ParameterList(
                 SeparatedList(
                     entries.Select(x => Parameter(x.IdentifierInCamelCase)
@@ -27,6 +28,7 @@ namespace Amadevus.RecordGenerator.Generators
 
         public static QualifiedNameSyntax ToOptionalType(this TypeSyntax type) 
         {
+            // Optional<type>
             return 
             QualifiedName(
                 QualifiedName(

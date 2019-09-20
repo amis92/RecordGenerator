@@ -125,7 +125,7 @@ namespace Amadevus.RecordGenerator.Generators
         {
             if (descriptor.Entries.Length == 0) yield break;
 
-            //public Person With(Optional<string> name, Optional<int> age) {
+            //public Person With(Optional<string> name = default, Optional<int> age = default) {
             //    return new Person(name.GetValueOrDefault(this.Name), age.GetValueOrDefault(this.Age));
             //}
 
