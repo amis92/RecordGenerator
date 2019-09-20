@@ -15,11 +15,12 @@ namespace Amadevus.RecordGenerator.Generators
     {
         public static ParameterListSyntax ToOptionalParameterSyntax(this IEnumerable<RecordDescriptor.Entry> entries) 
         {
-            // (Optional<string> name = default, Optional<int> age = default)
+            // (in Optional<string> name = default, in Optional<int> age = default)
             return
             ParameterList(
                 SeparatedList(
                     entries.Select(x => Parameter(x.IdentifierInCamelCase)
+                                        .AddModifiers(Token(SyntaxKind.InKeyword))
                                         .WithType(x.TypeSyntax.ToOptionalType())
                                         .WithDefault(EqualsValueClause(LiteralExpression(
                                             SyntaxKind.DefaultLiteralExpression,

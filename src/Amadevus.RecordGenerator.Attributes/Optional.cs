@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Text;
 
 namespace Amadevus.RecordGenerator {
-    public struct Optional<T> {
+    public readonly struct Optional<T> {
         private readonly T value;
         private readonly bool isDefined;
 
