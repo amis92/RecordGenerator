@@ -201,7 +201,7 @@ namespace Example
         [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
         public bool Equals(Person<TDetails> other)
         {
-            return other != null && FirstName == other.FirstName && LastName == other.LastName && Address == other.Address && System.Collections.Generic.EqualityComparer<DateTime>.Default.Equals(Birthday, other.Birthday) && System.Collections.Generic.EqualityComparer<TDetails>.Default.Equals(Details, other.Details);
+            return ReferenceEquals(this, other) || other != null && FirstName == other.FirstName && LastName == other.LastName && Address == other.Address && System.Collections.Generic.EqualityComparer<DateTime>.Default.Equals(Birthday, other.Birthday) && System.Collections.Generic.EqualityComparer<TDetails>.Default.Equals(Details, other.Details);
         }
     }
 

@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <DotNetCliToolReference Include="dotnet-codegen" Version="0.4.88" />
-    <PackageReference Include="Amadevus.RecordGenerator" Version="0.5.0-alpha.34" />
+    <PackageReference Include="Amadevus.RecordGenerator" Version="0.5.0-preview.1" />
   </ItemGroup>
 
 </Project>

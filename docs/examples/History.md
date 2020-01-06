@@ -167,7 +167,7 @@ namespace Example
             [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
             public bool Equals(Entry other)
             {
-                return other != null && Id == other.Id && Name == other.Name && Details == other.Details;
+                return Id == other.Id && Name == other.Name && Details == other.Details;
             }
         }
 

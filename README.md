@@ -7,7 +7,7 @@ Documentation available at [amis92.github.io/RecordGenerator](https://amis92.git
 ## Description
 [Description]: #description
 
-C# Record Generator makes creating **immutable** record classes a breeze! Just adorn your data class with `[Record]` attribute
+C# Record Generator makes creating **immutable** record types a breeze! Just adorn your data class with `[Record]` attribute
 and keep your code clean and simple. The backing code is generated on build-time, including IntelliSense support
 (just save the file, Visual Studio will make a build in background).
 
@@ -22,6 +22,43 @@ and keep your code clean and simple. The backing code is generated on build-time
 [![Azure Pipelines Build Status](https://dev.azure.com/amadevus/RecordGenerator/_apis/build/status/amis92.RecordGenerator?branchName=master)](https://dev.azure.com/amadevus/RecordGenerator/_build/latest?definitionId=1&branchName=master)
 
 ---
+
+## Demo
+
+Installation, usage, examples and all other docs available at [amis92.github.io/RecordGenerator](https://amis92.github.io/RecordGenerator)
+
+```csharp
+using Amadevus.RecordGenerator;
+
+namespace QuickDemo
+{
+    [Record]
+    public sealed partial class Contact
+    {
+        public int Id { get; }
+        public string Name { get; }
+        public string Email { get; }
+        public DateTime? Birthday { get; }
+
+        public static void Main()
+        {
+            var adam = new Contact.Builder
+            {
+                Id = 1,
+                Name = "Adam Demo",
+                Email = "foo@bar.com"
+            }.ToImmutable();
+            var adamWithBday = adam.WithBirthday(DateTime.UtcNow);
+            Console.WriteLine("Pretty display: " + adamWithBday);
+            // Pretty display: { Id = 1, Name = Adam Demo, Email = foo@bar.com, Birthday = 06.01.2020 23:17:06 }
+            Console.WriteLine("Check equality: " + adam.Equals(adamWithBday));
+            // Check equality: False
+            Console.WriteLine("Check equality: " + adam.Equals(new Contact(1, "Adam Demo", "foo@bar.com", null)));
+            // Check equality: True
+        }
+    }
+}
+```
 
 ## Development
 [Development]: #development
