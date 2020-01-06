@@ -282,7 +282,7 @@ namespace Amadevus.RecordGenerator.Generators
             //   // for struct
             //   return PropA == other.PropA && ...;
             //   // for class
-            //   return other != null && PropA == other.PropA && ...;
+            //   return ReferenceEquals(this, other) || other != null && PropA == other.PropA && ...;
             // }
             const string otherVariableName = "other";
             var propComparison =
@@ -291,13 +291,7 @@ namespace Amadevus.RecordGenerator.Generators
             var returnExpr =
                 descriptor.TypeDeclarationSyntaxKind == SyntaxKind.StructDeclaration
                 ? propComparison
-                : BinaryExpression(
-                    LogicalAndExpression,
-                    BinaryExpression(
-                        NotEqualsExpression,
-                        IdentifierName(otherVariableName),
-                        LiteralExpression(NullLiteralExpression)),
-                    propComparison);
+                : ReferenceTypeComparison();
             return
                 MethodDeclaration(
                     PredefinedType(
@@ -311,6 +305,23 @@ namespace Amadevus.RecordGenerator.Generators
                     .WithType(descriptor.TypeSyntax))
                 .AddBodyStatements(
                     ReturnStatement(returnExpr));
+            ExpressionSyntax ReferenceTypeComparison() =>
+                BinaryExpression(
+                    LogicalOrExpression,
+                    InvocationExpression(
+                        IdentifierName(nameof(object.ReferenceEquals)))
+                    .AddArgumentListArguments(
+                        Argument(
+                            ThisExpression()),
+                        Argument(
+                            IdentifierName(otherVariableName))),
+                    BinaryExpression(
+                        LogicalAndExpression,
+                        BinaryExpression(
+                            NotEqualsExpression,
+                            IdentifierName(otherVariableName),
+                            LiteralExpression(NullLiteralExpression)),
+                        propComparison));
         }
 
         private const string rightVariableName = "right";
