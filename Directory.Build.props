@@ -8,6 +8,8 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageProjectUrl>https://amis92.github.io/RecordGenerator</PackageProjectUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/amis92/RecordGenerator/master/docs/logo.png</PackageIconUrl>
+    <PackageIconPath>$(MSBuildThisFileDirectory)docs/logo.png</PackageIconPath>
+    <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/amis92/RecordGenerator</RepositoryUrl>
     <ReleaseNotes>https://github.com/amis92/RecordGenerator/blob/master/CHANGELOG.md</ReleaseNotes>
     <PackageTags>record immutable attribute generator generators generation amadevus recordgenerator code codegen codegenerator codegeneration</PackageTags>
@@ -17,7 +19,7 @@
     <LangVersion>7.3</LangVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <WarningsAsErrors Condition=" '$(Configuration)' == Release ">true</WarningsAsErrors>
+    <MSBuildTreatWarningsAsErrors Condition=" '$(Configuration)' == Release ">true</MSBuildTreatWarningsAsErrors>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
     <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)obj/$(MSBuildProjectName)/</BaseIntermediateOutputPath>
     <OutputPath>$(MSBuildThisFileDirectory)bin/$(MSBuildProjectName)/$(Configuration)/</OutputPath>
@@ -40,6 +42,10 @@
 
   <ItemGroup>
     <DotNetCliToolReference Include="dotnet-codegen" Version="$(CodeGenerationRoslynPackagesVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(PackageIconPath)" Pack="true" PackagePath="$(PackageIcon)" />
   </ItemGroup>
   
 </Project>
