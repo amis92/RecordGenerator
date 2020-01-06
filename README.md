@@ -28,6 +28,7 @@ and keep your code clean and simple. The backing code is generated on build-time
 Installation, usage, examples and all other docs available at [amis92.github.io/RecordGenerator](https://amis92.github.io/RecordGenerator)
 
 ```csharp
+using System;
 using Amadevus.RecordGenerator;
 
 namespace QuickDemo
@@ -39,7 +40,10 @@ namespace QuickDemo
         public string Name { get; }
         public string Email { get; }
         public DateTime? Birthday { get; }
+    }
 
+    public static class Program
+    {
         public static void Main()
         {
             var adam = new Contact.Builder
@@ -59,6 +63,7 @@ namespace QuickDemo
     }
 }
 ```
+The above is taken from [QuickDemo sample](samples/QuickDemo/Program.cs)
 
 ## Development
 [Development]: #development

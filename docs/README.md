@@ -78,6 +78,7 @@ with `[Record]` attribute** and voilà, you have made yoursef a record type!
 Using generated features:
 
 ```csharp
+using System;
 using Amadevus.RecordGenerator;
 
 namespace QuickDemo
@@ -89,7 +90,10 @@ namespace QuickDemo
         public string Name { get; }
         public string Email { get; }
         public DateTime? Birthday { get; }
+    }
 
+    public static class Program
+    {
         public static void Main()
         {
             var adam = new Contact.Builder
@@ -109,6 +113,8 @@ namespace QuickDemo
     }
 }
 ```
+
+The above is taken from [QuickDemo sample](../samples/QuickDemo/Program.cs)
 
 ##### What does it mean, a record type?
 
