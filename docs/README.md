@@ -143,7 +143,7 @@ If you want to use packages separately, there is more work to do.
 ## Development
 [Development]: #development
 
-To build the solution, .NET Core SDK v2.1.500 is required, as specified in `global.json`.
+To build the solution, .NET Core SDK v3.1.100 is required, as specified in `global.json`.
 
 ## Credits
 [Credits]: #credits
@@ -157,8 +157,6 @@ Analyzers in `Amadevus.RecordGenerator.Analyzers` were inspired by [xUnit.net's 
 
 All contributions are welcome, as well as critique. If you have any issues, problems or suggestions -
 please open an issue.
-
-When commiting a change, two main versioning mechanisms are branch name and version in `appveyor.yml`. Branch name will be used as a suffix when publishing packages on MyGet feed. Version will be used for both MyGet and releasing to NuGet. You might also update version in `Directory.Build.props` - that's used for non-CI builds.
 
 Visual Studio logo ™ Microsoft Corporation, used without permission.
 

@@ -26,7 +26,7 @@ and keep your code clean and simple. The backing code is generated on build-time
 ## Development
 [Development]: #development
 
-To build the solution, .NET Core SDK v2.1.500 is required, as specified in [`global.json`](global.json).
+To build the solution, .NET Core SDK v3.1.100 is required, as specified in [`global.json`](global.json).
 
 ## Credits
 [Credits]: #credits
