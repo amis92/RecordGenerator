@@ -19,9 +19,10 @@ namespace Amadevus.RecordGenerator.Analyzers
             string messageFormat, string description = null)
         {
             var isEnabledByDefault = true;
-            var helpLinkUri = HelpUriBase + id;
+            var fullId = IdPrefix + id;
+            var helpLinkUri = HelpUriBase + fullId;
             return new DiagnosticDescriptor(
-                IdPrefix + id, title, messageFormat, category.ToString(), defaultSeverity, isEnabledByDefault, description, helpLinkUri);
+                fullId, title, messageFormat, category.ToString(), defaultSeverity, isEnabledByDefault, description, helpLinkUri);
         }
 
         public static DiagnosticDescriptor X1000_RecordMustBePartial { get; } =
