@@ -28,7 +28,8 @@ namespace Amadevus.RecordGenerator.Generators
                 typeDeclaration.Identifier.WithoutTrivia(),
                 typeDeclaration.GetRecordProperties(semanticModel),
                 typeDeclaration.GetLocation(),
-                semanticModel.GetDeclaredSymbol(typeDeclaration).IsSealed);
+                semanticModel.GetDeclaredSymbol(typeDeclaration).IsSealed,
+                typeDeclaration.Kind());
         }
 
         private static ImmutableArray<RecordDescriptor.Entry> GetRecordProperties(this TypeDeclarationSyntax typeDeclaration, SemanticModel semanticModel)
