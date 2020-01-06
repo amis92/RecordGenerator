@@ -19,7 +19,7 @@
     <LangVersion>7.3</LangVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <WarningsAsErrors Condition=" '$(Configuration)' == Release ">true</WarningsAsErrors>
+    <MSBuildTreatWarningsAsErrors Condition=" '$(Configuration)' == Release ">true</MSBuildTreatWarningsAsErrors>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
     <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)obj/$(MSBuildProjectName)/</BaseIntermediateOutputPath>
     <OutputPath>$(MSBuildThisFileDirectory)bin/$(MSBuildProjectName)/$(Configuration)/</OutputPath>
