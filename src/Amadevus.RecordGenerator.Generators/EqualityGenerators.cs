@@ -279,9 +279,25 @@ namespace Amadevus.RecordGenerator.Generators
         private static MemberDeclarationSyntax GenerateEquatableEquals(RecordDescriptor descriptor)
         {
             // public bool Equals(MyRecord other) {
+            //   // for struct
+            //   return PropA == other.PropA && ...;
+            //   // for class
             //   return other != null && PropA == other.PropA && ...;
             // }
             const string otherVariableName = "other";
+            var propComparison =
+                GenerateEqualsExpressions(descriptor, otherVariableName)
+                    .Aggregate((prev, next) => BinaryExpression(LogicalAndExpression, prev, next));
+            var returnExpr =
+                descriptor.TypeDeclarationSyntaxKind == SyntaxKind.StructDeclaration
+                ? propComparison
+                : BinaryExpression(
+                    LogicalAndExpression,
+                    BinaryExpression(
+                        NotEqualsExpression,
+                        IdentifierName(otherVariableName),
+                        LiteralExpression(NullLiteralExpression)),
+                    propComparison);
             return
                 MethodDeclaration(
                     PredefinedType(
@@ -294,14 +310,7 @@ namespace Amadevus.RecordGenerator.Generators
                         Identifier(otherVariableName))
                     .WithType(descriptor.TypeSyntax))
                 .AddBodyStatements(
-                    ReturnStatement(
-                        GenerateEqualsExpressions(descriptor, otherVariableName)
-                        .Aggregate(
-                            BinaryExpression(
-                                NotEqualsExpression,
-                                IdentifierName(otherVariableName),
-                                LiteralExpression(NullLiteralExpression)),
-                            (prev, next) => BinaryExpression(LogicalAndExpression, prev, next))));
+                    ReturnStatement(returnExpr));
         }
 
         private const string rightVariableName = "right";
