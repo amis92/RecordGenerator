@@ -2,14 +2,18 @@ name: .NET Core CI
 on: push
 jobs:
   ci:
-    runs-on: windows-2019
+    runs-on: windows-latest
+    env:
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
     
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        version: 2.1.500
+        dotnet-version: 2.1.500
         
     - name: Restore packages
       run: dotnet restore -v m
