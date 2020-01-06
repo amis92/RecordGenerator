@@ -3,6 +3,8 @@ on: push
 jobs:
   ci:
     runs-on: windows-latest
+    env:
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     steps:
     - uses: actions/checkout@v2
       with:
@@ -11,7 +13,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        version: 2.1.500
+        dotnet-version: 2.1.500
         
     - name: Restore packages
       run: dotnet restore -v m
