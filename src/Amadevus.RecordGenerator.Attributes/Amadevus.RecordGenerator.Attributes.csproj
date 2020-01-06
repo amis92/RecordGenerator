@@ -2,7 +2,7 @@
   <Sdk Name="Microsoft.Build.CentralPackageVersions" />
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.0</TargetFrameworks>
+    <TargetFrameworks>net20;net40;netstandard1.0</TargetFrameworks>
     <RootNamespace>Amadevus.RecordGenerator</RootNamespace>
     <Description>Defines `[Record]` attribute and `Features` flags enum. See project site for more details.</Description>
   </PropertyGroup>
