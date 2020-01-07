@@ -7,11 +7,15 @@
 
 C# Record Generator makes creating **immutable** record types a breeze! Just adorn your data type with `[Record]` attribute and keep your code clean and simple. The backing code is generated on build-time, including IntelliSense support (just save the file, Visual Studio will make a build in background).
 
-[![NuGet package](https://img.shields.io/nuget/v/Amadevus.RecordGenerator.svg)](https://www.nuget.org/packages/Amadevus.RecordGenerator/)
-[![Build status](https://img.shields.io/appveyor/ci/amis92/recordgenerator/master.svg?label=build%20(master))](https://ci.appveyor.com/project/amis92/recordgenerator/branch/master)
-[![MyGet package](https://img.shields.io/myget/amadevus/v/Amadevus.RecordGenerator.svg?label=myget-ci)](https://www.myget.org/feed/amadevus/package/nuget/Amadevus.RecordGenerator)
 [![Join the chat at gitter!](https://img.shields.io/gitter/room/amis92/recordgenerator.svg)](https://gitter.im/amis92/RecordGenerator?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![License](https://img.shields.io/github/license/amis92/recordgenerator.svg)](https://github.com/amis92/RecordGenerator/blob/master/LICENSE)
+
+[![NuGet package](https://img.shields.io/nuget/v/Amadevus.RecordGenerator.svg)](https://www.nuget.org/packages/Amadevus.RecordGenerator/)
+[![NuGet package preview](https://img.shields.io/nuget/vpre/Amadevus.RecordGenerator.svg)](https://www.nuget.org/packages/Amadevus.RecordGenerator/)
+[![MyGet package](https://img.shields.io/myget/amadevus/v/Amadevus.RecordGenerator.svg?label=myget-ci)](https://www.myget.org/feed/amadevus/package/nuget/Amadevus.RecordGenerator)
+
+[![GitHub Actions - .NET CI workflow](https://github.com/amis92/RecordGenerator/workflows/.NET%20Core%20CI/badge.svg?branch=master)](https://github.com/amis92/RecordGenerator/actions?query=workflow%3A%22.NET+Core+CI%22+branch%3Amaster)
+[![Azure Pipelines Build Status](https://dev.azure.com/amadevus/RecordGenerator/_apis/build/status/amis92.RecordGenerator?branchName=master)](https://dev.azure.com/amadevus/RecordGenerator/_build/latest?definitionId=1&branchName=master)
 
 ---
 
@@ -61,7 +65,7 @@ using Amadevus.RecordGenerator;
 namespace Example
 {
     [Record]
-    partial class Foo
+    sealed partial class Foo
     {
         public string Bar { get; }
     }
@@ -70,6 +74,47 @@ namespace Example
 
 As you can see, it's very nice and easy. You just have to **decorate your type
 with `[Record]` attribute** and voilà, you have made yoursef a record type!
+
+Using generated features:
+
+```csharp
+using System;
+using Amadevus.RecordGenerator;
+
+namespace QuickDemo
+{
+    [Record]
+    public sealed partial class Contact
+    {
+        public int Id { get; }
+        public string Name { get; }
+        public string Email { get; }
+        public DateTime? Birthday { get; }
+    }
+
+    public static class Program
+    {
+        public static void Main()
+        {
+            var adam = new Contact.Builder
+            {
+                Id = 1,
+                Name = "Adam Demo",
+                Email = "foo@bar.com"
+            }.ToImmutable();
+            var adamWithBday = adam.WithBirthday(DateTime.UtcNow);
+            Console.WriteLine("Pretty display: " + adamWithBday);
+            // Pretty display: { Id = 1, Name = Adam Demo, Email = foo@bar.com, Birthday = 06.01.2020 23:17:06 }
+            Console.WriteLine("Check equality: " + adam.Equals(adamWithBday));
+            // Check equality: False
+            Console.WriteLine("Check equality: " + adam.Equals(new Contact(1, "Adam Demo", "foo@bar.com", null)));
+            // Check equality: True
+        }
+    }
+}
+```
+
+The above is taken from [QuickDemo sample](../samples/QuickDemo/Program.cs)
 
 ##### What does it mean, a record type?
 
@@ -92,7 +137,7 @@ The `[Flags] enum Features` has the following values:
 
 Feature | Generated Members | Description
 -|-|-
-`Constructor` | `.ctor`, `Validate` | Has a parameter for every record entry, and assigns those parameters to corresponding auto-properties. At the end, the partial method `Validate` is invoked.
+`Constructor` | `.ctor`, `OnConstructed` | Has a parameter for every record entry, and assigns those parameters to corresponding auto-properties. At the end, the partial method `OnConstructed` is invoked.
 `Withers` | `WithBar`, `Update` | `With`-methods which take single record entry parameter and return new record instance with all values of record entries taken from current instance, except the parameter one which is changed to the parameter value. `Update` is a constructor forward.
 `ToString` | `ToString` | Generates an override that replicates an anonymous class's `ToString` behavior.
 `Builder` | `Builder`, `ToBuilder` | Nested class which has the same record entries as the record, but read-write, and a `ToImmutable` method that creates a record instance with builder's values. `ToBuilder` method returns a new builder instance with record's values copied.
@@ -110,15 +155,13 @@ Feature | Generated Members | Description
 [Examples]: #examples
 
 * [Person](examples/Person.md)
-* [Enclosed type](examples/History.md)
+* [Enclosed type (History.Entry)](examples/History.md)
 
 ## Diagnostics
 [Diagnostics]: #diagnostics
 
 The `Amadevus.RecordGenerator.Analyzers` package (pulled in by main package) provides
 diagnostics/codefixes that help you use Records correctly. See [Analyzers].
-
-* [RecordGen1000](analyzers/rules/RecordGen1000.md) RecordMustBePartial with a codefix.
 
 ## Requirements
 [Requirements]: #requirements

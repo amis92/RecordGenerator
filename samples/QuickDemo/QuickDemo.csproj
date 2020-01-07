@@ -1,12 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <DotNetCliToolReference Include="dotnet-codegen" Version="0.4.88" />
     <PackageReference Include="Amadevus.RecordGenerator" Version="0.5.0-preview.1" />
+    <DotNetCliToolReference Include="dotnet-codegen" Version="0.4.88" />
   </ItemGroup>
 
 </Project>
