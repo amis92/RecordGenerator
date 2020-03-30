@@ -7,12 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CodeGeneration.Roslyn.BuildTime" />
+    <PackageReference Include="CodeGeneration.Roslyn.Tool" />
     <PackageReference Include="System.Collections.Immutable" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Amadevus.RecordGenerator.Generators\Amadevus.RecordGenerator.Generators.csproj" />
+    <ProjectReference Include="..\..\src\Amadevus.RecordGenerator.Generators\Amadevus.RecordGenerator.Generators.csproj"
+                      OutputItemType="CodeGenerationRoslynPlugin"
+                      ReferenceOutputAssembly="false"
+                      SkipGetTargetFrameworkProperties="true" />
+    <ProjectReference Include="..\..\src\Amadevus.RecordGenerator.Attributes\Amadevus.RecordGenerator.Attributes.csproj" />
   </ItemGroup>
 
 </Project>

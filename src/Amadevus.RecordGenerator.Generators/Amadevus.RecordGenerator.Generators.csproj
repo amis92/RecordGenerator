@@ -1,24 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Sdk Name="CodeGeneration.Roslyn.Plugin.Sdk" Version="0.7.43-alpha" />
   <Sdk Name="Microsoft.Build.CentralPackageVersions" />
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.6</TargetFramework>
-    <IsTool>true</IsTool>
-    <DevelopmentDependency>True</DevelopmentDependency>
-    <IncludeSymbols>false</IncludeSymbols>
-    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
     <Description>Code generators for [Record]-marked types; generate boilerplate code for immutable record types. See project site for installation instructions and more details.</Description>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Update="build/Amadevus.RecordGenerator.Generators.props" Pack="true" PackagePath="" />
     <Compile Include="../Amadevus.RecordGenerator.Analyzers/Descriptors.cs" />
     <Compile Include="../Amadevus.RecordGenerator.Attributes/**/*.cs" Link="Attributes/%(RecursiveDir)%(Filename)%(Extension)" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="CodeGeneration.Roslyn" PrivateAssets="all" />
-    <PackageReference Update="NETStandard.Library" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>

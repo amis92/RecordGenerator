@@ -6,7 +6,7 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  BuildConfiguration: 'Release'
+  Configuration: 'Release'
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
 
 steps:
@@ -33,20 +33,20 @@ steps:
   displayName: Build solution
   inputs:
     command: build
-    arguments: --no-restore -c $(BuildConfiguration)
+    arguments: --no-restore
 
 - task: DotNetCoreCLI@2
   displayName: Run tests
   inputs:
     command: test
-    arguments: --no-build -c $(BuildConfiguration)
+    arguments: --no-build
 
 - task: CopyFiles@1
   displayName: Collecting packages
   inputs:
     Contents: |
-      bin/Packages/$(BuildConfiguration)/*.nupkg
-      bin/Packages/$(BuildConfiguration)/*.snupkg
+      bin/Packages/$(Configuration)/*.nupkg
+      bin/Packages/$(Configuration)/*.snupkg
     TargetFolder: $(Build.ArtifactStagingDirectory)/nugets
     flattenFolders: true
 

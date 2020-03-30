@@ -20,7 +20,7 @@
       <dependency id="Amadevus.RecordGenerator.Attributes" version="$version$" />
       <dependency id="Amadevus.RecordGenerator.Generators" version="$version$" />
       <dependency id="Amadevus.RecordGenerator.Analyzers" version="$version$" />
-      <dependency id="CodeGeneration.Roslyn.BuildTime" version="$versionOfCodegenRoslyn$" />
+      <dependency id="CodeGeneration.Roslyn.Tool" version="$versionOfCodegenRoslyn$" />
     </dependencies>
   </metadata>
   <files>

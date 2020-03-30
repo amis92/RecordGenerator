@@ -2,17 +2,17 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <CodeGenerationRoslynPackagesVersion>0.4.88</CodeGenerationRoslynPackagesVersion>
+    <CodeGenerationRoslynPackagesVersion>0.7.43-alpha</CodeGenerationRoslynPackagesVersion>
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Update="Amadevus.RecordGenerator"        Version="[0.4.1]" PrivateAssets="all" />
-    <PackageReference Update="CodeGeneration.Roslyn"           Version="$(CodeGenerationRoslynPackagesVersion)" />
+    <PackageReference Update="Amadevus.RecordGenerator"         Version="[0.4.1]" PrivateAssets="all" />
+    <PackageReference Update="CodeGeneration.Roslyn"            Version="$(CodeGenerationRoslynPackagesVersion)" />
     <PackageReference Update="CodeGeneration.Roslyn.Attributes" Version="$(CodeGenerationRoslynPackagesVersion)" />
-    <PackageReference Update="CodeGeneration.Roslyn.BuildTime" Version="$(CodeGenerationRoslynPackagesVersion)" PrivateAssets="all" />
-    <PackageReference Update="Microsoft.CodeAnalysis.CSharp"   Version="[2.9.0]" />
-    <PackageReference Update="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="[2.9.0]" />
-    <PackageReference Update="System.Collections.Immutable"    Version="1.7.0" />
+    <PackageReference Update="CodeGeneration.Roslyn.Tool"       Version="$(CodeGenerationRoslynPackagesVersion)" PrivateAssets="all" />
+    <PackageReference Update="Microsoft.CodeAnalysis.CSharp"    Version="[3.4.0]" />
+    <PackageReference Update="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="[3.4.0]" />
+    <PackageReference Update="System.Collections.Immutable"     Version="1.7.0" />
   </ItemGroup>
   
   <ItemGroup Label="Tests">
