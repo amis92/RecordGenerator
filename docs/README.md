@@ -2,6 +2,8 @@
 
 ![RecordGenerator logo](https://raw.githubusercontent.com/amis92/RecordGenerator/master/docs/logo.png)
 
+> ℹ This documentation is for v0.5 of RecordGenerator.
+
 ## Description
 [Description]: #description
 
@@ -83,7 +85,7 @@ using Amadevus.RecordGenerator;
 
 namespace QuickDemo
 {
-    [Record]
+    [Record(Features.Default | Features.Equality)]
     public sealed partial class Contact
     {
         public int Id { get; }
@@ -146,7 +148,7 @@ Feature | Generated Members | Description
 `EquatableEquals` | `IEquatable<Foo>.Equals(Foo)` | Implements the interface.
 `OperatorEquals` | `==`, `!=` | Implements the operators.
 `Equality` | - | Bundle of `ObjectEquals`, `EquatableEquals`, `OperatorEquals` features.
-`Default` | - | Bundle of all above features.
+`Default` | - | Bundle of all above features, except `Equality`.
 
 [Deconstruct]: https://docs.microsoft.com/dotnet/csharp/deconstruct#deconstructing-user-defined-types
 
