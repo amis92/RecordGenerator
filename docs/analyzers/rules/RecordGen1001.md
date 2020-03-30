@@ -28,7 +28,7 @@ To fix a violation of this rule, either:
 ```csharp
 using Amadevus.RecordGenerator;
 
-[Record]
+[Record(Features.Equality)]
 partial class DataClass
 {
     public string Name { get; }
@@ -40,7 +40,7 @@ partial class DataClass
 ```csharp
 using Amadevus.RecordGenerator;
 
-[Record]
+[Record(Features.Equality)]
 sealed partial class DataClass
 {
     public string Name { get; }

@@ -2,7 +2,7 @@
 
 namespace Amadevus.RecordGenerator.TestsBase
 {
-    [Record]
+    [Record(Features.Default | Features.Equality)]
     public sealed partial class Item
     {
         public string Id { get; }
