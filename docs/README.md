@@ -2,6 +2,8 @@
 
 ![RecordGenerator logo](https://raw.githubusercontent.com/amis92/RecordGenerator/master/docs/logo.png)
 
+> ℹ This documentation is for v0.5 of RecordGenerator.
+
 ## Description
 [Description]: #description
 
