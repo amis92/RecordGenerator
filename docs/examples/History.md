@@ -11,7 +11,7 @@ namespace Example
 {
     public partial class History
     {
-        [Record]
+        [Record(Features.Default | Features.Equality)]
         private partial struct Entry
         {
             public int Id { get; }

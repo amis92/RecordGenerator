@@ -110,24 +110,24 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                                 public string Name { get; }
                             }
                         }".CropRawIndent(),
-                    NewSource = @"
-                        namespace TestApplication
-                        {
-                            using Amadevus.RecordGenerator;
+                    //NewSource = @"
+                    //    namespace TestApplication
+                    //    {
+                    //        using Amadevus.RecordGenerator;
 
-                            [Record]
-                            sealed class RecordType
-                            {
-                                public string Name { get; }
-                            }
-                        }".CropRawIndent(),
-                    ExpectedDiagnostics = new[]
-                    {
-                        new DiagnosticResult(Descriptors.X1001_RecordMustBeSealedIfEqualityIsEnabled, "RecordType")
-                        {
-                            Locations = new DiagnosticResultLocation(filename, 6, 11).ToSingletonArray()
-                        }
-                    }
+                    //        [Record]
+                    //        sealed class RecordType
+                    //        {
+                    //            public string Name { get; }
+                    //        }
+                    //    }".CropRawIndent(),
+                    //ExpectedDiagnostics = new[]
+                    //{
+                    //    new DiagnosticResult(Descriptors.X1001_RecordMustBeSealedIfEqualityIsEnabled, "RecordType")
+                    //    {
+                    //        Locations = new DiagnosticResultLocation(filename, 6, 11).ToSingletonArray()
+                    //    }
+                    //}
                 };
                 yield return new GeneratorTheoryData
                 {
@@ -176,24 +176,24 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                                 public string Name { get; }
                             }
                         }".CropRawIndent(),
-                    NewSource = @"
-                        namespace TestApplication
-                        {
-                            using Amadevus.RecordGenerator;
+                    //NewSource = @"
+                    //    namespace TestApplication
+                    //    {
+                    //        using Amadevus.RecordGenerator;
 
-                            [Record]
-                            public sealed partial class RecordType
-                            {
-                                public string Name { get; }
-                            }
-                        }".CropRawIndent(),
-                    ExpectedDiagnostics = new[]
-                    {
-                        new DiagnosticResult(Descriptors.X1001_RecordMustBeSealedIfEqualityIsEnabled, "RecordType")
-                        {
-                            Locations = new DiagnosticResultLocation(filename, 6, 26).ToSingletonArray()
-                        }
-                    }
+                    //        [Record]
+                    //        public sealed partial class RecordType
+                    //        {
+                    //            public string Name { get; }
+                    //        }
+                    //    }".CropRawIndent(),
+                    //ExpectedDiagnostics = new[]
+                    //{
+                    //    new DiagnosticResult(Descriptors.X1001_RecordMustBeSealedIfEqualityIsEnabled, "RecordType")
+                    //    {
+                    //        Locations = new DiagnosticResultLocation(filename, 6, 26).ToSingletonArray()
+                    //    }
+                    //}
                 };
                 yield return new GeneratorTheoryData
                 {
@@ -212,27 +212,27 @@ namespace Amadevus.RecordGenerator.Analyzers.Test
                                 }
                             }
                         }".CropRawIndent(),
-                    NewSource = @"
-                        namespace TestApplication
-                        {
-                            using Amadevus.RecordGenerator;
+                    //NewSource = @"
+                    //    namespace TestApplication
+                    //    {
+                    //        using Amadevus.RecordGenerator;
 
-                            class OuterClass
-                            {
-                                [Record]
-                                sealed class RecordType
-                                {
-                                    public string Name { get; }
-                                }
-                            }
-                        }".CropRawIndent(),
-                    ExpectedDiagnostics = new[]
-                    {
-                        new DiagnosticResult(Descriptors.X1001_RecordMustBeSealedIfEqualityIsEnabled, "RecordType")
-                        {
-                            Locations = new DiagnosticResultLocation(filename, 8, 15).ToSingletonArray()
-                        }
-                    }
+                    //        class OuterClass
+                    //        {
+                    //            [Record]
+                    //            sealed class RecordType
+                    //            {
+                    //                public string Name { get; }
+                    //            }
+                    //        }
+                    //    }".CropRawIndent(),
+                    //ExpectedDiagnostics = new[]
+                    //{
+                    //    new DiagnosticResult(Descriptors.X1001_RecordMustBeSealedIfEqualityIsEnabled, "RecordType")
+                    //    {
+                    //        Locations = new DiagnosticResultLocation(filename, 8, 15).ToSingletonArray()
+                    //    }
+                    //}
                 };
             }
         }

@@ -84,6 +84,6 @@ namespace Amadevus.RecordGenerator
         /// <summary>
         /// Default feature set.
         /// </summary>
-        Default = Constructor | Withers | ToString | Builder | Deconstruct | Equality
+        Default = Constructor | Withers | ToString | Builder | Deconstruct
     }
 }
