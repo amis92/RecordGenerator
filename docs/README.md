@@ -73,7 +73,7 @@ namespace Example
 ```
 
 As you can see, it's very nice and easy. You just have to **decorate your type
-with `[Record]` attribute** and voilà, you have made yoursef a record type!
+with `[Record]` attribute** and voilà, you have made yourself a record type!
 
 Using generated features:
 
