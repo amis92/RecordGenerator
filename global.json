@@ -3,7 +3,7 @@
   "msbuild-sdks": {
     "Microsoft.Build.CentralPackageVersions": "2.0.52",
     "Microsoft.Build.NoTargets": "1.0.94",
-    "CodeGeneration.Roslyn.Plugin.Sdk": "0.7.57-alpha",
-    "CodeGeneration.Roslyn.PluginMetapackage.Sdk": "0.7.57-alpha"
+    "CodeGeneration.Roslyn.Plugin.Sdk": "0.7.63",
+    "CodeGeneration.Roslyn.PluginMetapackage.Sdk": "0.7.63"
   }
 }
