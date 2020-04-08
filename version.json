@@ -2,7 +2,8 @@
   "$schema": "https://raw.githubusercontent.com/AArnott/Nerdbank.GitVersioning/master/src/NerdBank.GitVersioning/version.schema.json",
   "version": "0.6.0-alpha.{height}",
   "nugetPackageVersion": {"semVer": 2},
-  "publicReleaseRefSpec": [ "^refs/heads/master$" ],
+  "publicReleaseRefSpec": [ "^refs/heads/master$", "^ref/heads/release/v\\d+\\.\\d+$" ],
+  "versionHeightOffset": 0,
   "cloudBuild": {
     "setVersionVariables": true
   }

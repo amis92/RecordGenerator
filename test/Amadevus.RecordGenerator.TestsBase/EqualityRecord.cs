@@ -24,7 +24,9 @@ namespace Amadevus.RecordGenerator.TestsBase
     }
 
     [Record(Features.EquatableEquals | Features.ObjectEquals)]
+#pragma warning disable CA2231 // Overload operator equals on overriding value type Equals
     public partial struct EqualityRecordStructWithEquatableAndObjectEquals
+#pragma warning restore CA2231 // Overload operator equals on overriding value type Equals
     {
         public string StringProperty { get; }
         public Regex RegexProperty { get; }

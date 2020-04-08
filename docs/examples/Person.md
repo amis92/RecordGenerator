@@ -13,7 +13,7 @@ using Amadevus.RecordGenerator;
 
 namespace Example
 {
-    [Record]
+    [Record(Features.Default | Features.Equality)]
     public sealed partial class Person<TDetails>
     {
         public string FirstName { get; }
