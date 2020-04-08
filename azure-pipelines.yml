@@ -10,9 +10,10 @@ variables:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
 
 steps:
-- task: DotNetCoreInstaller@0
+- task: UseDotNet@2
   inputs:
-    version: '3.1.100'
+    useGlobalJson: true
+    performMultiLevelLookup: true
 
 - script: |
     dotnet tool install --tool-path . nbgv
@@ -41,16 +42,16 @@ steps:
     command: test
     arguments: --no-build
 
-- task: CopyFiles@1
+- task: CopyFiles@2
   displayName: Collecting packages
   inputs:
-    Contents: |
+    contents: |
       bin/Packages/$(Configuration)/*.nupkg
       bin/Packages/$(Configuration)/*.snupkg
-    TargetFolder: $(Build.ArtifactStagingDirectory)/nugets
+    targetFolder: $(Build.ArtifactStagingDirectory)/nugets
     flattenFolders: true
 
-- task: PublishPipelineArtifact@0
+- task: PublishPipelineArtifact@1
   displayName: Publish nuget artifacts
   inputs:
     artifactName: nugets
