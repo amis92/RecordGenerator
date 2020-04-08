@@ -15,6 +15,8 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.100
+    - name: Tool restore
+      run: dotnet tool restore
         
     - name: Restore packages
       run: dotnet restore -v m
@@ -27,10 +29,4 @@ jobs:
     
     - name: Build samples
       shell: pwsh
-      run: |
-        Get-ChildItem samples -Directory | ForEach-Object {
-          Push-Location $_
-          Write-Host $_.FullName -ForegroundColor Green
-          dotnet build
-          Pop-Location
-        }
+      run: samples/build.ps1

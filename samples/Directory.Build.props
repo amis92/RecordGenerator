@@ -1,3 +1,25 @@
 <Project>
-  <!-- empty file to prevent inclusion of the equivalent file in repo root -->
+  
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)obj/$(MSBuildProjectName)/</BaseIntermediateOutputPath>
+    <OutputPath>$(MSBuildThisFileDirectory)bin/$(MSBuildProjectName)/$(Configuration)/</OutputPath>
+    <PackageOutputPath>$(MSBuildThisFileDirectory)bin/Packages/$(Configuration)/</PackageOutputPath>
+
+    <RecordGeneratorVersion Condition=" '$(RecordGeneratorVersion)' == '' ">*</RecordGeneratorVersion>
+    <!-- Since we're using local nugets with prerelease versions, but samples build as 1.0.0 (default), ignore
+    NU5104 "A stable release of a package should not have a prerelease dependency." -->
+    <NoWarn>$(NoWarn);NU5104</NoWarn>
+    <RestorePackagesPath>$(MSBuildThisFileDirectory)/.nuget/</RestorePackagesPath>
+
+    <_MainPackagesDebug>$(MSBuildThisFileDirectory)../bin/Packages/Debug/</_MainPackagesDebug>
+    <_MainPackagesRelease>$(MSBuildThisFileDirectory)../bin/Packages/Release/</_MainPackagesRelease>
+    <RestoreAdditionalProjectSources>@(CustomLocalFeed);$(RestoreAdditionalProjectSources)</RestoreAdditionalProjectSources>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <CustomLocalFeed Include="$(_MainPackagesDebug)" Condition="Exists($(_MainPackagesDebug))" />
+    <CustomLocalFeed Include="$(_MainPackagesRelease)" Condition="Exists($(_MainPackagesRelease))" />
+  </ItemGroup>
+  
 </Project>

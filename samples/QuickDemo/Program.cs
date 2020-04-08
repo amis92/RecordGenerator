@@ -3,7 +3,7 @@ using Amadevus.RecordGenerator;
 
 namespace QuickDemo
 {
-    [Record]
+    [Record(Features.Default | Features.Equality)]
     public sealed partial class Contact
     {
         public int Id { get; }
