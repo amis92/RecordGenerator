@@ -141,8 +141,8 @@ Feature | Generated Members | Description
 ## Examples
 [Examples]: #examples
 
-* [Person](examples/Person.md)
-* [Enclosed type (History.Entry)](examples/History.md)
+* [Person](examples/Person.md) - with Default and Equality features
+* [Enclosed type (History.Entry)](examples/History.md) with default features
 
 ## Diagnostics
 [Diagnostics]: #diagnostics

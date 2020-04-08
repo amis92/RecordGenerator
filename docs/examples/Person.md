@@ -48,7 +48,7 @@ namespace Example
 {
     partial class Person<TDetails>
     {
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
         public Person(string firstName, string lastName, string address, DateTime birthday, TDetails details)
         {
             this.FirstName = firstName;
@@ -59,45 +59,45 @@ namespace Example
             OnConstructed();
         }
 
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
         partial void OnConstructed();
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
         public Person<TDetails> Update(string firstName, string lastName, string address, DateTime birthday, TDetails details)
         {
             return new Person<TDetails>(firstName, lastName, address, birthday, details);
         }
 
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
         public Person<TDetails> WithFirstName(string value)
         {
             return Update(value, LastName, Address, Birthday, Details);
         }
 
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
         public Person<TDetails> WithLastName(string value)
         {
             return Update(FirstName, value, Address, Birthday, Details);
         }
 
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
         public Person<TDetails> WithAddress(string value)
         {
             return Update(FirstName, LastName, value, Birthday, Details);
         }
 
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
         public Person<TDetails> WithBirthday(DateTime value)
         {
             return Update(FirstName, LastName, Address, value, Details);
         }
 
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
         public Person<TDetails> WithDetails(TDetails value)
         {
             return Update(FirstName, LastName, Address, Birthday, value);
         }
 
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
         public override string ToString() => new
         {
         FirstName, LastName, Address, Birthday, Details
@@ -108,7 +108,7 @@ namespace Example
 
     partial class Person<TDetails>
     {
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
         public Builder ToBuilder()
         {
             return new Builder{FirstName = FirstName, LastName = LastName, Address = Address, Birthday = Birthday, Details = Details};
@@ -116,42 +116,42 @@ namespace Example
 
         public partial class Builder
         {
-            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
             public string FirstName
             {
                 get;
                 set;
             }
 
-            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
             public string LastName
             {
                 get;
                 set;
             }
 
-            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
             public string Address
             {
                 get;
                 set;
             }
 
-            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
             public DateTime Birthday
             {
                 get;
                 set;
             }
 
-            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
             public TDetails Details
             {
                 get;
                 set;
             }
 
-            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
             public Person<TDetails> ToImmutable()
             {
                 return new Person<TDetails>(FirstName, LastName, Address, Birthday, Details);
@@ -161,7 +161,7 @@ namespace Example
 
     partial class Person<TDetails>
     {
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
         public void Deconstruct(out string firstName, out string lastName, out string address, out DateTime birthday, out TDetails details)
         {
             firstName = this.FirstName;
@@ -174,13 +174,13 @@ namespace Example
 
     partial class Person<TDetails>
     {
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
         public override bool Equals(object obj)
         {
             return obj is Person<TDetails> other && this.Equals(other);
         }
 
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
         public override int GetHashCode()
         {
             unchecked
@@ -198,7 +198,7 @@ namespace Example
 
     partial class Person<TDetails> : System.IEquatable<Person<TDetails>>
     {
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
         public bool Equals(Person<TDetails> other)
         {
             return ReferenceEquals(this, other) || other != null && FirstName == other.FirstName && LastName == other.LastName && Address == other.Address && System.Collections.Generic.EqualityComparer<DateTime>.Default.Equals(Birthday, other.Birthday) && System.Collections.Generic.EqualityComparer<TDetails>.Default.Equals(Details, other.Details);
@@ -207,13 +207,13 @@ namespace Example
 
     partial class Person<TDetails>
     {
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
         public static bool operator ==(Person<TDetails> left, Person<TDetails> right)
         {
             return System.Collections.Generic.EqualityComparer<Person<TDetails>>.Default.Equals(left, right);
         }
 
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
         public static bool operator !=(Person<TDetails> left, Person<TDetails> right)
         {
             return !(left == right);

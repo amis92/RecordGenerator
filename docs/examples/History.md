@@ -11,7 +11,7 @@ namespace Example
 {
     public partial class History
     {
-        [Record(Features.Default | Features.Equality)]
+        [Record]
         private partial struct Entry
         {
             public int Id { get; }
@@ -46,7 +46,7 @@ namespace Example
     {
         partial struct Entry
         {
-            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
             public Entry(int id, string name, string details)
             {
                 this.Id = id;
@@ -55,33 +55,33 @@ namespace Example
                 OnConstructed();
             }
 
-            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
             partial void OnConstructed();
-            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
             public Entry Update(int id, string name, string details)
             {
                 return new Entry(id, name, details);
             }
 
-            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
             public Entry WithId(int value)
             {
                 return Update(value, Name, Details);
             }
 
-            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
             public Entry WithName(string value)
             {
                 return Update(Id, value, Details);
             }
 
-            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
             public Entry WithDetails(string value)
             {
                 return Update(Id, Name, value);
             }
 
-            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
             public override string ToString() => new
             {
             Id, Name, Details
@@ -92,7 +92,7 @@ namespace Example
 
         partial struct Entry
         {
-            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
             public Builder ToBuilder()
             {
                 return new Builder{Id = Id, Name = Name, Details = Details};
@@ -100,28 +100,28 @@ namespace Example
 
             public partial class Builder
             {
-                [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+                [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
                 public int Id
                 {
                     get;
                     set;
                 }
 
-                [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+                [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
                 public string Name
                 {
                     get;
                     set;
                 }
 
-                [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+                [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
                 public string Details
                 {
                     get;
                     set;
                 }
 
-                [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+                [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
                 public Entry ToImmutable()
                 {
                     return new Entry(Id, Name, Details);
@@ -131,58 +131,12 @@ namespace Example
 
         partial struct Entry
         {
-            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
+            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.6.0.0")]
             public void Deconstruct(out int id, out string name, out string details)
             {
                 id = this.Id;
                 name = this.Name;
                 details = this.Details;
-            }
-        }
-
-        partial struct Entry
-        {
-            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
-            public override bool Equals(object obj)
-            {
-                return obj is Entry other && this.Equals(other);
-            }
-
-            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
-            public override int GetHashCode()
-            {
-                unchecked
-                {
-                    var hashCode = 2085527896;
-                    hashCode = hashCode * -1521134295 + System.Collections.Generic.EqualityComparer<int>.Default.GetHashCode(Id);
-                    hashCode = hashCode * -1521134295 + System.Collections.Generic.EqualityComparer<string>.Default.GetHashCode(Name);
-                    hashCode = hashCode * -1521134295 + System.Collections.Generic.EqualityComparer<string>.Default.GetHashCode(Details);
-                    return hashCode;
-                }
-            }
-        }
-
-        partial struct Entry : System.IEquatable<Entry>
-        {
-            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
-            public bool Equals(Entry other)
-            {
-                return Id == other.Id && Name == other.Name && Details == other.Details;
-            }
-        }
-
-        partial struct Entry
-        {
-            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
-            public static bool operator ==(Entry left, Entry right)
-            {
-                return System.Collections.Generic.EqualityComparer<Entry>.Default.Equals(left, right);
-            }
-
-            [System.CodeDom.Compiler.GeneratedCodeAttribute("Amadevus.RecordGenerator", "0.5.0.0")]
-            public static bool operator !=(Entry left, Entry right)
-            {
-                return !(left == right);
             }
         }
     }
