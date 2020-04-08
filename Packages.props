@@ -6,7 +6,6 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Update="Amadevus.RecordGenerator"         Version="[0.4.1]" PrivateAssets="all" />
     <PackageReference Update="CodeGeneration.Roslyn"            Version="$(CodeGenerationRoslynPackagesVersion)" />
     <PackageReference Update="CodeGeneration.Roslyn.Attributes" Version="$(CodeGenerationRoslynPackagesVersion)" />
     <PackageReference Update="CodeGeneration.Roslyn.Tool"       Version="$(CodeGenerationRoslynPackagesVersion)" PrivateAssets="all" />

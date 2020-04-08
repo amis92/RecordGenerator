@@ -27,10 +27,4 @@ jobs:
     
     - name: Build samples
       shell: pwsh
-      run: |
-        Get-ChildItem samples -Directory | ForEach-Object {
-          Push-Location $_
-          Write-Host $_.FullName -ForegroundColor Green
-          dotnet build
-          Pop-Location
-        }
+      run: samples/build.ps1
