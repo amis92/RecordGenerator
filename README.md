@@ -2,7 +2,7 @@
 
 ![RecordGenerator logo](https://raw.githubusercontent.com/amis92/RecordGenerator/master/docs/logo.png)
 
-> ℹ This is for v0.5 of RecordGenerator.
+> ℹ This is for v0.6 of RecordGenerator.
 
 Documentation available at [amis92.github.io/RecordGenerator](https://amis92.github.io/RecordGenerator) (or in [docs folder](docs/README.md)).
 
