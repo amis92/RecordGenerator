@@ -1,15 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <Sdk Name="CodeGeneration.Roslyn.Plugin.Sdk" Version="0.7.43-alpha" />
+  <Sdk Name="CodeGeneration.Roslyn.Plugin.Sdk" />
   <Sdk Name="Microsoft.Build.CentralPackageVersions" />
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <Description>Code generators for [Record]-marked types; generate boilerplate code for immutable record types. See project site for installation instructions and more details.</Description>
-    <TargetsForTfmSpecificContentInPackage>
-      _SetNoBuildForGeneratePackageOnBuild;
-      $(TargetsForTfmSpecificContentInPackage);
-      <!-- ... -->
-    </TargetsForTfmSpecificContentInPackage>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,11 +17,5 @@
       <_Parameter1>$(AssemblyName).UnitTests</_Parameter1>
     </AssemblyAttribute>
   </ItemGroup>
-
-  <Target Name="_SetNoBuildForGeneratePackageOnBuild" Condition=" '$(GeneratePackageOnBuild)' == 'true' ">
-    <PropertyGroup>
-      <NoBuild>true</NoBuild>
-    </PropertyGroup>
-  </Target>
   
 </Project>
