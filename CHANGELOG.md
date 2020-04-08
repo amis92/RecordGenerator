@@ -6,11 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.6.0] - 2020-04-08
 ### Changed
 
 * Update dependency: `CodeGeneration.Roslyn` v0.7.63; this drops the requirement for
   `dotnet-codegen` `DotNetCliToolReference` - now you only need `PackageReference` to
-  `Amadevus.RecordGenerator`! 
+  `Amadevus.RecordGenerator` ([#127])!
+
+[#127]: https://github.com/amis92/RecordGenerator/pull/127
 
 ## [0.5.0] - 2020-03-30
 ### Changed
@@ -104,7 +108,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 * Initial release with support for constructor and With-mutators.
 
-[Unreleased]: https://github.com/amis92/RecordGenerator/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/amis92/RecordGenerator/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/amis92/RecordGenerator/compare/v0.5.1...v0.6.0
 [0.5.0]: https://github.com/amis92/RecordGenerator/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/amis92/RecordGenerator/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/amis92/RecordGenerator/compare/v0.3.4...v0.4.0
