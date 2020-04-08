@@ -1,6 +1,6 @@
 <Project>
 
-    <PropertyGroup>
+  <PropertyGroup>
     <Authors>Amadeusz Sadowski</Authors>
     <Company>Amadevus</Company>
     <Copyright>Copyright © Amadeusz Sadowski</Copyright>
@@ -41,11 +41,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <DotNetCliToolReference Include="dotnet-codegen" Version="$(CodeGenerationRoslynPackagesVersion)" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="$(PackageIconPath)" Pack="true" PackagePath="$(PackageIcon)" />
   </ItemGroup>
-  
+
 </Project>

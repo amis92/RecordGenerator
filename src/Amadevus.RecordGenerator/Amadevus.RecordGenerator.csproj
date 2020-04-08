@@ -1,35 +1,16 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.Build.NoTargets">
   <Sdk Name="Microsoft.Build.CentralPackageVersions" />
+  <Sdk Name="CodeGeneration.Roslyn.PluginMetapackage.Sdk" />
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.6</TargetFramework>
-    <NuspecFile>Amadevus.RecordGenerator.nuspec</NuspecFile>
-    <IncludeSymbols>false</IncludeSymbols>
+    <TargetFrameworks>net40;netstandard1.0</TargetFrameworks>
     <Description>Code generator for [Record]-marked types. Automatically creates backing code (constructor, With- mutators, deconstructor to tuple, Builder nested type etc.) for immutable record classes. This package references all required and recommended (analyzers) packages. See project site for installation instructions and more details.</Description>
   </PropertyGroup>
 
-  <Target Name="UpdateNuspecProperties" AfterTargets="GetBuildVersion">
-    <PropertyGroup>
-      <NuspecProperties>
-        version=$(PackageVersion);
-        authors=$(Authors);
-        license=$(PackageLicenseExpression);
-        projectUrl=$(PackageProjectUrl);
-        icon=$(PackageIcon);
-        iconPath=$(PackageIconPath);
-        iconUrl=$(PackageIconUrl);
-        copyright=$(Copyright);
-        description=$(Description);
-        versionOfCodegenRoslyn=$(CodeGenerationRoslynPackagesVersion);
-        requireLicenseAcceptance=$(PackageRequireLicenseAcceptance);
-        minClientVersion=$(MinClientVersion);
-        releaseNotes=$(ReleaseNotes);
-        tags=$(PackageTags);
-        repoType=git;
-        repoUrl=$(RepositoryUrl);
-        repoCommit=$(GitCommitId);
-      </NuspecProperties>
-    </PropertyGroup>
-  </Target>
+  <ItemGroup>
+    <ProjectReference Include="..\Amadevus.RecordGenerator.Attributes\Amadevus.RecordGenerator.Attributes.csproj" />
+    <NupkgAdditionalDependency Include="Amadevus.RecordGenerator.Analyzers" IncludeAssets="all" />
+    <NupkgAdditionalDependency Include="Amadevus.RecordGenerator.Generators" IncludeAssets="all" />
+  </ItemGroup>
 
 </Project>

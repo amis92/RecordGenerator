@@ -2,7 +2,7 @@
 
 ![RecordGenerator logo](https://raw.githubusercontent.com/amis92/RecordGenerator/master/docs/logo.png)
 
-> ℹ This documentation is for v0.5 of RecordGenerator.
+> ℹ This documentation is for v0.6 of RecordGenerator.
 
 ## Description
 [Description]: #description
@@ -42,21 +42,6 @@ As it is a NuGet, it's really simple:
 * From terminal `dotnet add package Amadevus.RecordGenerator`
 * Package Manager `Install-Package Amadevus.RecordGenerator`
 * Or from `Manage NuGet packages` search for `Amadevus.RecordGenerator`
-
-##### Important Note
-You also need to add a `DotNetCliToolReference` of `dotnet-codegen` into an `ItemGroup` in your project file
- (or `Directory.Build.props` if used). The version of the tool should correspond with the version of
- `CodeGeneration.Roslyn.BuildTime` this project depends on.
-
- ```xml
- <Project>
-    ...
-    <ItemGroup>
-        <DotNetCliToolReference Include="dotnet-codegen" Version="0.4.88" />
-    </ItemGroup>
-    ...
-</Project>
- ```
 
 ## Usage
 [Usage]: #usage
@@ -172,18 +157,19 @@ diagnostics/codefixes that help you use Records correctly. See [Analyzers].
 
 It is a development-only package, and the generation also works with CLI builds, both using `dotnet` and `msbuild`. The `Attributes` target `netstandard1.0` (the only compile-time dependecy).
 
-It depends on `DotNetCliTool` `dotnet-codegen`. These kind of tools are only supported in SDK-format `csproj` projects, which in turn is only supported in VS2017+/MSBuild 15.0+ (outside of `dotnet` CLI tools).
+It on depends `dotnet` CLI to run the underlying `CodeGeneration.Roslyn.Tool`,
+which in turn requires `.NET Core App v2.1` runtime (or later).
 
 Roslyn Analyzer with CodeFix, to be supported in IDE, requires **Visual Studio 2017+** or **VS Code v1.19+**.
 
 If you want to use packages separately, there is more work to do.
 
-* First of all, you can define your own `RecordAttribute`, it needs to have the same name
-  and `[CodeGeneration]` attribute applied, same as [the one defined in the Attributes package][RecordAttribute].
+* First of all, you can define your own `RecordAttribute` (instead of referencing the Attributes package);
+  it needs to have the same name and `[CodeGeneration]` attribute applied,
+  same as [the one defined in the Attributes package][RecordAttribute].
 * The project where code will be generated needs to reference `Amadevus.RecordGeneration.Generators`
-  and `CodeGeneration.Roslyn.BuildTime` packages.
+  and `CodeGeneration.Roslyn.Tool` packages.
 * Analyzers package is optional.
-* If you declare your own RecordAttribute (see above), Attributes package is optional too.
 
 ## Development
 [Development]: #development
