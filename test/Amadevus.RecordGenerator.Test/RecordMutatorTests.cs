@@ -20,11 +20,26 @@ namespace Amadevus.RecordGenerator.Test
         }
 
         [Fact]
-        public void With_SimpleProperty_CreatesModifiedInstance()
-        {
+        public void OptionalWith_SimpleProperty_DoesNotModifyInstance() {
+            const string newName = "New " + ItemName;
+            var item = CreateItem();
+            item.With(name: newName);
+            Assert.Equal(ItemName, item.Name);
+        }
+
+        [Fact]
+        public void With_SimpleProperty_CreatesModifiedInstance() {
             const string newName = "New " + ItemName;
             var item = CreateItem();
             var modifiedItem = item.WithName(newName);
+            Assert.Equal(newName, modifiedItem.Name);
+        }
+
+        [Fact]
+        public void OptionalWith_SimpleProperty_CreatesModifiedInstance() {
+            const string newName = "New " + ItemName;
+            var item = CreateItem();
+            var modifiedItem = item.With(name: newName);
             Assert.Equal(newName, modifiedItem.Name);
         }
 

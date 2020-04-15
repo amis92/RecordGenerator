@@ -1,14 +1,46 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Text;
+using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
+using System.Reflection;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Amadevus.RecordGenerator.Generators
 {
     internal static class SyntaxExtensions
     {
+        public static ParameterListSyntax ToOptionalParameterSyntax(this IEnumerable<RecordDescriptor.Entry> entries) 
+        {
+            // (in Optional<string> name = default, in Optional<int> age = default)
+            return
+            ParameterList(
+                SeparatedList(
+                    entries.Select(x => Parameter(x.IdentifierInCamelCase)
+                                        .AddModifiers(Token(SyntaxKind.InKeyword))
+                                        .WithType(x.TypeSyntax.ToOptionalType())
+                                        .WithDefault(EqualsValueClause(LiteralExpression(
+                                            SyntaxKind.DefaultLiteralExpression,
+                                            Token(SyntaxKind.DefaultKeyword)))))));
+        }
+
+        public static QualifiedNameSyntax ToOptionalType(this TypeSyntax type) 
+        {
+            // Optional<type>
+            return 
+            QualifiedName(
+                QualifiedName(
+                    IdentifierName(nameof(Amadevus)),
+                    IdentifierName(nameof(Amadevus.RecordGenerator))
+                ),
+                GenericName(Identifier(nameof(Amadevus.RecordGenerator.Optional<int>)))
+                .WithTypeArgumentList(TypeArgumentList(SingletonSeparatedList(type)))
+            );
+        }
+
         public static MethodDeclarationSyntax AddModifiers(this MethodDeclarationSyntax syntax, params SyntaxKind[] modifier)
         {
             return syntax.AddModifiers(modifier.Select(Token).ToArray());
